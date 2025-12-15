@@ -1,0 +1,322 @@
+---
+title: "Robust Standard Errors"
+author:
+  - name: "Ted Ellsworth"
+    affiliation: "Yale University"
+    url: "https://authorwebpage1.com"
+  - name: "Co-author Name"
+    affiliation: "Affiliation 2"
+    url: "https://authorwebpage2.com"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+format: html
+execute: 
+  error: false
+  message: false
+  warning: false
+editor: visual
+links:
+  - text: "StatLab"
+    href: "https://yourinstitutionwebsite.com"
+abstract: |
+  A brief summary of the research guide. Include key highlights and findings here.
+about_author: |
+  Provide brief bios of the contributing authors here. Mention any relevant qualifications, affiliations, or experience related to the research guide.
+keywords: |
+  List relevant keywords that describe the content of the research guide. Examples include research methods, statistical software, data analysis, etc.
+---
+
+```{r, echo = F, eval = T}
+pacman::p_load(Statamarkdown, reticulate)
+```
+
+```{python}
+import warnings
+warnings.filterwarnings("ignore", category=UnicodeWarning, module="<string>")
+```
+
+# Introduction
+
+# Methods
+
+The other place your likely to encounter discussions about standard errors are your model outputs. Consider a simple linear regression:
+
+$$y_{i} = x_{i}\beta_{i} + \epsilon_i$$ Here $\hat{\beta}_{i}$ represents our coefficient estimate and the standard error can be written as $se(\hat{\beta_{i}})$. Everything that we need to interpret our regression outputs depends on these sample estimates including our test statistics, p-values, and confidence intervals. But how do we know these estimates are valid? Recall that when using OLS regression, we assume that the model's residuals—i.e. the distance between predicted and observed values—do not follow any explicit pattern. put another way, our random error term $\epsilon_{i}$ is unrelated to our units $i$ or on the values of $x_{i}$. This assumption is known as **homoskedasticity.** If your residuals are not normally distributed and independent from each other then you have **heteroskedasticity** and your standard errors will be wrong.
+
+One of the ways we can test for homoskedasticity is to extract the residuals from our model and compare them to a theoretical distribution. This technique is known as a **Q-Q plot**. As shown in the sample code below, the Q-Q plot uses a solid 45-degree line as a benchmark for perfect coorespondence. If our errors followed a normal distribution, we would expect our data points to follow this line. However, as we can see, the curvature toward the tails indicates heteroskedasticity.
+
+::: panel-tabset
+### R
+
+```{r}
+nunn <- haven::read_dta("Nunn_Wantchekon_AER_2011.dta")
+regression <- lm(trust_neighbors~exports, data = nunn)
+par(mfrow = c(2,2))
+plot(regression, pch = 19, cex = 0.8)
+```
+
+### Python
+
+```{python, python.reticulate = T, warning = F}
+import numpy as np
+import pandas as pd
+import statsmodels.api as sm
+import statsmodels.nonparametric.api as nparam
+import matplotlib.pyplot as plt
+import seaborn as sea
+import scipy.stats as stats
+
+# Read the data
+nunn = pd.read_stata("Nunn_Wantchekon_AER_2011.dta")
+
+# Run the regression
+reg1 = sm.formula.ols("trust_neighbors~exports", data=nunn).fit()
+
+# Calculate residuals and fitted values
+reg1_residuals = reg1.resid
+fitted_values = reg1.fittedvalues
+standardized_residuals = reg1.resid_pearson
+
+# Create diagnostic plots
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+
+# Residuals vs Fitted
+axes[0, 0].scatter(fitted_values, reg1_residuals, alpha=0.6)
+axes[0, 0].axhline(y=0, color='red', linestyle='--')
+axes[0, 0].set_xlabel('Fitted Values')
+axes[0, 0].set_ylabel('Residuals')
+axes[0, 0].set_title('Residuals vs Fitted')
+
+# Add lowess line to check for patterns
+lowess_line = nparam.lowess(reg1_residuals, fitted_values, frac=0.3)
+axes[0, 0].plot(lowess_line[:, 0], lowess_line[:, 1], color='blue', linewidth=2)
+
+# Q-Q Plot for normality
+stats.probplot(reg1_residuals, dist="norm", plot=axes[0, 1])
+axes[0, 1].set_title('Q-Q Plot of Residuals')
+
+# Histogram of residuals
+axes[1, 0].hist(reg1_residuals, bins=20, alpha=0.7, color='skyblue', edgecolor='black')
+axes[1, 0].set_xlabel('Residuals')
+axes[1, 0].set_ylabel('Frequency')
+axes[1, 0].set_title('Distribution of Residuals')
+
+# Scale-Location plot (sqrt of standardized residuals vs fitted)
+sqrt_std_resid = np.sqrt(np.abs(standardized_residuals))
+axes[1, 1].scatter(fitted_values, sqrt_std_resid, alpha=0.6)
+axes[1, 1].set_xlabel('Fitted Values')
+axes[1, 1].set_ylabel('√|Standardized Residuals|')
+axes[1, 1].set_title('Scale-Location Plot')
+
+# Add lowess line
+lowess_scale = nparam.lowess(sqrt_std_resid, fitted_values, frac=0.3)
+axes[1, 1].plot(lowess_scale[:, 0], lowess_scale[:, 1], color='red', linewidth=2)
+
+plt.tight_layout()
+plt.show()
+```
+
+### Stata
+
+```{stata, echo = T, eval = T}
+*==============================================================================
+* 1. Load the dataset
+* R equivalent: nunn <- haven::read_dta("Nunn_Wantchekon_AER_2011.dta")
+*==============================================================================
+// The `use` command loads a Stata-formatted .dta file.
+// The `, clear` option is good practice to remove any data currently in memory.
+use "Nunn_Wantchekon_AER_2011.dta", clear
+
+*==============================================================================
+* 2. Run the linear regression
+* R equivalent: regression <- lm(trust_neighbors~exports, data = nunn)
+*==============================================================================
+// The `regress` command fits a linear model. The first variable is the
+// dependent variable, followed by all independent variables.
+regress trust_neighbors exports
+
+*==============================================================================
+* 3. Generate and combine the four diagnostic plots
+* R equivalent: par(mfrow = c(2,2)); plot(regression, ...)
+*
+* Stata does not have a single command to generate all four plots at once.
+* We must create each one individually, save it to memory, and then combine them.
+*==============================================================================
+
+//--- Plot 1: Residuals vs. Fitted Values ---
+// Create the fitted values and residuals first
+predict fitted_vals, xb
+predict residuals, resid
+
+// Create the scatter plot and save it in memory as "plot1"
+scatter residuals fitted_vals, yline(0) title("Residuals vs. Fitted") name(plot1, replace)
+
+//--- Plot 2: Normal Q-Q Plot of Residuals ---
+// The `qnorm` command creates a quantile-normal plot for the specified variable.
+qnorm residuals, title("Normal Q-Q") name(plot2, replace)
+
+//--- Plot 3: Scale-Location Plot ---
+// (sqrt of standardized residuals vs. fitted values)
+// First, generate the standardized residuals and then the y-axis variable
+predict std_residuals, rstandard
+gen sqrt_abs_std_resid = sqrt(abs(std_residuals))
+
+// Create the scatter plot and save it in memory as "plot3"
+scatter sqrt_abs_std_resid fitted_vals, title("Scale-Location") name(plot3, replace)
+
+//--- Plot 4: Residuals vs. Leverage Plot ---
+// First, generate the leverage values
+predict leverage, leverage
+
+// Create the scatter plot and save it in memory as "plot4"
+scatter std_residuals leverage, title("Residuals vs. Leverage") name(plot4, replace)
+
+*==============================================================================
+* 4. Combine the saved plots into a single 2x2 graph
+* This is the final step that replicates the `par(mfrow=c(2,2))` behavior.
+*==============================================================================
+graph combine plot1 plot2 plot3 plot4, rows(2)
+```
+:::
+
+### Robust Standard Errors
+
+If we've identified heterosketasticity in our data we'll want to use heteroskedasticity-robust standard errors. These estimates go by many different names in the statistics and applied statistics literature including heterosketasticity-robust standard errors (robust standard errors for short), Huber-White standard errors, or the sandwich estimator.
+
+\par
+
+The term sandwich estimator is a subtle nod to the fact that if the regression errors are independent, but have distinct variances, our new standard errors can be derived as:
+
+$$Var(\hat{\beta}) = (X^{T}X)^{-1}X^{T}\Omega{X}(X^{T}X)^{-1}$$
+
+Where X is a model matrix (i.e., a matrix of predictor values) and $\Omega$ is an $n \times n$ matrix whose $i^{th}$ diagonal element is $e^{2}_{1}, e^{2}_{2}, e^{2}_{3}, ..., e^{2}_{i}$ and whose off-diagonal elements are all zero.
+
+::: panel-tabset
+### R Example
+
+| **Function** | **Package** | **Description** | **Type Options** |
+|----------------|----------------|--------------------|--------------------|
+| `vcovHC()` | sandwich | Heteroskedasticity-Consistent Errors | "HC0", "HC1", "HC2", "HC3", "HC4", "HC4m", "HC5" |
+| `vcovHAC()` | sandwich | Heteroskedasticity- and Autocorrelation-Consistent Errors | "Bartlett", "Parzen", "Quadratic Spectral" |
+| `vcovCL()` | sandwich | Clustered Errors | Specified by adjusting covariance matrix for clusters |
+| `lm_robust()` | estimatr | Robust Standard Errors with `lm_robust` function | "HC2", "HC3" |
+
+```{r}
+
+```
+
+### Python Example
+
+| **Function** | **Package** | **Description** | **Type Options** |
+|-----------------|-----------------|-----------------------|-----------------|
+| `cov_type` | statsmodels | Type of robust standard errors | "HC0", "HC1", "HC2", "HC3", "HAC" |
+| `cov_kwds={'kernel': 'bartlett'}` | statsmodels | Kernel options for HAC errors | "bartlett", "parzen", "qs" |
+| `cov_kwds={'groups': ...}` | statsmodels | Clustered errors (groups specified) | (specify groups in `cov_kwds`) |
+
+```{python}
+
+```
+
+### Stata Example
+
+| **Command** | **Description** | **Type Options** |
+|------------------------|----------------------------|--------------------|
+| `regress ... , robust` | Heteroskedasticity-Consistent (HC) robust standard errors | Default |
+| `regress ... , cluster(clusterid)` | Clustered standard errors | Specify the cluster variable |
+| `newey ... , lag(#)` | Heteroskedasticity- and Autocorrelation-Consistent (HAC) errors | Specify the number of lags |
+| `vce(robust)` | Heteroskedasticity-Consistent (HC) for other model types | Default |
+| `vce(cluster clusterid)` | Clustered standard errors for other model types | Specify the cluster variable |
+
+```{stata, echo = T, eval = T}
+
+```
+:::
+
+### Correcting for Heteroscedasticity
+
+::: panel-tabset
+### R Example
+
+```{r}
+nunn <- haven::read_dta("Nunn_Wantchekon_AER_2011.dta")
+regression <- lm(trust_neighbors~exports, data = nunn)
+regression_robust <- lmtest::coeftest(
+  regression, vcov = sandwich::vcovHC, type = "HC2"
+  )
+regression_robust
+```
+
+### Python Example
+
+```{python, python.reticulate = T}
+import statsmodels.api as sm
+import pandas as pd
+data = pd.read_stata("Nunn_Watchekon_AER_2011.dta")
+sm.OLS("trust_neighbors~exports", data = data).fit(cov_type = "HC2")
+```
+
+### Stata Example
+
+```{stata, echo = T, eval = T}
+use Nunn_Wantchekon_AER_2011.dta, clear
+regress trust_neighbors exports, robust
+```
+:::
+
+### Cluster-Robust Standard Errors
+
+Heterosketasticity-robust standard errors work well when our main concern is the relationship between our $x_{i}$'s and our error term, but they do not immediately solve for cases where observations within a group (or cluster) are likely to be correlated. In our running example, Nunn and Wanchekon pool survey data from a number of countries to build their dataset. To account for intra-country correlations between errors, all we'd need to do is make the following adjustment to our code:
+
+::: panel-tabset
+### R Example
+
+```{r}
+nunn <- haven::read_dta("Nunn_Wantchekon_AER_2011.dta")
+regression <- lm(trust_neighbors~exports+isocode, data = nunn)
+regression_robust <- lmtest::coeftest(
+  regression, vcov = sandwich::vcovHC, type = "HC2",
+  cluster = ~isocode )
+regression_robust
+```
+
+### Python Example
+
+```{python, python.reticulate = T}
+import statsmodels.api as sm
+import pandas as pd
+data = pd.read_stata("Nunn_Watchekon_AER_2011.dta")
+sm.OLS("trust_neighbors~exports", data = data).fit(cov_type = "HC2")
+```
+
+### Stata Example
+
+```{stata, echo = T, eval = T}
+use Nunn_Wantchekon_AER_2011.dta, clear
+regress trust_neighbors exports, robust
+```
+:::
+
+### Bootstrapping Standard Errors
+
+# Interpretation
+
+Summarize the key points and implications of the research.
+
+# FAQs
+
+### Sample FAQ
+
+The choice between a Poisson regression and a Negative Binomial regression depends on the characteristics of your count data, particularly the relationship between the mean and variance.
+
+# References
+
+-   https://evalf21.classes.andrewheiss.com/example/standard-errors/#sandwich-and-coeftest
+-   https://lrberge.github.io/fixest/articles/fixest_walkthrough.html#small-sample-correction-1
+-   https://medium.com/@michaeltsiebel/reproducing-statas-standard-errors-in-python-cd237b7e9ec3
+-   https://sandwich.r-forge.r-project.org/articles/sandwich.html
+-   https://mattblackwell.github.io/gov2002-f23/files/slides/13_ols_properties_handout.pdf
+-   https://journals.sagepub.com/doi/pdf/10.1177/1536867X0300300105
+-   
+
+# Appendix
+
+Include any additional material or supplementary information here.
