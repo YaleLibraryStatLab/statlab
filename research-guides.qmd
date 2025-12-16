@@ -47,7 +47,7 @@ Our comprehensive guides provide step-by-step statistical analysis workflows wit
       </ul>
     </div>
     <div class="guide-actions">
-      <a href="research-resources/guides/mixed-effects-models/mixed-effects-models.html" class="btn btn-primary">📖 View Guide</a>
+      <a href="research-guides/mixed-effects-models/mixed-effects-models.html" class="btn btn-primary">📖 View Guide</a>
       <a href="https://github.com/YaleLibraryStatLab/YUL-StatLab/tree/main/research-guides/mixed-effects-models" class="btn btn-secondary">💻 Source Code</a>
     </div>
   </div>
@@ -72,14 +72,14 @@ Our comprehensive guides provide step-by-step statistical analysis workflows wit
       </ul>
     </div>
     <div class="guide-actions">
-      <a href="research-resources/guides/statistical-analysis/standard-errors.html" class="btn btn-primary">📖 View Guide</a>
+      <a href="research-guides/standard-errors/standard-errors.html" class="btn btn-primary">📖 View Guide</a>
       <a href="https://github.com/YaleLibraryStatLab/YUL-StatLab/tree/main/research-guides/standard-errors" class="btn btn-secondary">💻 Source Code</a>
     </div>
   </div>
 </div>
 <div class="browse-section">
   <p>Explore our complete collection of research guides with interactive examples and downloadable code.</p>
-  <a href="research-resources/guides/index.html" class="btn btn-browse">🗂️ Browse Complete Guide Library</a>
+  <a href="research-guides/guides/index.html" class="btn btn-browse">🗂️ Browse Complete Guide Library</a>
 </div>
 
 <style>
