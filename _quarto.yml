@@ -1,12 +1,19 @@
 project:
   type: website
+  output-dir: _site 
+
+format:
+  html:
+    theme: statlab.scss
+    css: styles.css
+    toc: true
 
 
 execute: 
   eval: false
 
 website:
-  title: "YUL StatLab"
+  title: "Yale Library StatLab"
   navbar:
     left:
       - href: index.qmd
@@ -23,13 +30,6 @@ website:
       # - href: consulting.qmd
       #   text: Consulting
 
-format:
-  html:
-    theme:
-      - cosmo
-      - brand
-    css: styles.css
-    toc: true
 
 
 

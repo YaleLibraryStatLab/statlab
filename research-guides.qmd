@@ -11,9 +11,9 @@ Our comprehensive guides provide step-by-step statistical analysis workflows wit
 <div class="guides-overview">
   <div class="overview-stats">
     <div class="stat-item">
-      <span class="stat-number">3</span>
+      <span class="stat-number">4</span>
       <span class="stat-label">Languages</span>
-      <div class="stat-detail">R, Python, Julia</div>
+      <div class="stat-detail">R, Python, Julia, stata</div>
     </div>
     <div class="stat-item">
       <span class="stat-number">2+</span>
@@ -54,11 +54,12 @@ Our comprehensive guides provide step-by-step statistical analysis workflows wit
   
   <div class="guide-card">
     <div class="guide-header">
-      <h3>Statistical Analysis</h3>
+      <h3>Standard Errors</h3>
       <div class="language-support">
         <span class="language-tag r">R</span>
         <span class="language-tag python">Python</span>
         <span class="language-tag julia">Julia</span>
+        <span class="language-tag stata">Stata</span>
       </div>
     </div>
     <div class="guide-description">
@@ -317,3 +318,4 @@ Our comprehensive guides provide step-by-step statistical analysis workflows wit
   }
 }
 </style>
+```

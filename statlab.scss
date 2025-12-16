@@ -1,0 +1,203 @@
+/*-- scss:defaults --*/
+
+// Color Variables
+$banner-color: #00356B;
+$banner-text: white;
+$link-color: #00356B;
+$background-color: white;
+$body-text: #333333;
+$muted-text: #666666;
+$border-color: black;
+
+// Typography
+$font-family-sans-serif: "Times New Roman", Times, serif;
+$font-size-base: 12px;
+$font-weight-base: normal;
+$line-height-base: 1.6;
+
+// Layout & Spacing
+$max-width: 1200px;
+$sidebar-width: 250px;
+$spacer: 1rem;
+$border-radius: 4px;
+
+// Interactive Elements
+$link-hover-color: darken($link-color, 15%);
+$focus-outline: 2px solid $link-color;
+
+/*-- scss:rules --*/
+
+// Base Typography
+body {
+  font-family: $font-family-sans-serif;
+  font-size: $font-size-base;
+  font-weight: $font-weight-base;
+  line-height: $line-height-base;
+  color: $body-text;
+  background-color: $background-color;
+}
+
+// Banner/Header Styling
+.navbar, 
+.navbar-brand,
+#quarto-header {
+  background-color: $banner-color !important;
+  color: $banner-text !important;
+  
+  .navbar-nav .nav-link {
+    color: $banner-text !important;
+    
+    &:hover, &:focus {
+      color: lighten($banner-text, 20%) !important;
+    }
+  }
+  
+  .navbar-brand {
+    color: $banner-text !important;
+    font-weight: bold;
+  }
+}
+
+// Links
+a {
+  color: $link-color;
+  text-decoration: underline;
+  
+  &:hover, &:focus {
+    color: $link-hover-color;
+    text-decoration: underline;
+  }
+  
+  &:focus {
+    outline: $focus-outline;
+    outline-offset: 2px;
+  }
+}
+
+// Headings
+h1, h2, h3, h4, h5, h6 {
+  color: $link-color;
+  font-weight: bold;
+  margin-top: $spacer * 1.5;
+  margin-bottom: $spacer;
+}
+
+// Muted text elements
+.text-muted,
+.figure-caption,
+.caption,
+small {
+  color: $muted-text;
+  font-size: 0.9em;
+}
+
+// Borders
+hr, 
+.border,
+blockquote {
+  border-color: $border-color;
+}
+
+blockquote {
+  border-left: 4px solid $border-color;
+  padding-left: $spacer;
+  margin-left: 0;
+  font-style: italic;
+}
+
+// Layout containers
+.container-fluid,
+.container {
+  max-width: $max-width;
+}
+
+// Sidebar (if using)
+.sidebar {
+  width: $sidebar-width;
+  
+  .sidebar-item a {
+    color: $body-text;
+    
+    &:hover {
+      color: $link-color;
+      background-color: lighten($link-color, 45%);
+    }
+  }
+}
+
+// Content spacing
+.quarto-section-identifier {
+  margin-bottom: $spacer * 2;
+}
+
+main {
+  padding: $spacer * 2 $spacer;
+}
+
+// Quarto-specific callouts
+.callout {
+  border-radius: $border-radius;
+  border: 1px solid $border-color;
+  margin: $spacer 0;
+  
+  .callout-header {
+    background-color: lighten($link-color, 45%);
+    color: $link-color;
+    font-weight: bold;
+  }
+}
+
+// Table of Contents
+.sidebar nav[role="doc-toc"] {
+  ul {
+    list-style: none;
+    padding-left: 0;
+    
+    li a {
+      color: $body-text;
+      text-decoration: none;
+      padding: 0.25rem 0.5rem;
+      display: block;
+      border-radius: $border-radius;
+      
+      &:hover {
+        background-color: lighten($link-color, 45%);
+        color: $link-color;
+      }
+    }
+  }
+}
+
+// Footer
+.nav-footer {
+  background-color: lighten($banner-color, 5%);
+  color: $banner-text;
+  border-top: 1px solid $border-color;
+  
+  a {
+    color: $banner-text;
+    
+    &:hover {
+      color: lighten($banner-text, 20%);
+    }
+  }
+}
+
+// Focus and accessibility
+*:focus {
+  outline: $focus-outline;
+  outline-offset: 2px;
+}
+
+// Print styles
+@media print {
+  .navbar,
+  .sidebar,
+  .nav-footer {
+    display: none !important;
+  }
+  
+  body {
+    font-size: 11px;
+  }
+}
