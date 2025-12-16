@@ -1,0 +1,319 @@
+---
+title: "Research Guides"
+description: "Statistical analysis guides with executable code examples in R, Stata, Python, and Julia"
+---
+
+# Statistical Research Guides
+
+Our comprehensive guides provide step-by-step statistical analysis workflows with executable code examples across multiple programming languages.
+
+```{=html}
+<div class="guides-overview">
+  <div class="overview-stats">
+    <div class="stat-item">
+      <span class="stat-number">3</span>
+      <span class="stat-label">Languages</span>
+      <div class="stat-detail">R, Python, Julia</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">2+</span>
+      <span class="stat-label">Guides Available</span>
+      <div class="stat-detail">More coming soon</div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">100%</span>
+      <span class="stat-label">Executable</span>
+      <div class="stat-detail">All code runs</div>
+    </div>
+  </div>
+</div>
+<div class="guides-grid">
+  <div class="guide-card featured">
+    <div class="guide-header">
+      <h3>Mixed Effects Models</h3>
+      <div class="language-support">
+        <span class="language-tag r">R</span>
+        <span class="language-tag python">Python</span>
+        <span class="language-tag julia">Julia</span>
+      </div>
+    </div>
+    <div class="guide-description">
+      <p>Comprehensive guide to hierarchical and longitudinal data analysis with mixed-effects modeling techniques.</p>
+      <ul class="guide-features">
+        <li>Linear and generalized linear mixed models</li>
+        <li>Random intercepts and slopes</li>
+        <li>Model diagnostics and assumptions</li>
+        <li>Cross-platform implementation examples</li>
+      </ul>
+    </div>
+    <div class="guide-actions">
+      <a href="research-resources/guides/mixed-effects-models/mixed-effects-models.html" class="btn btn-primary">📖 View Guide</a>
+      <a href="https://github.com/YaleLibraryStatLab/YUL-StatLab/tree/main/research-guides/mixed-effects-models" class="btn btn-secondary">💻 Source Code</a>
+    </div>
+  </div>
+  
+  <div class="guide-card">
+    <div class="guide-header">
+      <h3>Statistical Analysis</h3>
+      <div class="language-support">
+        <span class="language-tag r">R</span>
+        <span class="language-tag python">Python</span>
+        <span class="language-tag julia">Julia</span>
+      </div>
+    </div>
+    <div class="guide-description">
+      <p>Fundamental statistical analysis methods with practical implementations across multiple programming environments.</p>
+      <ul class="guide-features">
+        <li>Descriptive and inferential statistics</li>
+        <li>Hypothesis testing and effect sizes</li>
+        <li>Regression analysis and diagnostics</li>
+        <li>Power analysis and sample size calculations</li>
+      </ul>
+    </div>
+    <div class="guide-actions">
+      <a href="research-resources/guides/statistical-analysis/standard-errors.html" class="btn btn-primary">📖 View Guide</a>
+      <a href="https://github.com/YaleLibraryStatLab/YUL-StatLab/tree/main/research-guides/standard-errors" class="btn btn-secondary">💻 Source Code</a>
+    </div>
+  </div>
+</div>
+<div class="browse-section">
+  <p>Explore our complete collection of research guides with interactive examples and downloadable code.</p>
+  <a href="research-resources/guides/index.html" class="btn btn-browse">🗂️ Browse Complete Guide Library</a>
+</div>
+
+<style>
+.guides-overview {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  margin: 2rem 0;
+}
+
+.overview-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 2rem;
+  text-align: center;
+}
+
+.stat-item {
+  padding: 1rem;
+}
+
+.stat-number {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.stat-detail {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.guides-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.guide-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.guide-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.guide-card.featured {
+  border: 2px solid #007bff;
+  position: relative;
+}
+
+.guide-card.featured::before {
+  content: "⭐ Featured";
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  background: #007bff;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.guide-header {
+  margin-bottom: 1rem;
+}
+
+.guide-header h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1.4rem;
+}
+
+.language-support {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.language-tag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.language-tag.r { 
+  background: #e8f4f8; 
+  color: #276749; 
+  border-color: #276749; 
+}
+
+.language-tag.python { 
+  background: #fff3cd; 
+  color: #856404; 
+  border-color: #856404; 
+}
+
+.language-tag.julia { 
+  background: #f8d7da; 
+  color: #721c24; 
+  border-color: #721c24; 
+}
+
+.guide-description {
+  flex-grow: 1;
+  margin-bottom: 1.5rem;
+}
+
+.guide-description p {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.guide-features {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.guide-features li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.guide-features li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #28a745;
+  font-weight: bold;
+}
+
+.guide-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+.btn {
+  padding: 0.75rem 1.25rem;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #0056b3;
+  color: white;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #545b62;
+  color: white;
+}
+
+.browse-section {
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  margin: 3rem 0;
+}
+
+.browse-section p {
+  margin-bottom: 1.5rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.btn-browse {
+  background: #28a745;
+  color: white;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+}
+
+.btn-browse:hover {
+  background: #1e7e34;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .guides-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .overview-stats {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .guide-actions {
+    flex-direction: column;
+  }
+}
+</style>

@@ -1,13 +1,27 @@
 project:
   type: website
 
+
+execute: 
+  eval: false
+
 website:
-  title: "Yale Library StatLab"
+  title: "YUL StatLab"
   navbar:
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
+      - href: about.qmd
+        text: About
+      - href: research-guides.qmd
+        text: "Research Guides"
+      # Leave room for your future sections:
+      # - href: workshops.qmd
+      #   text: Workshops
+      # - href: resources.qmd  
+      #   text: Resources
+      # - href: consulting.qmd
+      #   text: Consulting
 
 format:
   html:
