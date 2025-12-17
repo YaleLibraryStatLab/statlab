@@ -3,8 +3,6 @@ title: "Research Guides"
 description: "Statistical analysis guides with executable code examples in R, Stata, Python, and Julia"
 ---
 
-# Statistical Research Guides
-
 Our comprehensive guides provide step-by-step statistical analysis workflows with executable code examples across multiple programming languages.
 
 ```{=html}
@@ -37,18 +35,45 @@ Our comprehensive guides provide step-by-step statistical analysis workflows wit
         <span class="language-tag julia">Julia</span>
       </div>
     </div>
-    <div class="guide-description">
-      <p>Comprehensive guide to hierarchical and longitudinal data analysis with mixed-effects modeling techniques.</p>
-      <ul class="guide-features">
-        <li>Linear and generalized linear mixed models</li>
-        <li>Random intercepts and slopes</li>
-        <li>Model diagnostics and assumptions</li>
-        <li>Cross-platform implementation examples</li>
-      </ul>
-    </div>
-    <div class="guide-actions">
-      <a href="research-guides/mixed-effects-models/mixed-effects-models.html" class="btn btn-primary">📖 View Guide</a>
-      <a href="https://github.com/YaleLibraryStatLab/YUL-StatLab/tree/main/research-guides/mixed-effects-models" class="btn btn-secondary">💻 Source Code</a>
+    
+    <div class="guide-content">
+      <div class="guide-left">
+        <div class="guide-description">
+          <!-- REPLACE THIS PARAGRAPH WITH YOUR NEW DESCRIPTION -->
+          <p>Comprehensive guide to hierarchical and longitudinal data analysis with mixed-effects modeling techniques.</p>
+          
+          <!-- CONVERTED FEATURES TO KEYWORDS LIST -->
+          <div class="guide-keywords">
+            <span class="keyword">Linear mixed models</span>
+            <span class="keyword">Generalized linear mixed models</span>
+            <span class="keyword">Random intercepts</span>
+            <span class="keyword">Random slopes</span>
+            <span class="keyword">Model diagnostics</span>
+            <span class="keyword">Cross-platform implementation</span>
+          </div>
+        </div>
+        
+        <div class="guide-actions">
+          <a href="research-guides/mixed-effects-models/mixed-effects-models.html" class="btn btn-primary">📖 View Guide</a>
+          <a href="https://github.com/YaleLibraryStatLab/YUL-StatLab/tree/main/research-guides/mixed-effects-models" class="btn btn-secondary">💻 Source Code</a>
+        </div>
+      </div>
+      
+      <div class="guide-right">
+        <!-- IMAGE PLACEHOLDER - REPLACE SRC WITH ACTUAL IMAGE FROM YOUR GUIDE -->
+        <img src="/research-guides/mixed-effects-models/mixed-effects-models_files/figure-html/fig-soil-data-lm-1.png" 
+             alt="Mixed Effects Model Visualization" 
+             class="guide-image" />
+        <!-- 
+        ADAPTATION NOTES:
+        1. Replace the src path with the actual image path from your mixed-effects guide
+        2. Update the alt text to describe the specific image you're using
+        3. Common image locations in guides might be:
+           - research-guides/mixed-effects-models/images/
+           - research-guides/mixed-effects-models/figures/
+           - research-guides/mixed-effects-models/plots/
+        -->
+      </div>
     </div>
   </div>
   
@@ -62,18 +87,41 @@ Our comprehensive guides provide step-by-step statistical analysis workflows wit
         <span class="language-tag stata">Stata</span>
       </div>
     </div>
-    <div class="guide-description">
-      <p>Fundamental statistical analysis methods with practical implementations across multiple programming environments.</p>
-      <ul class="guide-features">
-        <li>Descriptive and inferential statistics</li>
-        <li>Hypothesis testing and effect sizes</li>
-        <li>Regression analysis and diagnostics</li>
-        <li>Power analysis and sample size calculations</li>
-      </ul>
-    </div>
-    <div class="guide-actions">
-      <a href="research-guides/standard-errors/standard-errors.html" class="btn btn-primary">📖 View Guide</a>
-      <a href="https://github.com/YaleLibraryStatLab/YUL-StatLab/tree/main/research-guides/standard-errors" class="btn btn-secondary">💻 Source Code</a>
+    
+    <div class="guide-content">
+      <div class="guide-left">
+        <div class="guide-description">
+          <!-- REPLACE THIS PARAGRAPH WITH YOUR NEW DESCRIPTION FOR STANDARD ERRORS -->
+          <p>Test.</p>
+          
+          <!-- CONVERTED FEATURES TO KEYWORDS LIST -->
+          <div class="guide-keywords">
+            <span class="keyword">Descriptive statistics</span>
+            <span class="keyword">Inferential statistics</span>
+            <span class="keyword">Hypothesis testing</span>
+            <span class="keyword">Effect sizes</span>
+            <span class="keyword">Regression analysis</span>
+            <span class="keyword">Power analysis</span>
+          </div>
+        </div>
+        
+        <div class="guide-actions">
+          <a href="research-guides/standard-errors/standard-errors.html" class="btn btn-primary">📖 View Guide</a>
+          <a href="https://github.com/YaleLibraryStatLab/YUL-StatLab/tree/main/research-guides/standard-errors" class="btn btn-secondary">💻 Source Code</a>
+        </div>
+      </div>
+      
+      <div class="guide-right">
+        <!-- IMAGE PLACEHOLDER - REPLACE SRC WITH ACTUAL IMAGE FROM YOUR STANDARD ERRORS GUIDE -->
+        <img src="research-guides/standard-errors/images/example-plot.png" 
+             alt="Standard Errors Visualization" 
+             class="guide-image" />
+        <!-- 
+        ADAPTATION NOTES:
+        1. Replace the src path with the actual image path from your standard-errors guide
+        2. Update the alt text to describe the specific image you're using
+        -->
+      </div>
     </div>
   </div>
 </div>
@@ -123,7 +171,7 @@ Our comprehensive guides provide step-by-step statistical analysis workflows wit
 
 .guides-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
   gap: 2rem;
   margin: 2rem 0;
 }
@@ -204,6 +252,38 @@ Our comprehensive guides provide step-by-step statistical analysis workflows wit
   border-color: #721c24; 
 }
 
+.language-tag.stata { 
+  background: #d1ecf1; 
+  color: #0c5460; 
+  border-color: #0c5460; 
+}
+
+/* NEW STYLES for the revised layout */
+.guide-content {
+  display: flex;
+  gap: 1.5rem;
+  flex-grow: 1;
+}
+
+.guide-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.guide-right {
+  width: 40%;
+  flex-shrink: 0;
+}
+
+.guide-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  max-height: 200px;
+}
+
 .guide-description {
   flex-grow: 1;
   margin-bottom: 1.5rem;
@@ -215,26 +295,19 @@ Our comprehensive guides provide step-by-step statistical analysis workflows wit
   margin-bottom: 1rem;
 }
 
-.guide-features {
-  list-style: none;
-  padding: 0;
-  margin: 1rem 0;
+.guide-keywords {
+  margin-top: 1rem;
 }
 
-.guide-features li {
-  position: relative;
-  padding-left: 1.5rem;
-  margin-bottom: 0.5rem;
-  color: #555;
-  font-size: 0.9rem;
-}
-
-.guide-features li::before {
-  content: "✓";
-  position: absolute;
-  left: 0;
-  color: #28a745;
-  font-weight: bold;
+.keyword {
+  display: inline-block;
+  background-color: #f0f0f0;
+  padding: 4px 8px;
+  margin: 2px 4px 2px 0;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #666;
+  border: 1px solid #ddd;
 }
 
 .guide-actions {
@@ -313,9 +386,18 @@ Our comprehensive guides provide step-by-step statistical analysis workflows wit
     gap: 1rem;
   }
   
+  .guide-content {
+    flex-direction: column;
+  }
+  
+  .guide-right {
+    width: 100%;
+  }
+  
   .guide-actions {
     flex-direction: column;
   }
 }
 </style>
+
 ```
