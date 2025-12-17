@@ -2,4 +2,4 @@
 title: "About"
 ---
 
-About this site
+Yale Library StatLab Webpage
