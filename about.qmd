@@ -2,4 +2,4 @@
 title: "About"
 ---
 
-Yale Library StatLab Webpage
+Yale University Library's StatLab supports all data, computational, and statistical inquiries. Whether you are an undergraduate researcher learning statistics for the first time, or a seasoned researcher looking for new tools to analyze complex data, we aim to provide quality support through 1-1 consultations, specialized workshops and instruction, and expertly crafted research guides.
