@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  {# ----------------------------------------------------------------
+     Each child template sets its own title via {% block title %}.
+     Falls back to the bare site name if the block is not overridden.
+  ----------------------------------------------------------------- #}
+  <title>{% block title %}Yale StatLab{% endblock %}</title>
+
+  <meta name="description"
+        content="{% block meta_description %}Statistical consulting and research support for the Yale community.{% endblock %}" />
+
+  {# ----------------------------------------------------------------
+     Typography
+     ITC Galliard is a licensed typeface — list it first in the font
+     stack so it resolves if the user's system has it installed.
+     EB Garamond (Google Fonts) is the closest freely available
+     approximation and serves as the practical web fallback.
+  ----------------------------------------------------------------- #}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+        rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+       All color, spacing, and type decisions live here.
+       Change these custom properties to retheme the whole site.
+    ============================================================ */
+    :root {
+      /* Yale palette */
+      --yale-blue:      #00356B;   /* primary brand */
+      --yale-blue-dark: #002654;   /* nav hover, footer background */
+      --yale-mid:       #0059A8;   /* inline links, accents */
+      --gold:           #bd9b60;   /* warm complementary accent */
+
+      /* Neutrals */
+      --white:          #ffffff;
+      --text:           #1d2939;
+      --text-muted:     #667085;
+      --bg-subtle:      #f8f9fc;
+      --border:         #e4e7ec;
+
+      /* Typography stacks */
+      --font-serif: 'ITC Galliard', 'EB Garamond', Georgia, 'Times New Roman', serif;
+      --font-body:  -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+      /* Layout */
+      --nav-height: 60px;
+      --site-max:   1160px;
+      --radius:     5px;
+      --ease:       180ms ease;
+    }
+
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--white);
+      /* flex column so the footer is always pushed to the bottom */
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: var(--yale-mid);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    a:hover { color: var(--yale-blue); }
+
+    /* Headings use the serif stack */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-serif);
+      line-height: 1.25;
+      color: var(--text);
+    }
+
+
+    /* ============================================================
+       LAYOUT HELPERS
+    ============================================================ */
+
+    /* Centred content column with generous horizontal padding */
+    .container {
+      width: 100%;
+      max-width: var(--site-max);
+      margin-inline: auto;
+      padding-inline: 1.5rem;
+    }
+
+    /* Main grows to fill available vertical space */
+    main {
+      flex: 1;
+      padding-block: 3rem;
+    }
+
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+
+    .site-nav {
+      background: var(--yale-blue);
+      height: var(--nav-height);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      /* Thin shadow separates the nav from page content */
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+    }
+
+    .nav-inner {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    /* ---- Brand ---- */
+    .nav-brand {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--white);
+      text-decoration: none;
+      letter-spacing: 0.015em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .nav-brand:hover { color: rgba(255, 255, 255, 0.85); }
+
+    /* ---- Link list ---- */
+    .nav-links {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 0.15rem;
+    }
+
+    .nav-links > li {
+      position: relative;  /* anchor for dropdowns */
+    }
+
+    .nav-links a {
+      display: block;
+      padding: 0.4rem 0.8rem;
+      color: rgba(255, 255, 255, 0.88);
+      text-decoration: none;
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+      border-radius: var(--radius);
+      transition: background var(--ease), color var(--ease);
+      white-space: nowrap;
+    }
+
+    /* Hover and active states */
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--white);
+    }
+
+    .nav-links a.active {
+      background: var(--yale-blue-dark);
+      color: var(--white);
+      /* Bottom border signals the current section clearly */
+      box-shadow: inset 0 -2px 0 var(--gold);
+    }
+
+    /* ---- Dropdown trigger arrow ---- */
+    .nav-dropdown > a::after {
+      content: '';
+      display: inline-block;
+      width: 0;
+      height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 5px solid rgba(255, 255, 255, 0.7);
+      margin-left: 5px;
+      vertical-align: middle;
+      transition: transform var(--ease);
+    }
+
+    /* Rotate arrow when menu is open or hovered */
+    .nav-dropdown:hover > a::after,
+    .nav-dropdown:focus-within > a::after {
+      transform: rotate(180deg);
+    }
+
+    /* ---- Dropdown menu ---- */
+    .dropdown-menu {
+      /* Hidden by default; revealed on :hover / :focus-within */
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      min-width: 170px;
+      background: var(--yale-blue-dark);
+      border-radius: var(--radius);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      /* Separating line from the nav bar */
+      border-top: 2px solid var(--gold);
+    }
+
+    /* Reveal on hover (desktop) and keyboard focus */
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu {
+      display: block;
+    }
+
+    .dropdown-menu li { list-style: none; }
+
+    .dropdown-menu a {
+      border-radius: 0;
+      padding: 0.6rem 1rem;
+      font-size: 0.875rem;
+      /* Left accent bar on hover */
+      border-left: 3px solid transparent;
+    }
+
+    .dropdown-menu a:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-left-color: var(--gold);
+      color: var(--white);
+    }
+
+
+    /* ---- Hamburger button (mobile only, hidden on desktop) ---- */
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: var(--radius);
+      cursor: pointer;
+      padding: 5px 8px;
+      color: var(--white);
+      line-height: 0;
+    }
+    .nav-toggle:hover {
+      border-color: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-toggle svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
+
+
+    /* ============================================================
+       HERO SECTION
+       Rendered only on the homepage — child templates fill the
+       'hero' block; all other pages leave it empty.
+    ============================================================ */
+
+    .hero {
+      background-color: var(--yale-blue);
+      /* Diagonal gradient adds depth without being busy */
+      background-image: linear-gradient(135deg, #00356b 0%, #002050 100%);
+      color: var(--white);
+      padding-block: 6rem 5.5rem;
+      text-align: center;
+    }
+
+    .hero__title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 500;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 1.1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .hero__tagline {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 560px;
+      margin-inline: auto;
+      margin-bottom: 2.5rem;
+      line-height: 1.65;
+    }
+
+    /* Ghost button on the dark background */
+    .hero__cta {
+      display: inline-block;
+      color: var(--white);
+      border: 2px solid rgba(255, 255, 255, 0.55);
+      padding: 0.65rem 1.8rem;
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      transition: background var(--ease), border-color var(--ease);
+    }
+    .hero__cta:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--white);
+      color: var(--white);
+    }
+
+    /* Secondary link below the main CTA */
+    .hero__secondary {
+      display: block;
+      margin-top: 1.1rem;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .hero__secondary:hover { color: rgba(255, 255, 255, 0.9); }
+
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+
+    .site-footer {
+      background: var(--yale-blue-dark);
+      color: rgba(255, 255, 255, 0.7);
+      padding-block: 1.75rem;
+      font-size: 0.875rem;
+      /* Footer is always at the bottom because body is a flex column */
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .footer-brand {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--white);
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-right a {
+      color: rgba(255, 255, 255, 0.65);
+      text-decoration: none;
+      transition: color var(--ease);
+    }
+    .footer-right a:hover { color: var(--white); }
+
+    .footer-copy {
+      width: 100%;
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      text-align: center;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+
+    /* ============================================================
+       RESPONSIVE  —  breakpoint at 768px
+    ============================================================ */
+
+    @media (max-width: 768px) {
+
+      /* Show hamburger, hide link list by default */
+      .nav-toggle { display: block; }
+
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        /* Drop below the fixed navbar */
+        position: absolute;
+        top: var(--nav-height);
+        left: 0;
+        right: 0;
+        background: var(--yale-blue-dark);
+        padding-block: 0.5rem;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      }
+
+      /* JS adds this class when the toggle is clicked */
+      .nav-links.is-open { display: flex; }
+
+      .nav-links > li { width: 100%; }
+
+      .nav-links a {
+        border-radius: 0;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.95rem;
+      }
+
+      /* On mobile the dropdown is always expanded inline */
+      .nav-dropdown > a::after { content: ''; }
+
+      .dropdown-menu {
+        display: block;       /* always visible when mobile menu is open */
+        position: static;
+        border-radius: 0;
+        box-shadow: none;
+        border-top: none;
+        background: rgba(0, 0, 0, 0.18);
+      }
+
+      .dropdown-menu a {
+        padding-left: 2.25rem;
+        border-left: none;
+        font-size: 0.9rem;
+      }
+
+      /* Tighter hero on small screens */
+      .hero { padding-block: 4rem 3.5rem; }
+
+      /* Stack footer vertically and centre it */
+      .footer-inner {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .footer-right {
+        justify-content: center;
+      }
+    }
+
+
+    /* ============================================================
+       SKIP LINK  (accessibility)
+    ============================================================ */
+
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 0;
+      background: var(--gold);
+      color: var(--text);
+      padding: 0.5rem 1rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      z-index: 999;
+    }
+    .skip-link:focus { top: 0; }
+
+  </style>
+
+  {# ----------------------------------------------------------------
+     Optional per-page <head> additions (extra CSS, meta tags, etc.)
+  ----------------------------------------------------------------- #}
+  {% block extra_head %}{% endblock %}
+
+</head>
+
+<body>
+
+  {# Skip to main content for keyboard / screen-reader users #}
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <!-- ============================================================
+       NAVIGATION
+       Active link detection uses request.path — Flask makes the
+       request object available in all templates automatically.
+  ============================================================ -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="container nav-inner">
+
+      {# Brand — always links home.
+         Replace url_for('index') with url_for('main.index') if/when
+         the app is refactored to use a Blueprint named 'main'. #}
+      <a href="{{ url_for('index') }}" class="nav-brand">Yale StatLab</a>
+
+      {# Hamburger button — visible on mobile only (display:none in CSS) #}
+      <button
+        class="nav-toggle"
+        aria-controls="primary-nav"
+        aria-expanded="false"
+        aria-label="Open navigation menu"
+      >
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="2" y1="5"  x2="18" y2="5"  />
+          <line x1="2" y1="10" x2="18" y2="10" />
+          <line x1="2" y1="15" x2="18" y2="15" />
+        </svg>
+      </button>
+
+      {# ---- Primary nav links ----
+         TODO: replace the href="#" stubs with url_for() calls once
+         those views are registered in app.py (or a blueprint).
+         Example: href="{{ url_for('research_guides') }}"
+      #}
+      <ul class="nav-links" id="primary-nav" role="list">
+
+        <li>
+          <a href="/research-guides"
+             {% if request.path.startswith('/research-guides') %}class="active"{% endif %}>
+            Research Guides
+          </a>
+        </li>
+
+        <li>
+          <a href="/workshops"
+             {% if request.path.startswith('/workshops') %}class="active"{% endif %}>
+            Workshops
+          </a>
+        </li>
+
+        <li>
+          <a href="/consultations"
+             {% if request.path.startswith('/consultations') %}class="active"{% endif %}>
+            Consultations
+          </a>
+        </li>
+
+        {# About — parent link + dropdown sub-pages #}
+        <li class="nav-dropdown">
+          <a href="/about"
+             {% if request.path.startswith('/about') %}class="active"{% endif %}>
+            About
+          </a>
+          <ul class="dropdown-menu" role="list">
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/about/team">Team</a></li>
+          </ul>
+        </li>
+
+        <li>
+          <a href="/contact"
+             {% if request.path == '/contact' %}class="active"{% endif %}>
+            Contact
+          </a>
+        </li>
+
+      </ul>
+    </div><!-- /.nav-inner -->
+  </nav>
+
+
+  <!-- ============================================================
+       HERO  (homepage only)
+       The index.html template fills this block with .hero markup.
+       All other child templates leave it empty.
+  ============================================================ -->
+  {% block hero %}{% endblock %}
+
+
+  <!-- ============================================================
+       MAIN CONTENT
+       Child templates fill the 'content' block.
+       The id="main-content" is the skip-link target.
+  ============================================================ -->
+  <main id="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="site-footer" aria-label="Site footer">
+    <div class="container footer-inner">
+
+      <span class="footer-brand">Yale StatLab</span>
+
+      <nav class="footer-right" aria-label="Footer links">
+        {# Yale Library link — primary external reference #}
+        <a href="https://library.yale.edu" target="_blank" rel="noopener noreferrer">
+          Yale Library
+        </a>
+        <a href="/research-guides">Research Guides</a>
+        <a href="/contact">Contact</a>
+        <a href="/about">About</a>
+      </nav>
+
+      <p class="footer-copy">
+        &copy; {{ now.year if now else '2025' }} Yale University Library &mdash; Statistical Consulting &amp; Research Support
+      </p>
+
+    </div>
+  </footer>
+
+
+  <!-- ============================================================
+       JAVASCRIPT
+       Only the mobile nav toggle is here.  Keep this minimal —
+       heavier page-specific scripts belong in the 'extra_scripts' block.
+  ============================================================ -->
+  <script>
+    (function () {
+      var toggle = document.querySelector('.nav-toggle');
+      var menu   = document.getElementById('primary-nav');
+
+      if (!toggle || !menu) return;
+
+      /* Toggle the menu open/closed */
+      toggle.addEventListener('click', function () {
+        var isOpen = menu.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', String(isOpen));
+        toggle.setAttribute(
+          'aria-label',
+          isOpen ? 'Close navigation menu' : 'Open navigation menu'
+        );
+      });
+
+      /* Close when any nav link is clicked (handy for same-page anchors) */
+      menu.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') {
+          menu.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation menu');
+        }
+      });
+
+      /* Close when the user clicks outside the nav bar */
+      document.addEventListener('click', function (e) {
+        var nav = document.querySelector('.site-nav');
+        if (nav && !nav.contains(e.target)) {
+          menu.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }());
+  </script>
+
+  {# Per-page scripts (analytics, MathJax, Mermaid, etc.) go here #}
+  {% block extra_scripts %}{% endblock %}
+
+</body>
+</html>

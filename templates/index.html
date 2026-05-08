@@ -1,11 +1,158 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yale Library StatLab</title>
-</head>
-<body>
-    <h1>Yale Library StatLab</h1>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block meta_description %}Yale StatLab offers free statistical consulting and research support for Yale students, faculty, and staff.{% endblock %}
+
+
+{# ================================================================
+   HERO  —  this block is defined empty in base.html; filling it
+   here is what makes the homepage the only page with a tall hero.
+================================================================= #}
+{% block hero %}
+<section class="hero" aria-label="Site introduction">
+  <div class="container">
+    <h1 class="hero__title">Yale StatLab</h1>
+    <p class="hero__tagline">
+      Free statistical consulting and research support
+      for the Yale community — from study design to final analysis.
+    </p>
+    <a href="/consultations" class="hero__cta">Book a Consultation</a>
+    <a href="/research-guides" class="hero__secondary">Browse Research Guides &rarr;</a>
+  </div>
+</section>
+{% endblock %}
+
+
+{# ================================================================
+   MAIN CONTENT
+================================================================= #}
+{% block content %}
+<div class="container">
+
+  <!-- ---- Services overview ---- -->
+  <section class="home-section" aria-labelledby="services-heading">
+    <h2 id="services-heading" class="section-title">How we can help</h2>
+    <p class="section-intro">
+      StatLab staff are available to help at any stage of your research —
+      whether you're just getting started or interpreting final results.
+    </p>
+
+    <div class="card-grid">
+
+      <article class="card">
+        <div class="card__icon" aria-hidden="true">&#9998;</div>
+        <h3 class="card__title">Consultations</h3>
+        <p class="card__body">
+          One-on-one sessions with a statistical consultant.
+          Bring a dataset, a design question, or a method you're unsure about.
+        </p>
+        <a href="/consultations" class="card__link">Schedule a session &rarr;</a>
+      </article>
+
+      <article class="card">
+        <div class="card__icon" aria-hidden="true">&#128218;</div>
+        <h3 class="card__title">Research Guides</h3>
+        <p class="card__body">
+          Practical guides covering regression, mixed models, causal inference,
+          and more — with code examples in R, Python, and Stata.
+        </p>
+        <a href="/research-guides" class="card__link">Browse guides &rarr;</a>
+      </article>
+
+      <article class="card">
+        <div class="card__icon" aria-hidden="true">&#127891;</div>
+        <h3 class="card__title">Workshops</h3>
+        <p class="card__body">
+          Hands-on workshops on statistical software and methods,
+          open to all Yale affiliates throughout the academic year.
+        </p>
+        <a href="/workshops" class="card__link">See upcoming workshops &rarr;</a>
+      </article>
+
+    </div>
+  </section>
+
+</div><!-- /.container -->
+{% endblock %}
+
+
+{# ================================================================
+   PAGE-SPECIFIC STYLES
+   Scoped to homepage content only — keeps base.html clean.
+================================================================= #}
+{% block extra_head %}
+<style>
+  /* ---- Section layout ---- */
+  .home-section {
+    margin-bottom: 4rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.6rem, 3vw, 2rem);
+    margin-bottom: 0.6rem;
+    color: var(--yale-blue);
+  }
+
+  .section-intro {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 620px;
+    margin-bottom: 2rem;
+    line-height: 1.65;
+  }
+
+  /* ---- Card grid ---- */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .card {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--yale-blue);
+    border-radius: var(--radius);
+    padding: 1.75rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: box-shadow var(--ease), transform var(--ease);
+  }
+
+  .card:hover {
+    box-shadow: 0 4px 20px rgba(0, 53, 107, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .card__icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .card__title {
+    font-size: 1.15rem;
+    color: var(--yale-blue);
+  }
+
+  .card__body {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .card__link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--yale-mid);
+    text-decoration: none;
+    letter-spacing: 0.01em;
+  }
+
+  .card__link:hover { color: var(--yale-blue); text-decoration: underline; }
+</style>
+{% endblock %}
