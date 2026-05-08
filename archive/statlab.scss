@@ -11,21 +11,45 @@ $border-color: black;
 
 // Typography
 $font-family-sans-serif: "Times New Roman", Times, serif;
-$font-size-base: 12px;
+$font-size-base: 16px;
+$font-size-small: 0.875rem;
+$font-size-large: 1.125rem;
 $font-weight-base: normal;
 $line-height-base: 1.6;
 
-// Layout & Spacing
-$max-width: 1200px;
-$sidebar-width: 250px;
-$spacer: 1rem;
-$border-radius: 4px;
+
+// Responsive banner title
+$banner-title-mobile: 1.25rem;
+$banner-title-tablet: 1.5rem;
+$banner-title-desktop: 1.75rem;
+
+
+$max-width: 100%;  // Changed from 1200px
+$content-max-width: 1400px;  // Maximum readable width
+$sidebar-width: 20%;  // Percentage-based
+$sidebar-min-width: 250px;
+$sidebar-max-width: 350px;
+
+// Breakpoints
+$breakpoint-mobile: 576px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 992px;
+$breakpoint-wide: 1200px;
 
 // Interactive Elements
 $link-hover-color: darken($link-color, 15%);
 $focus-outline: 2px solid $link-color;
 
 /*-- scss:rules --*/
+
+// Base - Full Width
+html, body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+} 
+
 
 // Base Typography
 body {
@@ -37,24 +61,45 @@ body {
   background-color: $background-color;
 }
 
-// Banner/Header Styling
+// Adaptive Banner
 .navbar, 
 .navbar-brand,
 #quarto-header {
   background-color: $banner-color !important;
   color: $banner-text !important;
-  
-  .navbar-nav .nav-link {
-    color: $banner-text !important;
-    
-    &:hover, &:focus {
-      color: lighten($banner-text, 20%) !important;
-    }
-  }
+  width: 100%;
+  padding: 0.75rem 2rem;  // Responsive padding
   
   .navbar-brand {
     color: $banner-text !important;
     font-weight: bold;
+    font-size: $banner-title-mobile;  // Start small
+    transition: font-size 0.3s ease;  // Smooth transitions
+    
+    // Scale up on larger screens
+    @media (min-width: $breakpoint-tablet) {
+      font-size: $banner-title-tablet;
+    }
+    
+    @media (min-width: $breakpoint-desktop) {
+      font-size: $banner-title-desktop;
+    }
+  }
+  
+  .navbar-nav {
+    .nav-link {
+      color: $banner-text !important;
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+      
+      @media (min-width: $breakpoint-tablet) {
+        font-size: 1rem;
+      }
+      
+      &:hover, &:focus {
+        color: lighten($banner-text, 20%) !important;
+      }
+    }
   }
 }
 
@@ -73,6 +118,84 @@ a {
     outline-offset: 2px;
   }
 }
+
+
+// Full-width containers
+.container-fluid,
+.container {
+  max-width: 100%;
+  width: 100%;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  
+  @media (max-width: $breakpoint-mobile) {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+// Content area - readable width
+#quarto-content {
+  max-width: $content-max-width;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// Responsive Sidebar
+.sidebar {
+  width: clamp($sidebar-min-width, $sidebar-width, $sidebar-max-width);
+  
+  @media (max-width: $breakpoint-tablet) {
+    width: 100%;
+    position: static;
+  }
+  
+  .sidebar-item a {
+    color: $body-text;
+    font-size: 0.9rem;
+    
+    &:hover {
+      color: $link-color;
+      background-color: lighten($link-color, 45%);
+    }
+  }
+}
+
+// Main content responsive spacing
+main {
+  padding: 2rem;
+  width: 100%;
+  
+  @media (max-width: $breakpoint-mobile) {
+    padding: 1rem;
+  }
+}
+
+// Responsive Typography
+h1 {
+  font-size: 2rem;
+  
+  @media (min-width: $breakpoint-tablet) {
+    font-size: 2.5rem;
+  }
+}
+
+h2 {
+  font-size: 1.5rem;
+  
+  @media (min-width: $breakpoint-tablet) {
+    font-size: 2rem;
+  }
+}
+
+h3 {
+  font-size: 1.25rem;
+  
+  @media (min-width: $breakpoint-tablet) {
+    font-size: 1.75rem;
+  }
+}
+
 
 // Headings
 h1, h2, h3, h4, h5, h6 {
