@@ -1,0 +1,502 @@
+{% extends "base.html" %}
+
+{% block title %}{{ guide.title }}{% endblock %}
+
+{% block meta_description %}{{ (guide.abstract or 'Yale StatLab research guide.') | striptags | truncate(180) }}{% endblock %}
+
+
+{% block extra_head %}
+  {# ---- Quarto support stylesheets (full Bootstrap is filtered out in the route) ---- #}
+  {% for css in guide.stylesheets %}
+    <link rel="stylesheet" href="{{ css.src }}"
+      {%- for k, v in css.attrs.items() %} {{ k }}="{{ v }}"{% endfor -%}
+    />
+  {% endfor %}
+
+  <style>
+    /* ============================================================
+       GUIDE PAGE — Yale-styled overrides for Quarto content.
+       Scoped to .guide-content so site-wide elements (nav, footer,
+       hero, cards) are untouched.
+    ============================================================ */
+
+    .guide-header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .guide-header__title {
+      font-size: clamp(2rem, 4.5vw, 2.8rem);
+      color: var(--yale-blue);
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
+    .guide-header__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .guide-header__meta strong {
+      color: var(--text);
+      font-weight: 600;
+      margin-right: 0.4rem;
+    }
+    .guide-header__meta a {
+      color: var(--yale-mid);
+      text-decoration: none;
+    }
+    .guide-header__meta a:hover { text-decoration: underline; }
+    .guide-header__abstract {
+      font-size: 1.02rem;
+      color: var(--text);
+      line-height: 1.7;
+      margin-top: 1rem;
+      padding: 1rem 1.25rem;
+      background: var(--bg-subtle);
+      border-left: 3px solid var(--gold);
+      border-radius: var(--radius);
+    }
+    .guide-header__abstract p:last-child { margin-bottom: 0; }
+    .guide-header__keywords {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .guide-header__keywords li {
+      display: inline-block;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.15rem 0.7rem;
+      margin: 0 0.3rem 0.3rem 0;
+      font-size: 0.78rem;
+    }
+
+    .guide-article { max-width: 960px; margin-inline: auto; }
+
+    /* Hide the Quarto-rendered title block; our own header above replaces it. */
+    .guide-content > header#title-block-header { display: none; }
+
+    /* ---- Typography inside guide content ---- */
+    .guide-content { font-size: 1.02rem; line-height: 1.75; color: var(--text); }
+    .guide-content h1,
+    .guide-content h2,
+    .guide-content h3,
+    .guide-content h4,
+    .guide-content h5,
+    .guide-content h6 {
+      font-family: var(--font-serif);
+      color: var(--yale-blue);
+      margin-top: 2.25rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.25;
+    }
+    .guide-content h2 {
+      font-size: 1.7rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .guide-content h3 { font-size: 1.35rem; }
+    .guide-content h4 { font-size: 1.1rem; }
+    .guide-content p { margin-bottom: 1rem; }
+    .guide-content ul, .guide-content ol { margin: 0 0 1rem 1.5rem; }
+    .guide-content li { margin-bottom: 0.35rem; }
+    .guide-content a { color: var(--yale-mid); }
+    .guide-content a:hover { color: var(--yale-blue); }
+    .guide-content blockquote {
+      border-left: 3px solid var(--gold);
+      margin: 1.5rem 0;
+      padding: 0.4rem 1rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .guide-content hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+
+    /* ---- Code blocks ---- */
+    .guide-content pre {
+      background: #f6f8fa;
+      border: 1px solid var(--border);
+      padding: 0.9rem 1.1rem;
+      border-radius: var(--radius);
+      overflow-x: auto;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      margin: 1.25rem 0;
+    }
+    .guide-content code {
+      font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+    }
+    .guide-content :not(pre) > code {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      padding: 0.05rem 0.35rem;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+    .guide-content pre code { padding: 0; background: transparent; border: 0; }
+
+    /* Code output (cell-output-stdout etc.) — subtle distinction from input */
+    .guide-content .cell-output pre {
+      background: #fff;
+      border-color: var(--border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* Display math can be wider than the column on small screens */
+    .guide-content .math.display {
+      display: block;
+      overflow-x: auto;
+      padding-block: 0.25rem;
+    }
+
+    /* ---- Tables ---- */
+    .guide-content table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+    .guide-content th, .guide-content td {
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+    }
+    .guide-content thead th { background: var(--bg-subtle); }
+
+    /* ---- Figures ---- */
+    .guide-content figure { margin: 2rem 0; }
+    .guide-content figure img { margin-inline: auto; }
+    .guide-content figcaption,
+    .guide-content .figure-caption,
+    .guide-content .quarto-figure figcaption {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+
+    /* ---- Callouts (Quarto markup, restyled without Bootstrap) ----
+       Header stacked above body; icon (when present) sits inline with title. */
+    .guide-content .callout {
+      display: block;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--text-muted);
+      border-radius: var(--radius);
+      background: var(--bg-subtle);
+      padding: 0.9rem 1.1rem;
+      margin: 1.5rem 0;
+    }
+    .guide-content .callout-note      { border-left-color: var(--yale-mid); }
+    .guide-content .callout-tip       { border-left-color: #2e7d32; }
+    .guide-content .callout-warning   { border-left-color: #ed6c02; }
+    .guide-content .callout-caution   { border-left-color: #d32f2f; }
+    .guide-content .callout-important { border-left-color: #d32f2f; }
+
+    .guide-content .callout-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .guide-content .callout-title-container,
+    .guide-content .callout-title,
+    .guide-content .callout-caption-container {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      color: var(--yale-blue);
+      font-size: 1.02rem;
+    }
+    .guide-content .callout-icon-container {
+      display: inline-flex;
+      align-items: center;
+    }
+    .guide-content .callout-icon-container .callout-icon,
+    .guide-content .callout-icon-container .bi {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+    }
+    .guide-content .callout-body,
+    .guide-content .callout-body-container { display: block; }
+    .guide-content .callout-body p:last-child,
+    .guide-content .callout-body-container p:last-child { margin-bottom: 0; }
+
+    /* ---- Footnote / citation links ---- */
+    .guide-content a.quarto-xref { font-variant-numeric: tabular-nums; }
+    .guide-content sup a { text-decoration: none; }
+
+    /* ---- Bibliography ---- */
+    .guide-content #refs.references {
+      font-size: 0.92rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    .guide-content #refs .csl-entry {
+      padding-left: 1.5rem;
+      text-indent: -1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ---- Section number prefixes that Quarto emits inside h2/h3 ---- */
+    .guide-content .header-section-number {
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-right: 0.5rem;
+    }
+
+    /* ---- Panel tabsets ----
+       JS marks language tabsets with .is-lang-tabset; only those get their
+       nav-tabs hidden (non-language tabsets keep their own visible tabs).
+       Without JS, Quarto's static .active marker keeps the first pane shown. */
+    .guide-content .panel-tabset.is-lang-tabset > .nav-tabs { display: none; }
+    .guide-content .panel-tabset .tab-content > .tab-pane { display: none; }
+    .guide-content .panel-tabset .tab-content > .tab-pane.active { display: block; }
+
+    /* ---- Global language switcher ---- */
+    .lang-switcher {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.65rem 0.9rem;
+      margin: 0 0 1.75rem;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.92rem;
+      position: sticky;
+      top: var(--nav-height);
+      z-index: 5;
+    }
+    .lang-switcher__label {
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      margin-right: 0.35rem;
+    }
+    .lang-switcher__btn {
+      appearance: none;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.25rem 0.85rem;
+      font: inherit;
+      font-size: 0.88rem;
+      color: var(--text);
+      cursor: pointer;
+      transition: background var(--ease), border-color var(--ease), color var(--ease);
+    }
+    .lang-switcher__btn:hover {
+      border-color: var(--yale-mid);
+      color: var(--yale-blue);
+    }
+    .lang-switcher__btn.is-active {
+      background: var(--yale-blue);
+      color: var(--white);
+      border-color: var(--yale-blue);
+    }
+  </style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+  <article class="guide-article">
+
+    <header class="guide-header">
+      <h1 class="guide-header__title">{{ guide.title }}</h1>
+
+      {% if guide.authors or guide.date %}
+      <div class="guide-header__meta">
+        {% if guide.authors %}
+          <span>
+            <strong>By</strong>
+            {% for a in guide.authors -%}
+              {%- set profile = consultant_map.get(a.name | lower) -%}
+              {%- if profile %}<a href="/consultants/{{ profile.slug }}">{{ a.name }}</a>
+              {%- elif a.url %}<a href="{{ a.url }}" target="_blank" rel="noopener noreferrer">{{ a.name }}</a>
+              {%- else %}{{ a.name }}{% endif %}
+              {%- if a.affiliation %} <span class="guide-header__affiliation">({{ a.affiliation }})</span>{% endif %}
+              {%- if not loop.last %}, {% endif %}
+            {%- endfor %}
+          </span>
+        {% endif %}
+        {% if guide.date %}
+          <span><strong>Published</strong> {{ guide.date }}</span>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% if guide.abstract %}
+        <div class="guide-header__abstract">{{ guide.abstract | safe }}</div>
+      {% endif %}
+
+      {% if guide.keywords %}
+        <ul class="guide-header__keywords" role="list" aria-label="Keywords">
+          {% for k in guide.keywords %}<li>{{ k }}</li>{% endfor %}
+        </ul>
+      {% endif %}
+    </header>
+
+    <div class="guide-content">
+      {{ guide.main_html | safe }}
+    </div>
+
+  </article>
+</div>
+{% endblock %}
+
+
+{% block extra_scripts %}
+  {% for js in guide.scripts %}
+    <script src="{{ js.src }}"
+      {%- for k, v in js.attrs.items() %} {{ k }}="{{ v }}"{% endfor -%}
+    ></script>
+  {% endfor %}
+
+  <script>
+    /* ============================================================
+       Global language switcher.
+
+       Quarto emits one .panel-tabset per code chunk that has multiple
+       language variants (R, Julia, Python, ...). Each tabset carries
+       its own .nav-tabs list. We hide those per-tabset tabs (via CSS)
+       and inject a single switcher at the top of .guide-content that
+       drives every tabset simultaneously.
+
+       Only tabsets whose tab labels include at least one recognised
+       coding language are controlled; any other tabsets (e.g. an
+       "Output / Plot" comparison) keep their own navigation untouched.
+
+       Choice persists in localStorage so it survives reloads and
+       navigations between guides.
+    ============================================================ */
+    (function () {
+      var STORAGE_KEY = 'statlab.guide.lang';
+
+      // Canonical coding languages the switcher understands.
+      // Add entries here as new guides introduce new languages.
+      var KNOWN_LANGS = [
+        'r', 'python', 'julia', 'stata', 'sas', 'matlab', 'sql',
+        'bash', 'shell', 'javascript', 'typescript', 'c', 'c++', 'cpp'
+      ];
+
+      function isKnownLang(label) {
+        return KNOWN_LANGS.indexOf(label.toLowerCase()) !== -1;
+      }
+
+      var guide = document.querySelector('.guide-content');
+      if (!guide) return;
+      var allTabsets = guide.querySelectorAll('.panel-tabset');
+      if (!allTabsets.length) return;
+
+      // Identify language tabsets: those with at least one recognised-language tab.
+      var langTabsets = [];
+      allTabsets.forEach(function (ts) {
+        var hasLang = false;
+        ts.querySelectorAll('.nav-tabs .nav-link').forEach(function (link) {
+          if (isKnownLang((link.textContent || '').trim())) hasLang = true;
+        });
+        if (hasLang) {
+          ts.classList.add('is-lang-tabset');
+          langTabsets.push(ts);
+        }
+      });
+      if (!langTabsets.length) return;
+
+      // Collect unique language labels from language tabsets, in first-seen order.
+      var langs = [];
+      var seen = {};
+      langTabsets.forEach(function (ts) {
+        ts.querySelectorAll('.nav-tabs .nav-link').forEach(function (link) {
+          var label = (link.textContent || '').trim();
+          var key = label.toLowerCase();
+          if (label && isKnownLang(label) && !seen[key]) {
+            seen[key] = true;
+            langs.push(label);
+          }
+        });
+      });
+      if (!langs.length) return;
+
+      // Restore saved choice (case-insensitive) or fall back to first.
+      var saved = null;
+      try { saved = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+      var current = langs[0];
+      if (saved) {
+        for (var i = 0; i < langs.length; i++) {
+          if (langs[i].toLowerCase() === saved.toLowerCase()) {
+            current = langs[i];
+            break;
+          }
+        }
+      }
+
+      // Build the switcher
+      var switcher = document.createElement('div');
+      switcher.className = 'lang-switcher';
+      switcher.setAttribute('role', 'group');
+      switcher.setAttribute('aria-label', 'Code language selector');
+
+      var label = document.createElement('span');
+      label.className = 'lang-switcher__label';
+      label.textContent = 'Code language';
+      switcher.appendChild(label);
+
+      langs.forEach(function (lang) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'lang-switcher__btn';
+        btn.dataset.lang = lang;
+        btn.textContent = lang;
+        btn.setAttribute('aria-pressed', 'false');
+        btn.addEventListener('click', function () { switchTo(lang); });
+        switcher.appendChild(btn);
+      });
+
+      guide.insertBefore(switcher, guide.firstChild);
+
+      function switchTo(lang) {
+        current = lang;
+        try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+
+        switcher.querySelectorAll('.lang-switcher__btn').forEach(function (btn) {
+          var on = btn.dataset.lang === lang;
+          btn.classList.toggle('is-active', on);
+          btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+
+        langTabsets.forEach(function (ts) {
+          var links = ts.querySelectorAll('.nav-tabs .nav-link');
+          var panes = ts.querySelectorAll('.tab-content > .tab-pane');
+          var matchIdx = -1;
+          links.forEach(function (link, idx) {
+            if ((link.textContent || '').trim().toLowerCase() === lang.toLowerCase()) {
+              matchIdx = idx;
+            }
+          });
+          // If this tabset doesn't have the chosen language, leave its
+          // current active pane alone rather than blanking the whole block.
+          if (matchIdx < 0) return;
+          links.forEach(function (link, idx) {
+            link.classList.toggle('active', idx === matchIdx);
+            link.setAttribute('aria-selected', idx === matchIdx ? 'true' : 'false');
+          });
+          panes.forEach(function (pane, idx) {
+            pane.classList.toggle('active', idx === matchIdx);
+          });
+        });
+      }
+
+      switchTo(current);
+    })();
+  </script>
+{% endblock %}

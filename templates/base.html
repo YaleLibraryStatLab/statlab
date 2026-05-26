@@ -8,17 +8,15 @@
      Each child template sets its own title via {% block title %}.
      Falls back to the bare site name if the block is not overridden.
   ----------------------------------------------------------------- #}
-  <title>{% block title %}Yale StatLab{% endblock %}</title>
+  <title>{% block title %}Yale Library | StatLab{% endblock %}</title>
 
   <meta name="description"
         content="{% block meta_description %}Statistical consulting and research support for the Yale community.{% endblock %}" />
 
   {# ----------------------------------------------------------------
-     Typography
-     ITC Galliard is a licensed typeface — list it first in the font
-     stack so it resolves if the user's system has it installed.
-     EB Garamond (Google Fonts) is the closest freely available
-     approximation and serves as the practical web fallback.
+     Typography — Yale 2024 typeface served from /assets/yale-font/.
+     EB Garamond (Google Fonts) is kept as a web fallback for contexts
+     where the Yale font files are unavailable (e.g. public CDN builds).
   ----------------------------------------------------------------- #}
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -26,6 +24,38 @@
         rel="stylesheet" />
 
   <style>
+    /* ============================================================
+       YALE 2024 TYPEFACE  (served from /assets/yale-font/)
+    ============================================================ */
+    @font-face {
+      font-family: 'Yale';
+      src: url('/assets/yale-font/Yale2024-Roman.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Yale';
+      src: url('/assets/yale-font/Yale2024-Italic.otf') format('opentype');
+      font-weight: 400;
+      font-style: italic;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Yale';
+      src: url('/assets/yale-font/Yale2024-Bold.otf') format('opentype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Yale';
+      src: url('/assets/yale-font/Yale2024-BoldItalic.otf') format('opentype');
+      font-weight: 700;
+      font-style: italic;
+      font-display: swap;
+    }
+
     /* ============================================================
        DESIGN TOKENS
        All color, spacing, and type decisions live here.
@@ -46,7 +76,7 @@
       --border:         #e4e7ec;
 
       /* Typography stacks */
-      --font-serif: 'ITC Galliard', 'EB Garamond', Georgia, 'Times New Roman', serif;
+      --font-serif: 'Yale', 'EB Garamond', Georgia, 'Times New Roman', serif;
       --font-body:  -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 
       /* Layout */
@@ -216,15 +246,26 @@
       /* Hidden by default; revealed on :hover / :focus-within */
       display: none;
       position: absolute;
-      top: calc(100% + 8px);
+      top: 100%;          /* flush to parent — no gap that breaks hover */
       left: 0;
       min-width: 170px;
       background: var(--yale-blue-dark);
       border-radius: var(--radius);
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
       overflow: hidden;
-      /* Separating line from the nav bar */
+      /* Gold accent separates menu from nav bar visually */
       border-top: 2px solid var(--gold);
+    }
+
+    /* Invisible bridge: fills any sub-pixel gap so the mouse never
+       leaves .nav-dropdown while moving from the trigger to the list */
+    .nav-dropdown::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      height: 4px;
     }
 
     /* Reveal on hover (desktop) and keyboard focus */
@@ -500,7 +541,7 @@
       {# Brand — always links home.
          Replace url_for('index') with url_for('main.index') if/when
          the app is refactored to use a Blueprint named 'main'. #}
-      <a href="{{ url_for('index') }}" class="nav-brand">Yale StatLab</a>
+      <a href="{{ url_for('index') }}" class="nav-brand">Yale Library | StatLab</a>
 
       {# Hamburger button — visible on mobile only (display:none in CSS) #}
       <button
@@ -524,6 +565,18 @@
       #}
       <ul class="nav-links" id="primary-nav" role="list">
 
+        {# About — parent link + dropdown sub-pages #}
+        <li class="nav-dropdown">
+          <a href="/about"
+             {% if request.path.startswith('/about') %}class="active"{% endif %}>
+            About
+          </a>
+          <ul class="dropdown-menu" role="list">
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/about/team">Team</a></li>
+          </ul>
+        </li>
+
         <li>
           <a href="/research-guides"
              {% if request.path.startswith('/research-guides') %}class="active"{% endif %}>
@@ -545,21 +598,8 @@
           </a>
         </li>
 
-        {# About — parent link + dropdown sub-pages #}
-        <li class="nav-dropdown">
-          <a href="/about"
-             {% if request.path.startswith('/about') %}class="active"{% endif %}>
-            About
-          </a>
-          <ul class="dropdown-menu" role="list">
-            <li><a href="/about">About Us</a></li>
-            <li><a href="/about/team">Team</a></li>
-          </ul>
-        </li>
-
         <li>
-          <a href="/contact"
-             {% if request.path == '/contact' %}class="active"{% endif %}>
+          <a href="mailto:statlab@yale.edu">
             Contact
           </a>
         </li>
@@ -593,7 +633,7 @@
   <footer class="site-footer" aria-label="Site footer">
     <div class="container footer-inner">
 
-      <span class="footer-brand">Yale StatLab</span>
+      <span class="footer-brand">Yale Library | StatLab</span>
 
       <nav class="footer-right" aria-label="Footer links">
         {# Yale Library link — primary external reference #}

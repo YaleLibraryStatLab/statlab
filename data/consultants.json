@@ -1,0 +1,163 @@
+[
+  {
+    "slug": "ted-ellsworth",
+    "name": "Ted Ellsworth",
+    "title": "PhD",
+    "role": "StatLab Manager · Marx Library",
+    "department": "Marx Library — Computational Methods & Data",
+    "email": "ted.ellsworth@yale.edu",
+    "photo": "tellsworth.jpg",
+    "short_bio": "Ted is the Manager of Yale's StatLab and holds a PhD in Government and Politics from the University of Maryland, College Park. His expertise spans causal inference, machine learning, natural language processing, and Bayesian methods.",
+    "bio": "Ted Ellsworth is the manager of Yale's StatLab. Prior to coming to Yale, Ted received a PhD in Government and Politics from the University of Maryland, College Park.",
+    "status": "current",
+    "guides": [],
+    "links": {
+      "email": "ted.ellsworth@yale.edu"
+    },
+    "methodological_topics": [
+      "Linear Regression", "Logistic Regression", "Multiple Regression", "Ordinal Regression",
+      "Poisson Regression", "Negative Binomial", "Zero-inflated Models", "Quantile Regression",
+      "GLMs", "Survival Analysis", "Cox Regression", "Causal Inference", "Experimental Design",
+      "Randomized Controlled Trials", "Difference-in-Differences", "Regression Discontinuity",
+      "Instrumental Variables", "Propensity Score Matching", "Synthetic Control", "Power Analysis",
+      "Multilevel Modeling", "Panel Data", "Structural Equation Modeling", "Latent Variable Models",
+      "MCMC", "Bayesian Hierarchical Models", "Machine Learning", "Supervised Learning",
+      "Unsupervised Learning", "NLP", "Text Classification", "Topic Modeling", "Web Scraping",
+      "Simulation Experiments", "Data Management", "Data Cleaning / Wrangling", "Big Data",
+      "Reproducible Research", "Hypothesis Testing", "Missing Data / Imputation",
+      "Measurement Theory", "Factor Analysis", "Psychometrics", "Data Visualization"
+    ],
+    "coding_languages_and_tools": ["R", "Python", "Stata", "Bash / Shell", "Stan", "BUGS / JAGS"],
+    "ai_coding_agents": ["Claude Code", "OpenAI Codex"]
+  },
+  {
+    "slug": "muji-chughtai",
+    "name": "Muji Chughtai",
+    "title": "PhD Candidate",
+    "role": "PhD Candidate · Psychology",
+    "department": "Psychology",
+    "email": "muji.chughtai@yale.edu",
+    "photo": "Muji.png",
+    "short_bio": "Muji is a PhD Candidate in Psychology. His research specializes in emotions across social contexts, large-scale data analysis, and dimensionality reduction techniques.",
+    "bio": "I am a PhD candidate in (social) psychology, and my research broadly focuses on emotions and how they vary across social contexts. Before becoming a PhD candidate, I received a B.S. in Psychology and a B.S. in Statistics from the Ohio State University and an M.A. in Statistics from Yale. I really enjoy using large-scale datasets to better understand complex phenomena (like human behavior), and I have taught mentees and students to do this through my teaching experiences in my graduate and undergraduate training. I am especially passionate about expanding theory by using methodological and analytical techniques that allow researchers to appreciate the inherent complexity of important outcomes. This often takes the form of using dimensionality reduction techniques, fitting multilevel models, and designing informative plots with multiple key predictor variables.",
+    "status": "current",
+    "guides": [],
+    "links": {
+      "email": "muji.chughtai@yale.edu"
+    },
+    "methodological_topics": [
+      "Linear Regression", "Logistic Regression", "Multiple Regression", "Ordinal Regression",
+      "Poisson Regression", "GLMs", "Causal Inference", "Experimental Design",
+      "Instrumental Variables", "Synthetic Control", "Power Analysis", "Multilevel Modeling",
+      "Bayesian Statistics", "Machine Learning", "Clustering", "Dimensionality Reduction (PCA/UMAP)",
+      "NLP", "LLMs", "Big Data", "Factor Analysis", "Data Visualization", "Interactive Visualization"
+    ],
+    "coding_languages_and_tools": ["R", "Python"],
+    "ai_coding_agents": ["GitHub Copilot", "OpenAI Codex"]
+  },
+  {
+    "slug": "kevin-jin",
+    "name": "Kevin Jin",
+    "title": "PhD Candidate",
+    "role": "PhD Candidate · Computational Biology & Biomedical Informatics",
+    "department": "Computational Biology and Biomedical Informatics",
+    "email": "kevin.jin@yale.edu",
+    "webpage": "https://kevinwjin.com",
+    "photo": "kjin.JPEG",
+    "short_bio": "Kevin is a PhD Candidate in Computational Biology and Biomedical Informatics. His research specializes in large language models for psychiatric treatment recommendation, natural language processing, and causal inference.",
+    "bio": "Hey! Thanks for checking out my profile. My research centers on training a large language model for evidence-grounded psychiatric treatment recommendation. I specialize in LLMs but have secondary interests in classical natural language processing, classical machine learning, causal inference, time series, model interpretability, and Bayesian reasoning. I love advising on types of analyses to perform, interpreting results, understanding models and coefficients, and learning more statistics in general! If you're not sure whether your project fits, just hit me up and let's chat — I'd love to see what I can do for you, and if I can't help you directly, I'll be sure to point you in the direction of someone who can.",
+    "status": "current",
+    "guides": [],
+    "links": {
+      "email": "kevin.jin@yale.edu",
+      "website": "https://kevinwjin.com"
+    },
+    "methodological_topics": [
+      "Linear Regression", "Machine Learning", "Clustering", "NLP", "LLMs",
+      "Data Cleaning / Wrangling", "High-performance Computing", "Data Visualization"
+    ],
+    "coding_languages_and_tools": ["R", "Python", "SQL", "Bash / Shell"],
+    "ai_coding_agents": ["Claude Code"]
+  },
+  {
+    "slug": "atalay-demiray",
+    "name": "Atalay Demiray",
+    "title": "PhD Candidate",
+    "role": "PhD Candidate · Health Policy and Management",
+    "department": "Health Policy and Management",
+    "email": "atalay.demiray@yale.edu",
+    "webpage": "https://atalaydemiray.com",
+    "photo": "ademiray.jpeg",
+    "short_bio": "Atalay is a PhD Candidate in Health Policy and Management. His research specializes in decision-analytic modeling, applied health economics, and women's health and tobacco regulation.",
+    "bio": "I'm a PhD candidate in Health Policy and Management (Economics Track) at Yale, where I use decision-analytic modeling, microsimulation, and applied health economics to study women's health, tobacco regulation, and chronic diseases. I do most of my modeling in R, with a particular interest in reproducible workflows, simulation methods, and cost-effectiveness analysis. Before Yale, I trained in medicine at Koç University and in health economics at Erasmus University Rotterdam, so clinical and healthcare research questions sit squarely in my area of expertise. I most enjoy helping researchers with study design, regression and survival analysis of health data, decision and simulation modeling, and translating clinical/policy questions into analysis.",
+    "status": "current",
+    "guides": ["multivariate-regression"],
+    "links": {
+      "email": "atalay.demiray@yale.edu",
+      "website": "https://atalaydemiray.com"
+    },
+    "methodological_topics": [
+      "Linear Regression", "Logistic Regression", "Multiple Regression", "Ordinal Regression",
+      "Poisson Regression", "Negative Binomial", "Regularization (Ridge/Lasso)", "GLMs",
+      "Survival Analysis", "Cox Regression", "Causal Inference", "Experimental Design",
+      "Randomized Controlled Trials", "Difference-in-Differences", "Regression Discontinuity",
+      "Instrumental Variables", "Propensity Score Matching", "Synthetic Control", "Power Analysis",
+      "Survey Design", "Mixed Effects Models", "Panel Data", "Repeated Measures", "Longitudinal Data",
+      "Mathematical Modeling", "Simulation Experiments", "Agent-based Modeling",
+      "Data Cleaning / Wrangling", "Reproducible Research", "Hypothesis Testing",
+      "Nonparametric Methods", "Bootstrapping", "Missing Data / Imputation", "Data Visualization",
+      "Cost-effectiveness analysis", "Systematic review methodology", "Meta-analysis"
+    ],
+    "coding_languages_and_tools": ["R", "Stata", "SPSS"],
+    "ai_coding_agents": ["Claude Code"]
+  },
+  {
+    "slug": "cole-brookson",
+    "name": "Cole Brookson",
+    "title": "PhD Candidate",
+    "role": "PhD Candidate · Epidemiology (Microbial Diseases)",
+    "department": "Epidemiology (Microbial Diseases)",
+    "email": "cole.brookson@yale.edu",
+    "webpage": "https://github.com/colebrookson",
+    "photo": "cbrookson.JPG",
+    "short_bio": "Cole is a PhD Candidate in Epidemiology (Microbial Diseases). His research specializes in climate change and infectious disease dynamics, statistical forecasting, and Bayesian methods.",
+    "bio": "I am a PhD Candidate in the department of Epidemiology (Microbial Diseases), and I work on developing methods for understanding the impacts of climate and climate change on infectious disease dynamics, as well as the theory behind statistical forecasting. My background is in ecology and statistics/computation. While I enjoy supporting all of the interesting questions that come to the StatLab, I'm most knowledgeable about regression-based statistics. I have specific interests in Bayesian approaches, and simulation-based power analyses, as well as generally supporting work in the biological and health sciences.",
+    "status": "current",
+    "guides": ["mixed-effects-models"],
+    "links": {
+      "email": "cole.brookson@yale.edu",
+      "github": "https://github.com/colebrookson"
+    },
+    "methodological_topics": [
+      "Linear Regression", "Logistic Regression", "Multiple Regression", "Poisson Regression",
+      "Negative Binomial", "Zero-inflated Models", "GLMs", "GAMs", "Power Analysis",
+      "Mixed Effects Models", "Multilevel Modeling", "Panel Data", "Repeated Measures",
+      "Structural Equation Modeling", "Latent Variable Models", "Time Series (ARIMA/VAR)",
+      "Longitudinal Data", "Bayesian Statistics", "MCMC", "Bayesian Hierarchical Models",
+      "Approximate Bayesian Computation", "Mathematical Modeling", "Simulation Experiments",
+      "Compartmental Models (SIR/SEIR)", "Theoretical Modeling", "Data Management",
+      "Data Cleaning / Wrangling", "High-performance Computing", "Big Data",
+      "Reproducible Research", "Hypothesis Testing", "Bootstrapping", "Data Visualization",
+      "Spatial / GIS Analysis"
+    ],
+    "coding_languages_and_tools": ["R", "Python", "Julia", "SQL", "Bash / Shell", "Mathematica", "Stan", "BUGS / JAGS", "NIMBLE", "INLA"],
+    "ai_coding_agents": []
+  },
+  {
+    "slug": "jonathan-elkobi",
+    "name": "Jonathan Elkobi",
+    "title": "PhD Candidate",
+    "role": "PhD Candidate · Political Science",
+    "department": "Political Science",
+    "email": null,
+    "photo": "jelkobi.jpeg",
+    "short_bio": "Jonathan is a PhD Candidate in Political Science at Yale.",
+    "bio": null,
+    "status": "current",
+    "guides": [],
+    "links": {},
+    "methodological_topics": [],
+    "coding_languages_and_tools": [],
+    "ai_coding_agents": []
+  }
+]

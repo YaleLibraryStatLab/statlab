@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+
+{% block title %}{{ consultant.name }} — Yale StatLab{% endblock %}
+
+{% block meta_description %}{{ consultant.bio | truncate(180) }}{% endblock %}
+
+
+{% block extra_head %}
+<style>
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .profile-avatar {
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--yale-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    font-weight: 500;
+    color: var(--white);
+    letter-spacing: 0.04em;
+    overflow: hidden;
+  }
+
+  .profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    border-radius: 50%;
+  }
+
+  .profile-header__info { flex: 1; }
+
+  .profile-header__name {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    color: var(--yale-blue);
+    line-height: 1.2;
+    margin-bottom: 0.3rem;
+  }
+
+  .profile-header__role {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.02em;
+  }
+
+  .profile-header__status--former {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.65rem;
+    border-radius: 999px;
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  /* ---- Book a consultation ---- */
+  .schedule-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--yale-blue);
+    border-radius: var(--radius);
+    align-items: center;
+  }
+  .schedule-box__label {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+    min-width: 180px;
+  }
+  .schedule-box__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .schedule-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0.4rem 1rem;
+    border-radius: var(--radius);
+    transition: background var(--ease), border-color var(--ease);
+  }
+  .schedule-link--inperson {
+    background: var(--yale-blue);
+    color: var(--white);
+    border: 1px solid var(--yale-blue);
+  }
+  .schedule-link--inperson:hover {
+    background: var(--yale-blue-dark);
+    border-color: var(--yale-blue-dark);
+    color: var(--white);
+  }
+  .schedule-link--virtual {
+    background: var(--white);
+    color: var(--yale-blue);
+    border: 1px solid var(--yale-mid);
+  }
+  .schedule-link--virtual:hover {
+    background: var(--bg-subtle);
+    border-color: var(--yale-blue);
+    color: var(--yale-blue);
+  }
+
+  .profile-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+  }
+  .profile-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    color: var(--yale-mid);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.2rem 0.75rem;
+    transition: border-color var(--ease), background var(--ease);
+  }
+  .profile-link:hover {
+    border-color: var(--yale-mid);
+    background: var(--bg-subtle);
+    color: var(--yale-blue);
+  }
+
+  /* ---- Bio ---- */
+  .profile-bio {
+    font-size: 1.05rem;
+    color: var(--text);
+    line-height: 1.75;
+    max-width: 720px;
+    margin-bottom: 2.5rem;
+  }
+
+  /* ---- Section headers ---- */
+  .profile-section-title {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    color: var(--yale-blue);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ---- Guide list ---- */
+  .guide-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 720px;
+  }
+  .guide-list__item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--yale-blue);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow var(--ease), border-left-color var(--ease);
+  }
+  .guide-list__item:hover {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border-left-color: var(--gold);
+  }
+  .guide-list__title {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    color: var(--yale-blue);
+    flex: 1;
+  }
+  .guide-list__item:hover .guide-list__title { color: var(--text); }
+  .guide-list__date {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .guide-list__arrow {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    transition: transform var(--ease);
+  }
+  .guide-list__item:hover .guide-list__arrow {
+    transform: translateX(3px);
+    color: var(--gold);
+  }
+
+  .profile-no-guides {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    padding: 1.25rem;
+    background: var(--bg-subtle);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 2rem;
+    transition: color var(--ease);
+  }
+  .back-link:hover { color: var(--yale-blue); }
+
+  @media (max-width: 600px) {
+    .profile-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .profile-avatar { width: 88px; height: 88px; font-size: 1.7rem; }
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+
+  <a href="/about/team" class="back-link">
+    &#8592; Our Team
+  </a>
+
+  {# ---- Avatar initials ---- #}
+  {%- set parts = consultant.name.split() -%}
+  {%- set initials = (parts[0][0] if parts else '') + (parts[-1][0] if parts | length > 1 else '') -%}
+
+  <header class="profile-header">
+    <div class="profile-avatar">
+      {% if consultant.photo %}
+        <img src="/assets/consultant-photos/{{ consultant.photo }}" alt="{{ consultant.name }}">
+      {% else %}
+        {{ initials | upper }}
+      {% endif %}
+    </div>
+    <div class="profile-header__info">
+      <h1 class="profile-header__name">{{ consultant.name }}</h1>
+      <p class="profile-header__role">{{ consultant.role }} &mdash; Yale StatLab</p>
+      {% if consultant.status == 'former' %}
+        <span class="profile-header__status--former">Former Consultant</span>
+      {% endif %}
+
+      {% if consultant.links %}
+        <div class="profile-links">
+          {% if consultant.links.github %}
+            <a href="{{ consultant.links.github }}" class="profile-link" target="_blank" rel="noopener noreferrer">
+              GitHub
+            </a>
+          {% endif %}
+          {% if consultant.links.website %}
+            <a href="{{ consultant.links.website }}" class="profile-link" target="_blank" rel="noopener noreferrer">
+              Website
+            </a>
+          {% endif %}
+          {% if consultant.status == 'current' %}
+            <a href="https://schedule.yale.edu/appointments/statlab-consult#s-lc-public-pt"
+               class="profile-link" target="_blank" rel="noopener noreferrer">
+              In-Person
+            </a>
+            <a href="https://schedule.yale.edu/appointments/statlab-consult-virtual#s-lc-public-pt"
+               class="profile-link" target="_blank" rel="noopener noreferrer">
+              Virtual
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </header>
+
+  {% if consultant.bio %}
+    <p class="profile-bio">{{ consultant.bio }}</p>
+  {% endif %}
+
+  {% if consultant.status == 'current' %}
+    <div class="schedule-box">
+      <span class="schedule-box__label">Book a consultation</span>
+      <div class="schedule-box__links">
+        <a href="https://schedule.yale.edu/appointments/statlab-consult#s-lc-public-pt"
+           class="schedule-link schedule-link--inperson"
+           target="_blank" rel="noopener noreferrer">
+          In-Person
+        </a>
+        <a href="https://schedule.yale.edu/appointments/statlab-consult-virtual#s-lc-public-pt"
+           class="schedule-link schedule-link--virtual"
+           target="_blank" rel="noopener noreferrer">
+          Virtual
+        </a>
+      </div>
+    </div>
+  {% endif %}
+
+  <h2 class="profile-section-title">Research Guides</h2>
+
+  {% if guides %}
+    <ul class="guide-list" role="list">
+      {% for g in guides %}
+        <li>
+          <a href="/guides/{{ g.slug }}/" class="guide-list__item">
+            <span class="guide-list__title">{{ g.title }}</span>
+            {% if g.date %}<span class="guide-list__date">{{ g.date }}</span>{% endif %}
+            <span class="guide-list__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="profile-no-guides">No guides have been published yet.</p>
+  {% endif %}
+
+</div>
+{% endblock %}

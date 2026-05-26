@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Research Guides{% endblock %}
+
+{% block meta_description %}Practical statistics research guides from Yale StatLab — regression, mixed models, causal inference, and more.{% endblock %}
+
+
+{% block content %}
+<div class="container">
+
+  <header class="page-header">
+    <h1 class="page-title">Research Guides</h1>
+    <p class="page-intro">
+      Practical, code-forward guides written by StatLab staff. Each guide
+      walks through a method end-to-end with worked examples.
+    </p>
+  </header>
+
+  {% if guides %}
+    <ul class="guide-list" role="list">
+      {% for g in guides %}
+        <li class="guide-list__item">
+          <a class="guide-list__link" href="{{ url_for('guide_index', slug=g.slug) }}">
+            <span class="guide-list__title">{{ g.title }}</span>
+            <span class="guide-list__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="guide-empty">No guides are available yet.</p>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+
+{% block extra_head %}
+<style>
+  .page-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-title {
+    font-size: clamp(1.9rem, 4vw, 2.6rem);
+    color: var(--yale-blue);
+    margin-bottom: 0.5rem;
+  }
+
+  .page-intro {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 640px;
+    line-height: 1.65;
+  }
+
+  .guide-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .guide-list__item { margin: 0; }
+
+  .guide-list__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--yale-blue);
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    color: var(--text);
+    text-decoration: none;
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    transition: background var(--ease), border-color var(--ease), transform var(--ease);
+  }
+
+  .guide-list__link:hover {
+    background: var(--white);
+    border-left-color: var(--gold);
+    color: var(--yale-blue);
+    transform: translateX(2px);
+  }
+
+  .guide-list__arrow {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    transition: color var(--ease), transform var(--ease);
+  }
+
+  .guide-list__link:hover .guide-list__arrow {
+    color: var(--yale-mid);
+    transform: translateX(3px);
+  }
+
+  .guide-empty {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+</style>
+{% endblock %}
