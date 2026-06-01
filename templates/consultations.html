@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Consultations — Yale StatLab{% endblock %}
+
+{% block meta_description %}Book a free one-on-one statistical consultation with a Yale StatLab consultant. Available to all Yale students, faculty, and staff.{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <header class="page-header">
+    <h1 class="page-header__title">Statistical Consultations</h1>
+    <p class="page-header__lead">
+      Free one-on-one sessions for Yale students, faculty, and staff —
+      at any stage of your research.
+    </p>
+  </header>
+
+  <!-- ---- Photo ---- -->
+  <figure class="consult-photo">
+    <img src="/assets/statlab-photos/2025_12_05 Yale DISS CGS_Lavitt_58-Web High Quality.jpg"
+         alt="A StatLab consultation session at Yale"
+         loading="lazy">
+  </figure>
+
+  <!-- ---- What to expect ---- -->
+  <div class="consult-body">
+
+    <section class="consult-section" aria-labelledby="what-heading">
+      <h2 id="what-heading">What to Expect</h2>
+      <p>
+        Our consultants are available to help with all aspects of quantitative research —
+        from study design and power analysis to model selection, interpretation of results,
+        and data visualization. Sessions are collaborative and tailored to your project.
+      </p>
+      <p>
+        You don't need to have a fully-formed question. Bring whatever you're working on —
+        a dataset, an analysis script, a draft methods section — and we'll work through it
+        together.
+      </p>
+    </section>
+
+    <!-- ---- How to book ---- -->
+    <section class="consult-section" aria-labelledby="book-heading">
+      <h2 id="book-heading">How to Book</h2>
+      <ol class="book-steps">
+        <li>
+          <strong>Browse consultants</strong> — visit the
+          <a href="/about/team">team page</a> to see each consultant's expertise
+          and the statistical methods they work with.
+        </li>
+        <li>
+          <strong>Request a session</strong> — email the consultant directly or reach
+          us at <a href="mailto:statlab@yale.edu">statlab@yale.edu</a> to schedule a time.
+        </li>
+        <li>
+          <strong>Come prepared</strong> — bring a brief description of your project,
+          any data or code you're working with, and your specific question if you have one.
+        </li>
+      </ol>
+    </section>
+
+    <!-- ---- Who can use StatLab ---- -->
+    <section class="consult-section" aria-labelledby="who-heading">
+      <h2 id="who-heading">Who Can Use StatLab?</h2>
+      <p>
+        Consultations are free and open to all current Yale students, faculty, postdocs,
+        and staff. We support projects across all disciplines — from social sciences and
+        public health to the biological and physical sciences, humanities, and professional
+        schools.
+      </p>
+    </section>
+
+    <!-- ---- CTA ---- -->
+    <div class="consult-cta">
+      <a href="mailto:statlab@yale.edu" class="btn-primary">Email us to get started &rarr;</a>
+    </div>
+
+  </div><!-- /.consult-body -->
+
+</div>
+{% endblock %}
+
+
+{% block extra_head %}
+<style>
+  /* ---- Page header ---- */
+  .page-header {
+    padding-block: 2.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+
+  .page-header__title {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    color: var(--yale-blue);
+    margin-bottom: 0.5rem;
+  }
+
+  .page-header__lead {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 580px;
+    line-height: 1.65;
+  }
+
+  /* ---- Full-width photo ---- */
+  .consult-photo {
+    margin: 0 0 2.5rem;
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .consult-photo img {
+    width: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ---- Body sections ---- */
+  .consult-body {
+    max-width: 720px;
+  }
+
+  .consult-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .consult-section h2 {
+    font-size: 1.3rem;
+    color: var(--yale-blue);
+    margin-bottom: 0.75rem;
+  }
+
+  .consult-section p + p {
+    margin-top: 0.9rem;
+  }
+
+  .consult-section p {
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.75;
+  }
+
+  /* ---- Numbered steps ---- */
+  .book-steps {
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .book-steps li {
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.7;
+    padding-left: 0.25rem;
+  }
+
+  /* ---- CTA ---- */
+  .consult-cta {
+    margin-top: 0.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 0.65rem 1.5rem;
+    background: var(--yale-blue);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: background var(--ease);
+  }
+
+  .btn-primary:hover {
+    background: var(--yale-blue-dark);
+    color: var(--white);
+  }
+</style>
+{% endblock %}

@@ -78,6 +78,11 @@ def serve_consultant_photo(filename):
     return send_from_directory(ASSETS_DIR / "consultant-photos", filename)
 
 
+@app.route("/assets/statlab-photos/<path:filename>")
+def serve_statlab_photo(filename):
+    return send_from_directory(ASSETS_DIR / "statlab-photos", filename)
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -119,6 +124,16 @@ def guide_asset(slug, filename):
     if not guide_dir.is_dir():
         abort(404)
     return send_from_directory(guide_dir, filename)
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
+@app.route("/consultations")
+def consultations():
+    return render_template("consultations.html")
 
 
 @app.route("/about/team")

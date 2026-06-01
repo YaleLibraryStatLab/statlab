@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}About — Yale StatLab{% endblock %}
+
+{% block meta_description %}Learn about Yale Library's Statistical Consulting Lab — who we are, what we do, and how we support the Yale research community.{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <header class="page-header">
+    <h1 class="page-header__title">About Yale StatLab</h1>
+    <p class="page-header__lead">
+      Statistical consulting and research support, free for the Yale community.
+    </p>
+  </header>
+
+  <!-- ---- Mission ---- -->
+  <section class="about-section" aria-labelledby="mission-heading">
+    <h2 id="mission-heading">Our Mission</h2>
+    <p>
+      Yale University Library's StatLab supports all data, computational, and statistical
+      inquiries across the Yale community. Whether you are an undergraduate researcher
+      encountering statistics for the first time or a seasoned faculty member developing a
+      complex multi-level model, we provide quality support at every stage — through
+      one-on-one consultations, specialized workshops, and expertly crafted research guides.
+    </p>
+    <p>
+      We believe that methodological rigor and accessibility go hand in hand.
+      Our goal is to meet researchers where they are and help them move forward with
+      confidence.
+    </p>
+  </section>
+
+  <!-- ---- Photo ---- -->
+  <figure class="about-photo">
+    <img src="/assets/statlab-photos/2025_12_05 Yale DH Lab_Lavitt_32-Web High Quality.jpg"
+         alt="StatLab consultants at work in Yale's Digital Humanities Lab"
+         loading="lazy">
+  </figure>
+
+  <!-- ---- What we offer ---- -->
+  <section class="about-section" aria-labelledby="services-heading">
+    <h2 id="services-heading">What We Offer</h2>
+    <ul class="about-list">
+      <li>
+        <strong>Free one-on-one consultations</strong> — bring a dataset, a design
+        question, or a method you want to understand better.
+      </li>
+      <li>
+        <strong>Research guides</strong> — practical, code-first guides covering regression,
+        mixed models, causal inference, and more in R, Python, and Stata.
+      </li>
+      <li>
+        <strong>Workshops</strong> — hands-on instruction in statistical software and methods,
+        open to all Yale affiliates throughout the academic year.
+      </li>
+    </ul>
+  </section>
+
+  <!-- ---- Team link ---- -->
+  <section class="about-section about-cta" aria-labelledby="team-heading">
+    <h2 id="team-heading">Meet the Team</h2>
+    <p>
+      StatLab is staffed by Yale Library's Manager of Computational Methods &amp; Data
+      alongside a team of advanced PhD student consultants drawn from departments across
+      the university.
+    </p>
+    <a href="/about/team" class="btn-primary">View the full team &rarr;</a>
+  </section>
+
+</div>
+{% endblock %}
+
+
+{% block extra_head %}
+<style>
+  /* ---- Page header ---- */
+  .page-header {
+    padding-block: 2.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+
+  .page-header__title {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    color: var(--yale-blue);
+    margin-bottom: 0.5rem;
+  }
+
+  .page-header__lead {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 580px;
+    line-height: 1.65;
+  }
+
+  /* ---- Body sections ---- */
+  .about-section {
+    max-width: 720px;
+    margin-bottom: 2.5rem;
+  }
+
+  .about-section h2 {
+    font-size: 1.3rem;
+    color: var(--yale-blue);
+    margin-bottom: 0.75rem;
+  }
+
+  .about-section p + p {
+    margin-top: 0.9rem;
+  }
+
+  .about-section p,
+  .about-section li {
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.75;
+  }
+
+  /* ---- List ---- */
+  .about-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .about-list li {
+    padding-left: 1.25rem;
+    position: relative;
+  }
+
+  .about-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--yale-blue);
+  }
+
+  /* ---- Full-width photo ---- */
+  .about-photo {
+    margin: 0 0 2.5rem;
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .about-photo img {
+    width: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ---- CTA section ---- */
+  .about-cta {
+    padding: 2rem;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    max-width: 100%;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.6rem 1.4rem;
+    background: var(--yale-blue);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: background var(--ease);
+  }
+
+  .btn-primary:hover {
+    background: var(--yale-blue-dark);
+    color: var(--white);
+  }
+</style>
+{% endblock %}
