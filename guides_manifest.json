@@ -1,0 +1,122 @@
+[
+  {
+    "slug": "instrumental-variables",
+    "title": "Research Guide Title",
+    "date": "2025-12-17",
+    "authors": [
+      "Jonathan Elkobi"
+    ],
+    "keywords": [
+      "List relevant keywords that describe the content of the research guide. Examples include research methods",
+      "statistical software",
+      "data analysis",
+      "etc."
+    ]
+  },
+  {
+    "slug": "mixed-effects-models",
+    "title": "Mixed-Effects Models: A Practical Guide",
+    "date": "2025-11-10",
+    "authors": [
+      "Cole Brookson"
+    ],
+    "keywords": [
+      "mixed-effects models",
+      "hierarchical models",
+      "multilevel models",
+      "random effects",
+      "variance components",
+      "longitudinal data",
+      "clustered data",
+      "R",
+      "Julia",
+      "lme4",
+      "MixedModels.jl"
+    ]
+  },
+  {
+    "slug": "multivariate-regression",
+    "title": "Multivariable Regression & Covariate Selection",
+    "date": null,
+    "authors": [
+      "Atalay Demiray"
+    ],
+    "keywords": []
+  },
+  {
+    "slug": "olsregression",
+    "title": "Ordinary Least Square Regression",
+    "date": "2025-11-03",
+    "authors": [
+      "Claudia Mastrogiacomo",
+      "Co-author Name"
+    ],
+    "keywords": [
+      "List relevant keywords that describe the content of the research guide. Examples include research methods",
+      "statistical software",
+      "data analysis",
+      "etc."
+    ]
+  },
+  {
+    "slug": "pvalues",
+    "title": "p-Values",
+    "date": "2025-11-03",
+    "authors": [
+      "Prabaha Gangopadhyay"
+    ],
+    "keywords": [
+      "p-value",
+      "hypothesis testing",
+      "significance level",
+      "null hypothesis",
+      "statistical inference"
+    ]
+  },
+  {
+    "slug": "standard-errors",
+    "title": "Robust Standard Errors",
+    "date": "2026-03-05",
+    "authors": [
+      "Ted Ellsworth",
+      "Co-author Name"
+    ],
+    "keywords": [
+      "List relevant keywords that describe the content of the research guide. Examples include research methods",
+      "statistical software",
+      "data analysis",
+      "etc."
+    ]
+  },
+  {
+    "slug": "statisticalpower",
+    "title": "Statistical Power",
+    "date": "2025-10-20",
+    "authors": [
+      "Claudia Mastrogiacomo",
+      "Co-author Name"
+    ],
+    "keywords": [
+      "List relevant keywords that describe the content of the research guide. Examples include research methods",
+      "statistical software",
+      "data analysis",
+      "etc."
+    ]
+  },
+  {
+    "slug": "teststatistics",
+    "title": "Test Statistics",
+    "date": "2025-11-03",
+    "authors": [
+      "Prabaha Gangopadhyay"
+    ],
+    "keywords": [
+      "hypothesis testing",
+      "t-statistics",
+      "F-statistics",
+      "z-scores",
+      "chi-square",
+      "inference"
+    ]
+  }
+]

@@ -1,0 +1,13 @@
+# Guides held back from publication. One slug per line; "#" starts a comment.
+#
+# This file is shared by two tools:
+#   - tools/port_guides.py skips these when rendering/porting from the upstream
+#     ResearchGuides repo, and validates every entry against the upstream
+#     catalog (a typo here fails the port).
+#   - tools/build.py skips these when publishing research-guides/ -> temp/.
+#     Entries excluded upstream never land in research-guides/, so build.py
+#     only warns when an entry matches no local directory.
+
+diffindiff                       # out of alpha scope
+missingdata                      # out of alpha scope
+research-guide-quarto-template   # authoring template, not a publishable guide

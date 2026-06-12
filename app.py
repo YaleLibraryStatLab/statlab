@@ -1,5 +1,7 @@
 import json
+import logging
 import re
+from dataclasses import replace
 from datetime import datetime
 from pathlib import Path
 
@@ -8,9 +10,11 @@ from flask import Flask, abort, redirect, render_template, send_from_directory
 from tools.extractor import extract
 
 app = Flask(__name__)
+logger = logging.getLogger(__name__)
 
 TEMP_GUIDES_DIR = Path(__file__).parent / "temp"
 CONSULTANTS_FILE = Path(__file__).parent / "data" / "consultants.json"
+GUIDES_MANIFEST_FILE = Path(__file__).parent / "guides_manifest.json"
 
 # Assets that must never load inside base.html:
 #   • Full Bootstrap distribution — clobbers site nav/footer styles.
@@ -41,7 +45,34 @@ def _consultant_map(consultants):
     return {c["name"].strip().lower(): c for c in consultants}
 
 
-def list_available_guides():
+# extract() results keyed on (path, mtime) so repeated views don't re-parse
+# the same guide HTML.
+_extract_cache: dict[Path, tuple[float, object]] = {}
+
+
+def cached_extract(html_file):
+    mtime = html_file.stat().st_mtime
+    cached = _extract_cache.get(html_file)
+    if cached is not None and cached[0] == mtime:
+        return cached[1]
+    guide = extract(html_file)
+    _extract_cache[html_file] = (mtime, guide)
+    return guide
+
+
+def load_guides_manifest():
+    """Read guides_manifest.json, or None if missing/unreadable."""
+    if not GUIDES_MANIFEST_FILE.is_file():
+        return None
+    try:
+        with open(GUIDES_MANIFEST_FILE, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.warning("Could not read %s: %s", GUIDES_MANIFEST_FILE.name, exc)
+        return None
+
+
+def _scan_temp_guides():
     """Scan temp/ for guide directories that contain <slug>/<slug>.html."""
     if not TEMP_GUIDES_DIR.is_dir():
         return []
@@ -53,11 +84,29 @@ def list_available_guides():
         if not html_file.is_file():
             continue
         try:
-            title = extract(html_file).title or entry.name
+            guide = cached_extract(html_file)
+            title, date = guide.title or entry.name, guide.date
         except Exception:
-            title = entry.name
-        guides.append({"slug": entry.name, "title": title})
+            title, date = entry.name, None
+        guides.append({"slug": entry.name, "title": title, "date": date})
     return guides
+
+
+def list_available_guides():
+    """List published guides from guides_manifest.json, falling back to a
+    directory scan of temp/ if the manifest is missing or unreadable."""
+    manifest = load_guides_manifest()
+    if manifest is None:
+        logger.warning(
+            "%s not found; falling back to scanning %s (run tools/build.py to "
+            "generate the manifest)",
+            GUIDES_MANIFEST_FILE.name, TEMP_GUIDES_DIR.name,
+        )
+        return _scan_temp_guides()
+    return [
+        {"slug": g["slug"], "title": g["title"], "date": g.get("date")}
+        for g in manifest
+    ]
 
 
 @app.context_processor
@@ -106,9 +155,12 @@ def guide_index(slug):
     html_file = guide_dir / f"{slug}.html"
     if not html_file.is_file():
         abort(404)
-    guide = extract(html_file)
-    guide.stylesheets = _filter_quarto_assets(guide.stylesheets)
-    guide.scripts = _filter_quarto_assets(guide.scripts)
+    cached = cached_extract(html_file)
+    guide = replace(
+        cached,
+        stylesheets=_filter_quarto_assets(cached.stylesheets),
+        scripts=_filter_quarto_assets(cached.scripts),
+    )
     consultants = load_consultants()
     return render_template(
         "guide.html",

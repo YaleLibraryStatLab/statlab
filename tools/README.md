@@ -10,19 +10,43 @@ Flask-served content.
 | File | Purpose |
 |------|---------|
 | `extractor.py` | Parse a single Quarto HTML file; extract content, metadata, assets |
-| `build.py` | (Future) Walk all guides, run extractor, copy assets, write manifest |
+| `build.py` | Single ingestion command: walk `research-guides/`, smoke-check each guide with the extractor, verify local assets exist, copy accepted guides to `temp/`, write `guides_manifest.json` |
+| `port_guides.py` | Render guides in the upstream ResearchGuides repo (`quarto render`), copy the output into `research-guides/<slug>/` (normalizing the main HTML to `<slug>.html`), then run `build.py`. `--no-render` skips quarto; `--only <slug>` ports one guide |
 
 ---
 
 ## Quick start
 
 ```bash
-# Human-readable summary
+# Full pipeline: render every non-excluded upstream guide and publish it
+python tools/port_guides.py
+
+# Port one guide whose upstream HTML is already rendered (no quarto run)
+python tools/port_guides.py --only standard-errors --no-render
+
+# Re-publish what's already in research-guides/ to temp/ + manifest
+python tools/build.py
+
+# Preview without writing anything
+python tools/build.py --dry-run
+
+# Also remove temp/ guides that are excluded or gone from research-guides/
+python tools/build.py --clean
+
+# Human-readable summary of one guide
 python tools/extractor.py research-guides/mixed-effects-models/mixed-effects-models.html
 
 # Full JSON dump (pipe to jq, etc.)
 python tools/extractor.py research-guides/standard-errors/standard-errors.html --json
 ```
+
+Guide selection is exclusion-based: every `research-guides/<slug>/` containing
+`<slug>.html` publishes unless the slug is listed in `guides.exclude` at the
+repo root (one slug per line, `#` comments). `port_guides.py` validates every
+exclusion entry against the upstream catalog, so typos and renamed guides
+surface immediately; `build.py` only warns on entries matching no local
+directory (expected for guides excluded upstream before porting — pass
+`--strict-exclusions` to make it fail instead).
 
 `extract()` returns an `ExtractedGuide` dataclass with:
 

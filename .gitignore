@@ -2,3 +2,9 @@
 
 # Assets — fonts, photos, and bios are not tracked publicly
 /assets/
+
+# Python virtualenv and caches
+/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
