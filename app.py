@@ -25,12 +25,24 @@ _STRIP_ASSET_PATTERNS = [
     re.compile(r"polyfill\.min\.js"),   # matches polyfill.io AND cdnjs.cloudflare.com/polyfill
 ]
 
+# Self-contained renders (embed-resources: true) inline Bootstrap as a
+# data: URI stylesheet, which has no filename for the patterns above to
+# match. Its `--bs-blue` custom property (URL-encoded or literal) is the
+# marker; the quarto-hl data-CSS (syntax highlighting) must be kept.
+_DATA_CSS_BOOTSTRAP_MARKERS = ("%2D%2Dbs%2Dblue", "--bs-blue")
+
 
 def _filter_quarto_assets(assets):
-    return [
-        a for a in assets
-        if not any(p.search(a.src) for p in _STRIP_ASSET_PATTERNS)
-    ]
+    kept = []
+    for a in assets:
+        if any(p.search(a.src) for p in _STRIP_ASSET_PATTERNS):
+            continue
+        if a.src.startswith("data:text/css") and any(
+            m in a.src for m in _DATA_CSS_BOOTSTRAP_MARKERS
+        ):
+            continue
+        kept.append(a)
+    return kept
 
 
 def load_consultants():

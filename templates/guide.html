@@ -170,10 +170,16 @@
       text-align: left;
     }
     .guide-content thead th { background: var(--bg-subtle); }
+    .guide-content tbody tr:nth-child(even) { background: var(--bg-subtle); }
 
     /* ---- Figures ---- */
     .guide-content figure { margin: 2rem 0; }
-    .guide-content figure img { margin-inline: auto; }
+    .guide-content figure img {
+      display: block;
+      margin-inline: auto;
+      max-width: 100%;
+      border-radius: var(--radius);
+    }
     .guide-content figcaption,
     .guide-content .figure-caption,
     .guide-content .quarto-figure figcaption {
@@ -253,12 +259,121 @@
     }
 
     /* ---- Panel tabsets ----
-       JS marks language tabsets with .is-lang-tabset; only those get their
-       nav-tabs hidden (non-language tabsets keep their own visible tabs).
+       JS marks PURE language tabsets with .is-lang-tabset (every tab label
+       is a recognised coding language); only those get their nav-tabs hidden.
+       Mixed tabsets (language tabs alongside others) keep a visible tab bar
+       but still respond to the global switcher; non-language tabsets
+       (package comparisons, output-vs-plot) keep their own tab bar, switched
+       by the delegated click handler.
        Without JS, Quarto's static .active marker keeps the first pane shown. */
     .guide-content .panel-tabset.is-lang-tabset > .nav-tabs { display: none; }
     .guide-content .panel-tabset .tab-content > .tab-pane { display: none; }
     .guide-content .panel-tabset .tab-content > .tab-pane.active { display: block; }
+
+    /* Visible tab bar for non-language tabsets (Bootstrap CSS is stripped,
+       so style Quarto's .nav-tabs markup from scratch). */
+    .guide-content .panel-tabset > .nav-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      list-style: none;
+      margin: 1.5rem 0 0;
+      padding: 0;
+      border-bottom: 2px solid var(--border);
+    }
+    .guide-content .panel-tabset > .nav-tabs .nav-item { margin: 0; }
+    .guide-content .panel-tabset > .nav-tabs .nav-link {
+      display: inline-block;
+      padding: 0.45rem 1rem;
+      margin-bottom: -2px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      cursor: pointer;
+      transition: color var(--ease), border-color var(--ease);
+    }
+    .guide-content .panel-tabset > .nav-tabs .nav-link:hover {
+      color: var(--yale-blue);
+    }
+    .guide-content .panel-tabset > .nav-tabs .nav-link.active {
+      color: var(--yale-blue);
+      border-bottom-color: var(--yale-blue);
+    }
+    .guide-content .panel-tabset .tab-content {
+      padding-top: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ---- Collapsible callouts (Bootstrap Collapse JS replaced by ours) ---- */
+    .guide-content .callout .callout-collapse.collapse:not(.show) { display: none; }
+    .guide-content .callout-header[data-bs-toggle="collapse"] { cursor: pointer; }
+    .guide-content .callout-toggle::before {
+      content: "\25B8";               /* ▸ */
+      display: inline-block;
+      color: var(--text-muted);
+      font-style: normal;
+      transition: transform var(--ease);
+    }
+    .guide-content .callout-header[aria-expanded="true"] .callout-toggle::before {
+      transform: rotate(90deg);
+    }
+    .guide-content .callout-btn-toggle { margin-left: auto; }
+
+    /* Callout type icons (bootstrap-icons font isn't loaded; use glyphs) */
+    .guide-content .callout-icon::before {
+      font-style: normal;
+      font-size: 1rem;
+      line-height: 1;
+    }
+    .guide-content .callout-note      .callout-icon::before { content: "\2139";  color: var(--yale-mid); }  /* ℹ */
+    .guide-content .callout-tip       .callout-icon::before { content: "\2714";  color: #2e7d32; }          /* ✔ */
+    .guide-content .callout-warning   .callout-icon::before { content: "\26A0";  color: #ed6c02; }          /* ⚠ */
+    .guide-content .callout-caution   .callout-icon::before { content: "\26A0";  color: #d32f2f; }
+    .guide-content .callout-important .callout-icon::before { content: "\2757";  color: #d32f2f; }          /* ❗ */
+
+    /* ---- Code copy button (clipboard handled by our JS) ---- */
+    .guide-content div.sourceCode { position: relative; }
+    .guide-content .code-copy-button {
+      position: absolute;
+      top: 0.45rem;
+      right: 0.45rem;
+      padding: 0.15rem 0.6rem;
+      font-size: 0.72rem;
+      font-family: inherit;
+      color: var(--text-muted);
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity var(--ease), color var(--ease), border-color var(--ease);
+    }
+    .guide-content div.sourceCode:hover .code-copy-button,
+    .guide-content .code-copy-button:focus-visible { opacity: 1; }
+    .guide-content .code-copy-button::after { content: "Copy"; }
+    .guide-content .code-copy-button.code-copy-button-checked::after { content: "Copied"; }
+    .guide-content .code-copy-button.code-copy-button-checked {
+      color: #2e7d32;
+      border-color: #2e7d32;
+    }
+    .guide-content .code-copy-button .bi { display: none; }
+
+    /* ---- Mermaid diagrams ----
+       Rendered client-side into the <pre class="mermaid"> block; it must
+       not look like a code block once (or before) the SVG lands. */
+    .guide-content pre.mermaid {
+      background: transparent;
+      border: 0;
+      text-align: center;
+      /* Hide the raw flowchart source until mermaid replaces it */
+      visibility: hidden;
+    }
+    .guide-content pre.mermaid[data-processed="true"] { visibility: visible; }
+    .guide-content pre.mermaid svg { margin-inline: auto; }
 
     /* ---- Global language switcher ---- */
     .lang-switcher {
@@ -275,6 +390,7 @@
       position: sticky;
       top: var(--nav-height);
       z-index: 5;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     }
     .lang-switcher__label {
       color: var(--text-muted);
@@ -364,7 +480,46 @@
 
   <script>
     /* ============================================================
-       Global language switcher.
+       Guide runtime.
+
+       Quarto's own interactive runtime (Bootstrap JS + quarto.js +
+       MathJax loader) is deliberately not loaded here: file-based
+       renders get their Bootstrap stripped to protect site styles,
+       and self-contained renders inline everything in <head>, which
+       the extractor drops. The handlers below replace exactly what
+       guides need, for both render styles:
+
+         1. MathJax (loaded on demand when math is present)
+         2. Global language switcher for code tabsets
+         3. Tab switching for every other tabset
+         4. Collapsible callouts
+         5. Mermaid diagrams (loaded on demand when present)
+         6. Code copy buttons
+    ============================================================ */
+
+    /* ---- 1. MathJax: load from CDN only if the guide has math and
+       no other script has already brought MathJax in. ---- */
+    (function () {
+      if (window.MathJax) return;
+      if (!document.querySelector('.guide-content .math')) return;
+      window.MathJax = {
+        tex: {
+          inlineMath: [['\\(', '\\)']],
+          displayMath: [['\\[', '\\]']],
+          processEscapes: true
+        },
+        options: {
+          ignoreHtmlClass: 'lang-switcher'
+        }
+      };
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js';
+      document.head.appendChild(s);
+    })();
+
+    /* ============================================================
+       2. Global language switcher.
 
        Quarto emits one .panel-tabset per code chunk that has multiple
        language variants (R, Julia, Python, ...). Each tabset carries
@@ -372,21 +527,33 @@
        and inject a single switcher at the top of .guide-content that
        drives every tabset simultaneously.
 
-       Only tabsets whose tab labels include at least one recognised
-       coding language are controlled; any other tabsets (e.g. an
-       "Output / Plot" comparison) keep their own navigation untouched.
+       THE RULE — tabsets fall into three classes by their tab labels:
 
-       Choice persists in localStorage so it survives reloads and
-       navigations between guides.
+       • PURE language tabsets (every label is a recognised coding
+         language — any subset counts, e.g. R+Julia before the other
+         languages are written): tab bar hidden, fully switcher-driven.
+       • MIXED tabsets (at least one language label alongside others,
+         e.g. R | Julia | Interpretation): tab bar stays VISIBLE so the
+         non-language tabs remain reachable, but the switcher also
+         activates the matching language tab when one exists.
+       • NON-language tabsets (no language labels at all — package
+         comparisons like lme4 / glmmTMB / MCMCglmm, output-vs-plot):
+         untouched; their own tab bar is handled by section 3.
+
+       The switcher appears once the guide has two or more distinct
+       language tabs anywhere. Choice persists in localStorage so it
+       survives reloads and navigations between guides.
     ============================================================ */
     (function () {
       var STORAGE_KEY = 'statlab.guide.lang';
 
       // Canonical coding languages the switcher understands.
       // Add entries here as new guides introduce new languages.
+      // 'ai prompt' / 'ai' cover the agent-prompt tab in the 5-tab standard.
       var KNOWN_LANGS = [
         'r', 'python', 'julia', 'stata', 'sas', 'matlab', 'sql',
-        'bash', 'shell', 'javascript', 'typescript', 'c', 'c++', 'cpp'
+        'bash', 'shell', 'javascript', 'typescript', 'c', 'c++', 'cpp',
+        'ai', 'ai prompt', 'agent prompt'
       ];
 
       function isKnownLang(label) {
@@ -398,24 +565,29 @@
       var allTabsets = guide.querySelectorAll('.panel-tabset');
       if (!allTabsets.length) return;
 
-      // Identify language tabsets: those with at least one recognised-language tab.
-      var langTabsets = [];
+      // Classify tabsets. "Controlled" = pure + mixed (the switcher drives
+      // them); only pure ones get is-lang-tabset, which hides the tab bar.
+      var controlled = [];
       allTabsets.forEach(function (ts) {
-        var hasLang = false;
-        ts.querySelectorAll('.nav-tabs .nav-link').forEach(function (link) {
-          if (isKnownLang((link.textContent || '').trim())) hasLang = true;
+        var links = ts.querySelectorAll('.nav-tabs .nav-link');
+        if (!links.length) return;
+        var langCount = 0;
+        links.forEach(function (link) {
+          if (isKnownLang((link.textContent || '').trim())) langCount += 1;
         });
-        if (hasLang) {
-          ts.classList.add('is-lang-tabset');
-          langTabsets.push(ts);
+        if (langCount === 0) return;                       // non-language: untouched
+        if (langCount === links.length && links.length >= 2) {
+          ts.classList.add('is-lang-tabset');              // pure: hide tab bar
         }
+        controlled.push(ts);                               // pure or mixed
       });
-      if (!langTabsets.length) return;
+      if (!controlled.length) return;
 
-      // Collect unique language labels from language tabsets, in first-seen order.
+      // Collect unique language labels from controlled tabsets, in
+      // first-seen order. Non-language labels in mixed tabsets are skipped.
       var langs = [];
       var seen = {};
-      langTabsets.forEach(function (ts) {
+      controlled.forEach(function (ts) {
         ts.querySelectorAll('.nav-tabs .nav-link').forEach(function (link) {
           var label = (link.textContent || '').trim();
           var key = label.toLowerCase();
@@ -425,7 +597,7 @@
           }
         });
       });
-      if (!langs.length) return;
+      if (langs.length < 2) return;   // nothing to switch between
 
       // Restore saved choice (case-insensitive) or fall back to first.
       var saved = null;
@@ -474,7 +646,7 @@
           btn.setAttribute('aria-pressed', on ? 'true' : 'false');
         });
 
-        langTabsets.forEach(function (ts) {
+        controlled.forEach(function (ts) {
           var links = ts.querySelectorAll('.nav-tabs .nav-link');
           var panes = ts.querySelectorAll('.tab-content > .tab-pane');
           var matchIdx = -1;
@@ -483,8 +655,9 @@
               matchIdx = idx;
             }
           });
-          // If this tabset doesn't have the chosen language, leave its
-          // current active pane alone rather than blanking the whole block.
+          // If this tabset doesn't have the chosen language (a partial
+          // tabset, or a mixed one currently on a non-language tab),
+          // leave its current active pane alone rather than blanking it.
           if (matchIdx < 0) return;
           links.forEach(function (link, idx) {
             link.classList.toggle('active', idx === matchIdx);
@@ -497,6 +670,111 @@
       }
 
       switchTo(current);
+    })();
+
+    /* ---- 3. Tab switching for non-language tabsets.
+       Bootstrap's Tab plugin is never loaded, so handle clicks on any
+       visible .nav-tabs ourselves. Language tabsets have their nav
+       hidden; if a click reaches one anyway the same logic applies. ---- */
+    (function () {
+      var guide = document.querySelector('.guide-content');
+      if (!guide) return;
+      guide.addEventListener('click', function (ev) {
+        var link = ev.target.closest('.panel-tabset .nav-tabs .nav-link');
+        if (!link || !guide.contains(link)) return;
+        ev.preventDefault();
+        var tabset = link.closest('.panel-tabset');
+        var links = tabset.querySelectorAll(':scope > .nav-tabs .nav-link');
+        var panes = tabset.querySelectorAll(':scope > .tab-content > .tab-pane');
+        var idx = Array.prototype.indexOf.call(links, link);
+        if (idx < 0) return;
+        links.forEach(function (l, i) {
+          l.classList.toggle('active', i === idx);
+          l.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+        });
+        panes.forEach(function (p, i) {
+          p.classList.toggle('active', i === idx);
+        });
+      });
+    })();
+
+    /* ---- 4. Collapsible callouts (replaces Bootstrap Collapse).
+       Quarto markup: .callout-header[data-bs-toggle=collapse] with a
+       data-bs-target class selector pointing at the .callout-collapse
+       body inside the same callout. ---- */
+    (function () {
+      var guide = document.querySelector('.guide-content');
+      if (!guide) return;
+      guide.addEventListener('click', function (ev) {
+        var header = ev.target.closest('.callout-header[data-bs-toggle="collapse"]');
+        if (!header || !guide.contains(header)) return;
+        var callout = header.closest('.callout') || guide;
+        var targetSel = header.getAttribute('data-bs-target');
+        if (!targetSel) return;
+        var body = callout.querySelector(targetSel) || guide.querySelector(targetSel);
+        if (!body) return;
+        var open = body.classList.toggle('show');
+        header.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+
+    /* ---- 5. Mermaid diagrams.
+       File-based renders keep their own runtime (quarto-diagram libs
+       survive extraction as <script src> assets) and render themselves —
+       running a second pass over the same node produces mermaid's
+       "Syntax error in text" overlay, so when window.mermaid exists we
+       only keep a delayed fallback for blocks its init never touched.
+       Self-contained renders inline the runtime in <head>, which the
+       extractor drops — for those, load mermaid from CDN and render. ---- */
+    (function () {
+      if (!document.querySelector('.guide-content pre.mermaid:not([data-processed])')) {
+        return;
+      }
+
+      function renderLeftovers() {
+        var left = document.querySelectorAll(
+          '.guide-content pre.mermaid:not([data-processed])'
+        );
+        if (!left.length) return;
+        try {
+          window.mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
+          window.mermaid.run({ nodes: left });
+        } catch (e) {
+          // Leave the raw source hidden rather than show broken output.
+        }
+      }
+
+      if (window.mermaid) {
+        // The guide's own runtime renders on DOMContentLoaded; only pick
+        // up blocks it left unprocessed.
+        setTimeout(renderLeftovers, 1500);
+        return;
+      }
+
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+      s.onload = renderLeftovers;
+      document.head.appendChild(s);
+    })();
+
+    /* ---- 6. Code copy buttons (replaces clipboard.js binding). ---- */
+    (function () {
+      var guide = document.querySelector('.guide-content');
+      if (!guide || !navigator.clipboard) return;
+      guide.addEventListener('click', function (ev) {
+        var btn = ev.target.closest('.code-copy-button');
+        if (!btn || !guide.contains(btn)) return;
+        var container = btn.closest('div.sourceCode') || btn.closest('pre');
+        if (!container) return;
+        var code = container.querySelector('code');
+        var text = (code || container).innerText;
+        navigator.clipboard.writeText(text).then(function () {
+          btn.classList.add('code-copy-button-checked');
+          setTimeout(function () {
+            btn.classList.remove('code-copy-button-checked');
+          }, 1500);
+        });
+      });
     })();
   </script>
 {% endblock %}

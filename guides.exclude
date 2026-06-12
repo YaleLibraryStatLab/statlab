@@ -8,6 +8,8 @@
 #     Entries excluded upstream never land in research-guides/, so build.py
 #     only warns when an entry matches no local directory.
 
-diffindiff                       # out of alpha scope
-missingdata                      # out of alpha scope
+# Policy (2026-06-12): unfinished guides live on branches in the upstream
+# repo, not on main — main contains only publish-ready guides. The template
+# is the one permanent resident of main that must never publish.
+
 research-guide-quarto-template   # authoring template, not a publishable guide

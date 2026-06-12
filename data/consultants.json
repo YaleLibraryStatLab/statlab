@@ -146,18 +146,25 @@
   {
     "slug": "jonathan-elkobi",
     "name": "Jonathan Elkobi",
-    "title": "PhD Candidate",
-    "role": "PhD Candidate · Political Science",
+    "title": "PhD Student",
+    "role": "PhD Student · Political Science",
     "department": "Political Science",
-    "email": null,
+    "email": "jonathan.elkobi@yale.edu",
+    "webpage": "https://jonathan-elkobi.github.io/homepage/",
     "photo": "jelkobi.jpeg",
-    "short_bio": "Jonathan is a PhD Candidate in Political Science at Yale.",
-    "bio": null,
+    "short_bio": "Jonathan is a PhD Student in Political Science at Yale. His research focuses on elite politics and speech, local governments, and municipal bond markets, using text-as-data approaches with LLMs and NLP.",
+    "bio": "I am a PhD student in the Department of Political Science at Yale. My research focuses on elite politics and elite speech, local governments, and politics and financial markets. Methodologically, I develop computational social science tools, especially text-as-data approaches using Large Language Models (LLMs) and Natural Language Processing (NLP), to measure political elite behavior and political speech. A major part of my research agenda examines municipal bond markets in the United States and China. I also work on side projects on other local-government economic outcomes, including pollution and growth, and on other markets such as prediction markets.",
     "status": "current",
     "guides": [],
-    "links": {},
-    "methodological_topics": [],
-    "coding_languages_and_tools": [],
-    "ai_coding_agents": []
+    "links": {
+      "email": "jonathan.elkobi@yale.edu",
+      "website": "https://jonathan-elkobi.github.io/homepage/"
+    },
+    "methodological_topics": [
+      "Causal Inference", "Panel Data", "Time Series (ARIMA/VAR)", "Deep Learning", "NLP", "LLMs",
+      "Image Analysis / Computer Vision", "Big Data"
+    ],
+    "coding_languages_and_tools": ["R", "Python", "Stata"],
+    "ai_coding_agents": ["Claude Code", "GitHub Copilot", "OpenAI Codex", "Cursor", "Tabnine"]
   }
 ]

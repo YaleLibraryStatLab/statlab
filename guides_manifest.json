@@ -1,22 +1,32 @@
 [
   {
-    "slug": "instrumental-variables",
-    "title": "Research Guide Title",
-    "date": "2025-12-17",
+    "slug": "glmms",
+    "title": "Generalized Mixed-Effects Models",
+    "date": "2026-06-01",
     "authors": [
-      "Jonathan Elkobi"
+      "Cole Brookson"
     ],
     "keywords": [
-      "List relevant keywords that describe the content of the research guide. Examples include research methods",
-      "statistical software",
-      "data analysis",
-      "etc."
+      "glmm",
+      "generalized linear models",
+      "generalized linear mixed-effects models",
+      "hierarchical models",
+      "multilevel models",
+      "random effects",
+      "variance components",
+      "clustered data",
+      "R",
+      "Julia",
+      "lme4",
+      "MixedModels.jl",
+      "glmmTMB",
+      "TMB"
     ]
   },
   {
     "slug": "mixed-effects-models",
-    "title": "Mixed-Effects Models: A Practical Guide",
-    "date": "2025-11-10",
+    "title": "Linear Mixed-Effects Models: A Practical Guide",
+    "date": "2025-12-02",
     "authors": [
       "Cole Brookson"
     ],
@@ -35,88 +45,21 @@
     ]
   },
   {
-    "slug": "multivariate-regression",
-    "title": "Multivariable Regression & Covariate Selection",
-    "date": null,
+    "slug": "panel-regression",
+    "title": "Panel/Longitudinal Data and its Associated Regression Practices",
+    "date": "2025-12-16",
     "authors": [
-      "Atalay Demiray"
-    ],
-    "keywords": []
-  },
-  {
-    "slug": "olsregression",
-    "title": "Ordinary Least Square Regression",
-    "date": "2025-11-03",
-    "authors": [
-      "Claudia Mastrogiacomo",
-      "Co-author Name"
+      "Cole Brookson"
     ],
     "keywords": [
-      "List relevant keywords that describe the content of the research guide. Examples include research methods",
-      "statistical software",
-      "data analysis",
-      "etc."
-    ]
-  },
-  {
-    "slug": "pvalues",
-    "title": "p-Values",
-    "date": "2025-11-03",
-    "authors": [
-      "Prabaha Gangopadhyay"
-    ],
-    "keywords": [
-      "p-value",
-      "hypothesis testing",
-      "significance level",
-      "null hypothesis",
-      "statistical inference"
-    ]
-  },
-  {
-    "slug": "standard-errors",
-    "title": "Robust Standard Errors",
-    "date": "2026-03-05",
-    "authors": [
-      "Ted Ellsworth",
-      "Co-author Name"
-    ],
-    "keywords": [
-      "List relevant keywords that describe the content of the research guide. Examples include research methods",
-      "statistical software",
-      "data analysis",
-      "etc."
-    ]
-  },
-  {
-    "slug": "statisticalpower",
-    "title": "Statistical Power",
-    "date": "2025-10-20",
-    "authors": [
-      "Claudia Mastrogiacomo",
-      "Co-author Name"
-    ],
-    "keywords": [
-      "List relevant keywords that describe the content of the research guide. Examples include research methods",
-      "statistical software",
-      "data analysis",
-      "etc."
-    ]
-  },
-  {
-    "slug": "teststatistics",
-    "title": "Test Statistics",
-    "date": "2025-11-03",
-    "authors": [
-      "Prabaha Gangopadhyay"
-    ],
-    "keywords": [
-      "hypothesis testing",
-      "t-statistics",
-      "F-statistics",
-      "z-scores",
-      "chi-square",
-      "inference"
+      "panel data",
+      "fixed effects models",
+      "multilevel models",
+      "random effects",
+      "longitudinal data",
+      "clustered data",
+      "R",
+      "Julia"
     ]
   }
 ]
