@@ -1,15 +1,13 @@
 # Guides held back from publication. One slug per line; "#" starts a comment.
 #
-# This file is shared by two tools:
-#   - tools/port_guides.py skips these when rendering/porting from the upstream
-#     ResearchGuides repo, and validates every entry against the upstream
-#     catalog (a typo here fails the port).
-#   - tools/build.py skips these when publishing research-guides/ -> temp/.
-#     Entries excluded upstream never land in research-guides/, so build.py
-#     only warns when an entry matches no local directory.
-
-# Policy (2026-06-12): unfinished guides live on branches in the upstream
-# repo, not on main — main contains only publish-ready guides. The template
-# is the one permanent resident of main that must never publish.
+# Selection is automatic: tools/port_guides.py mirrors every guide directory
+# on the upstream repo's MAIN branch (read via git, regardless of which branch
+# is checked out over there) into research-guides/, and tools/build.py then
+# publishes research-guides/ -> temp/. This file is the only hand-maintained
+# piece: it lists guides that are on main but must NOT publish. Every entry
+# must be a real directory on main, or port_guides.py fails loudly.
+#
+# Normally the only entry is the authoring template. To hold a finished guide
+# back temporarily, add its slug here; remove it to publish.
 
 research-guide-quarto-template   # authoring template, not a publishable guide

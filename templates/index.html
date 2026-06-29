@@ -10,9 +10,10 @@
    here is what makes the homepage the only page with a tall hero.
 ================================================================= #}
 {% block hero %}
-<section class="hero" aria-label="Site introduction">
+<section class="hero hero--photo" aria-label="Site introduction">
   <div class="container">
-    <h1 class="hero__title">Yale StatLab</h1>
+    <p class="hero__eyebrow">Yale University Library</p>
+    <h1 class="hero__title">StatLab</h1>
     <p class="hero__tagline">
       Free statistical consulting and research support
       for the Yale community — from study design to final analysis.
@@ -90,20 +91,17 @@
     </div>
   </section>
 
-  <!-- ---- Photo strip ---- -->
-  <section class="home-section photo-section" aria-label="StatLab in action">
-    <div class="photo-grid">
-      <figure class="photo-item">
-        <img src="/assets/statlab-photos/2025_12_05 Yale DH Lab_Lavitt_01-Web High Quality.jpg"
-             alt="StatLab consultants collaborating with a researcher at Yale"
-             loading="lazy">
-      </figure>
-      <figure class="photo-item">
-        <img src="/assets/statlab-photos/2025_12_05 Yale DISS CGS_Lavitt_42-Web High Quality.jpg"
-             alt="StatLab session at Yale — graduate student consulting"
-             loading="lazy">
-      </figure>
+  <!-- ---- Team CTA band ---- -->
+  <section class="home-section team-band" aria-labelledby="team-band-heading">
+    <div class="team-band__text">
+      <h2 id="team-band-heading" class="team-band__title">Meet your consultants</h2>
+      <p class="team-band__body">
+        StatLab consultants are PhD researchers from departments across Yale —
+        psychology, epidemiology, political science, health policy, and more.
+        Find the right person for your project.
+      </p>
     </div>
+    <a href="/about/team" class="btn btn--inverse">Meet the team &rarr;</a>
   </section>
 
 </div><!-- /.container -->
@@ -116,22 +114,29 @@
 ================================================================= #}
 {% block extra_head %}
 <style>
+  /* ---- Photo hero ----
+     Library hall photo under a deep-blue overlay keeps the white
+     text readable while showing a real StatLab space. */
+  .hero--photo {
+    background-image:
+      linear-gradient(rgba(0, 28, 64, 0.84), rgba(0, 45, 92, 0.80)),
+      url('/assets/statlab-photos/2025_12_05 Yale DH Lab_Lavitt_01-Web High Quality.jpg');
+    background-size: cover;
+    background-position: center 35%;
+  }
+
   /* ---- Section layout ---- */
   .home-section {
-    margin-bottom: 4rem;
+    margin-bottom: 4.5rem;
   }
 
-  .section-title {
-    font-size: clamp(1.6rem, 3vw, 2rem);
-    margin-bottom: 0.6rem;
-    color: var(--yale-blue);
-  }
+  .home-section:last-child { margin-bottom: 1rem; }
 
   .section-intro {
-    font-size: 1.05rem;
+    font-size: 1.08rem;
     color: var(--text-muted);
     max-width: 620px;
-    margin-bottom: 2rem;
+    margin-bottom: 2.25rem;
     line-height: 1.65;
   }
 
@@ -139,30 +144,29 @@
   .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
+    gap: 1.75rem;
   }
 
   .card {
-    background: var(--bg-subtle);
+    background: var(--white);
     border: 1px solid var(--border);
-    border-top: 3px solid var(--yale-blue);
-    border-radius: var(--radius);
-    padding: 1.75rem 1.5rem;
+    border-radius: var(--radius-lg);
+    padding: 2rem 1.75rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    transition: box-shadow var(--ease), transform var(--ease);
+    gap: 0.6rem;
+    transition: box-shadow var(--ease), border-color var(--ease);
   }
 
   .card:hover {
-    box-shadow: 0 4px 20px rgba(0, 53, 107, 0.1);
-    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(0, 53, 107, 0.28);
   }
 
   .card__icon {
     width: 2rem;
     height: 2rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.65rem;
     color: var(--yale-blue);
   }
 
@@ -173,62 +177,59 @@
   }
 
   .card__title {
-    font-size: 1.15rem;
+    font-size: 1.3rem;
     color: var(--yale-blue);
   }
 
   .card__body {
     font-size: 0.95rem;
     color: var(--text-muted);
-    line-height: 1.6;
+    line-height: 1.65;
     flex: 1;
   }
 
   .card__link {
     display: inline-block;
-    margin-top: 0.5rem;
+    margin-top: 0.6rem;
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--yale-mid);
     text-decoration: none;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.02em;
+    transition: color var(--ease);
   }
 
-  .card__link:hover { color: var(--yale-blue); text-decoration: underline; }
-
-  /* ---- Photo strip ---- */
-  .photo-section {
-    margin-top: 0.5rem;
+  .card__link:hover {
+    color: var(--yale-blue);
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
 
-  .photo-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
+  /* ---- Team CTA band — navy panel echoing the hero ---- */
+  .team-band {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+    padding: 3rem;
+    background-color: var(--yale-blue);
+    background-image: linear-gradient(135deg, #00356b 0%, #002050 100%);
+    border-radius: var(--radius-lg);
+    color: var(--white);
   }
 
-  .photo-item {
-    margin: 0;
-    overflow: hidden;
-    border-radius: var(--radius);
-    background: var(--bg-subtle);
+  .team-band__title {
+    font-size: clamp(1.6rem, 3vw, 2rem);
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 0.5rem;
   }
 
-  .photo-item img {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
-    display: block;
-    transition: transform 400ms ease;
-  }
-
-  .photo-item:hover img {
-    transform: scale(1.02);
-  }
-
-  @media (max-width: 640px) {
-    .photo-grid { grid-template-columns: 1fr; }
-    .photo-item img { height: 220px; }
+  .team-band__body {
+    color: rgba(255, 255, 255, 0.78);
+    max-width: 560px;
+    line-height: 1.7;
   }
 </style>
 {% endblock %}

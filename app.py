@@ -1,3 +1,4 @@
+import base64
 import json
 import logging
 import re
@@ -126,12 +127,28 @@ def inject_now():
     return {"now": datetime.utcnow()}
 
 
+@app.template_filter("friendly_date")
+def friendly_date(value):
+    """Render an ISO date string ('2026-06-01') as 'June 1, 2026'."""
+    if not value:
+        return ""
+    try:
+        return datetime.strptime(value, "%Y-%m-%d").strftime("%B %-d, %Y")
+    except ValueError:
+        return value
+
+
 ASSETS_DIR = Path(__file__).parent / "assets"
 
 
 @app.route("/assets/yale-font/<filename>")
 def serve_font(filename):
     return send_from_directory(ASSETS_DIR / "yale-font", filename)
+
+
+@app.route("/assets/yale-logo/<filename>")
+def serve_logo(filename):
+    return send_from_directory(ASSETS_DIR / "yale-logo", filename)
 
 
 @app.route("/assets/consultant-photos/<filename>")
@@ -144,6 +161,33 @@ def serve_statlab_photo(filename):
     return send_from_directory(ASSETS_DIR / "statlab-photos", filename)
 
 
+def _first_guide_image(guide):
+    """First usable figure in a guide — a local file path or a data: URI."""
+    for img in guide.images:
+        if img.is_local or img.src.startswith("data:image/"):
+            return img
+    return None
+
+
+def _enrich_guides(guides):
+    """Add authors, abstract, and thumbnail info to manifest guide entries
+    by reading each guide's HTML (cached, so repeat views are cheap)."""
+    enriched = []
+    for g in guides:
+        info = dict(g, authors=[], abstract=None, has_thumbnail=False)
+        html_file = TEMP_GUIDES_DIR / g["slug"] / f"{g['slug']}.html"
+        if html_file.is_file():
+            try:
+                extracted = cached_extract(html_file)
+                info["authors"] = [a.name for a in extracted.authors]
+                info["abstract"] = extracted.abstract
+                info["has_thumbnail"] = _first_guide_image(extracted) is not None
+            except Exception:
+                logger.warning("Could not enrich guide %s", g["slug"], exc_info=True)
+        enriched.append(info)
+    return enriched
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -151,7 +195,33 @@ def index():
 
 @app.route("/research-guides")
 def research_guides():
-    return render_template("research_guides.html", guides=list_available_guides())
+    return render_template(
+        "research_guides.html", guides=_enrich_guides(list_available_guides())
+    )
+
+
+@app.route("/guides/<slug>/thumbnail")
+def guide_thumbnail(slug):
+    """Serve the guide's first figure as a card thumbnail. Self-contained
+    renders inline figures as data: URIs, which we decode and serve as
+    real image bytes so listing pages stay small."""
+    html_file = TEMP_GUIDES_DIR / slug / f"{slug}.html"
+    if not html_file.is_file():
+        abort(404)
+    img = _first_guide_image(cached_extract(html_file))
+    if img is None:
+        abort(404)
+    if img.is_local:
+        return redirect(f"/guides/{slug}/{img.src}")
+    header, _, b64 = img.src.partition(",")
+    mimetype = header.removeprefix("data:").split(";", 1)[0]
+    try:
+        data = base64.b64decode(b64)
+    except ValueError:  # binascii.Error subclasses ValueError
+        abort(404)
+    resp = app.response_class(data, mimetype=mimetype)
+    resp.cache_control.max_age = 86400
+    return resp
 
 
 @app.route("/guides/<slug>")
@@ -200,6 +270,11 @@ def consultations():
     return render_template("consultations.html")
 
 
+@app.route("/workshops")
+def workshops():
+    return render_template("workshops.html")
+
+
 @app.route("/about/team")
 def team():
     consultants = load_consultants()
@@ -220,8 +295,14 @@ def consultant_profile(slug):
         html_file = TEMP_GUIDES_DIR / guide_slug / f"{guide_slug}.html"
         if html_file.is_file():
             try:
-                g = extract(html_file)
-                authored_guides.append({"slug": guide_slug, "title": g.title, "date": g.date})
+                g = cached_extract(html_file)
+                authored_guides.append({
+                    "slug": guide_slug,
+                    "title": g.title,
+                    "date": g.date,
+                    "abstract": g.abstract,
+                    "has_thumbnail": _first_guide_image(g) is not None,
+                })
             except Exception:
                 pass
 

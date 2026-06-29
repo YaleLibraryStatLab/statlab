@@ -66,7 +66,11 @@
       --yale-blue:      #00356B;   /* primary brand */
       --yale-blue-dark: #002654;   /* nav hover, footer background */
       --yale-mid:       #0059A8;   /* inline links, accents */
-      --gold:           #bd9b60;   /* warm complementary accent */
+      /* Yale web accent palette (yaleidentity.yale.edu).
+         Orange passes AA on white; on Yale Blue it falls below 3:1,
+         so dark-background accents use the palette's light blue. */
+      --accent:       #bd5319;   /* Yale accent orange — light backgrounds */
+      --accent-light: #63aaff;   /* Yale light blue — navy backgrounds */
 
       /* Neutrals */
       --white:          #ffffff;
@@ -79,10 +83,16 @@
       --font-serif: 'Yale', 'EB Garamond', Georgia, 'Times New Roman', serif;
       --font-body:  -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 
+      /* Elevation — one consistent shadow scale for the whole site */
+      --shadow-sm:  0 1px 2px rgba(16, 24, 40, 0.06);
+      --shadow-md:  0 6px 20px rgba(0, 33, 71, 0.10);
+      --shadow-lg:  0 16px 40px rgba(0, 33, 71, 0.16);
+
       /* Layout */
-      --nav-height: 60px;
+      --nav-height: 64px;
       --site-max:   1160px;
-      --radius:     5px;
+      --radius:     4px;     /* controls, chips */
+      --radius-lg:  8px;     /* cards, panels */
       --ease:       180ms ease;
     }
 
@@ -115,18 +125,35 @@
       display: block;
     }
 
+    ::selection {
+      background: var(--yale-blue);
+      color: var(--white);
+    }
+
     a {
       color: var(--yale-mid);
       text-decoration: underline;
-      text-underline-offset: 2px;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
     }
     a:hover { color: var(--yale-blue); }
 
-    /* Headings use the serif stack */
+    /* Headings use the serif stack. Large display sizes use the Roman
+       weight (400) — the Yale typeface is most elegant unbolded. */
     h1, h2, h3, h4, h5, h6 {
       font-family: var(--font-serif);
-      line-height: 1.25;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
       color: var(--text);
+    }
+
+    /* Respect users who prefer reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
     }
 
 
@@ -160,19 +187,22 @@
       top: 0;
       z-index: 100;
       /* Thin shadow separates the nav from page content */
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+      box-shadow: 0 2px 12px rgba(0, 21, 44, 0.25);
     }
 
     .nav-inner {
       height: 100%;
       display: flex;
-      align-items: center;
+      align-items: stretch;
       justify-content: space-between;
-      gap: 1rem;
+      gap: 2rem;
     }
 
     /* ---- Brand ---- */
     .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
       font-family: var(--font-serif);
       font-size: 1.2rem;
       font-weight: 500;
@@ -184,77 +214,101 @@
     }
     .nav-brand:hover { color: rgba(255, 255, 255, 0.85); }
 
-    /* ---- Link list ---- */
+    /* Yale Library wordmark is Yale-blue on transparent; invert it to
+       white so it reads on the blue nav bar. */
+    .nav-brand__logo {
+      height: 26px;
+      width: auto;
+      filter: brightness(0) invert(1);
+    }
+
+    /* Thin divider between the wordmark and "StatLab" */
+    .nav-brand__name {
+      border-left: 1px solid rgba(255, 255, 255, 0.35);
+      padding-left: 0.75rem;
+      line-height: 1;
+    }
+
+    /* ---- Link list ----
+       Links run the full height of the bar; the current section is
+       marked with a thin accent rule along the bottom edge (no boxes). */
     .nav-links {
       list-style: none;
       display: flex;
-      align-items: center;
-      gap: 0.15rem;
+      align-items: stretch;
+      gap: 0.25rem;
     }
 
     .nav-links > li {
       position: relative;  /* anchor for dropdowns */
+      display: flex;
+      align-items: stretch;
     }
 
     .nav-links a {
-      display: block;
-      padding: 0.4rem 0.8rem;
-      color: rgba(255, 255, 255, 0.88);
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      color: rgba(255, 255, 255, 0.85);
       text-decoration: none;
       font-size: 0.9rem;
-      letter-spacing: 0.02em;
-      border-radius: var(--radius);
-      transition: background var(--ease), color var(--ease);
+      letter-spacing: 0.03em;
+      transition: color var(--ease);
       white-space: nowrap;
     }
 
-    /* Hover and active states */
-    .nav-links a:hover {
-      background: rgba(255, 255, 255, 0.12);
-      color: var(--white);
+    /* Underline indicator — ::before so it doesn't collide with the
+       dropdown chevron, which uses ::after */
+    .nav-links > li > a::before {
+      content: '';
+      position: absolute;
+      left: 1rem;
+      right: 1rem;
+      bottom: 0;
+      height: 2px;
+      background: transparent;
+      transition: background var(--ease);
     }
 
-    .nav-links a.active {
-      background: var(--yale-blue-dark);
-      color: var(--white);
-      /* Bottom border signals the current section clearly */
-      box-shadow: inset 0 -2px 0 var(--gold);
-    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-links > li > a:hover::before { background: rgba(255, 255, 255, 0.35); }
 
-    /* ---- Dropdown trigger arrow ---- */
+    .nav-links > li > a.active { color: var(--white); }
+    .nav-links > li > a.active::before { background: var(--accent-light); }
+
+    /* ---- Dropdown trigger chevron ---- */
     .nav-dropdown > a::after {
       content: '';
-      display: inline-block;
-      width: 0;
-      height: 0;
-      border-left: 4px solid transparent;
-      border-right: 4px solid transparent;
-      border-top: 5px solid rgba(255, 255, 255, 0.7);
-      margin-left: 5px;
-      vertical-align: middle;
+      width: 6px;
+      height: 6px;
+      margin-left: 0.5rem;
+      border-right: 1.5px solid rgba(255, 255, 255, 0.6);
+      border-bottom: 1.5px solid rgba(255, 255, 255, 0.6);
+      transform: rotate(45deg) translate(-1px, -1px);
       transition: transform var(--ease);
     }
 
-    /* Rotate arrow when menu is open or hovered */
+    /* Flip chevron when menu is open or hovered */
     .nav-dropdown:hover > a::after,
     .nav-dropdown:focus-within > a::after {
-      transform: rotate(180deg);
+      transform: rotate(225deg) translate(-2px, -2px);
     }
 
-    /* ---- Dropdown menu ---- */
+    /* ---- Dropdown menu — quiet white panel ---- */
     .dropdown-menu {
       /* Hidden by default; revealed on :hover / :focus-within */
       display: none;
       position: absolute;
       top: 100%;          /* flush to parent — no gap that breaks hover */
       left: 0;
-      min-width: 170px;
-      background: var(--yale-blue-dark);
-      border-radius: var(--radius);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-      overflow: hidden;
-      /* Gold accent separates menu from nav bar visually */
-      border-top: 2px solid var(--gold);
+      min-width: 190px;
+      padding: 0.4rem 0;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent);
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+      box-shadow: var(--shadow-lg);
     }
 
     /* Invisible bridge: fills any sub-pixel gap so the mouse never
@@ -277,17 +331,17 @@
     .dropdown-menu li { list-style: none; }
 
     .dropdown-menu a {
-      border-radius: 0;
-      padding: 0.6rem 1rem;
-      font-size: 0.875rem;
-      /* Left accent bar on hover */
-      border-left: 3px solid transparent;
+      display: block;
+      padding: 0.55rem 1.15rem;
+      color: var(--text);
+      font-size: 0.88rem;
+      letter-spacing: 0.01em;
+      transition: background var(--ease), color var(--ease);
     }
 
     .dropdown-menu a:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-left-color: var(--gold);
-      color: var(--white);
+      background: var(--bg-subtle);
+      color: var(--yale-blue);
     }
 
 
@@ -325,57 +379,226 @@
       /* Diagonal gradient adds depth without being busy */
       background-image: linear-gradient(135deg, #00356b 0%, #002050 100%);
       color: var(--white);
-      padding-block: 6rem 5.5rem;
+      padding-block: 7rem 6.5rem;
       text-align: center;
+    }
+
+    .hero__eyebrow {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: 1rem;
     }
 
     .hero__title {
       font-family: var(--font-serif);
-      font-size: clamp(2.4rem, 6vw, 4rem);
-      font-weight: 500;
+      font-size: clamp(2.75rem, 6vw, 4.5rem);
+      font-weight: 400;
       color: var(--white);
-      line-height: 1.15;
-      margin-bottom: 1.1rem;
-      letter-spacing: -0.01em;
+      line-height: 1.1;
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.015em;
     }
 
     .hero__tagline {
-      font-size: clamp(1rem, 2.5vw, 1.25rem);
-      color: rgba(255, 255, 255, 0.8);
-      max-width: 560px;
+      font-family: var(--font-serif);
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      color: rgba(255, 255, 255, 0.85);
+      max-width: 640px;
       margin-inline: auto;
-      margin-bottom: 2.5rem;
-      line-height: 1.65;
+      margin-bottom: 2.75rem;
+      line-height: 1.6;
     }
 
-    /* Ghost button on the dark background */
+    /* Solid white button that inverts on hover */
     .hero__cta {
       display: inline-block;
-      color: var(--white);
-      border: 2px solid rgba(255, 255, 255, 0.55);
-      padding: 0.65rem 1.8rem;
+      background: var(--white);
+      color: var(--yale-blue);
+      border: 1px solid var(--white);
+      padding: 0.8rem 2.1rem;
       border-radius: var(--radius);
       font-size: 0.95rem;
-      letter-spacing: 0.04em;
+      font-weight: 600;
+      letter-spacing: 0.05em;
       text-decoration: none;
-      transition: background var(--ease), border-color var(--ease);
+      transition: background var(--ease), color var(--ease);
     }
     .hero__cta:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: var(--white);
+      background: transparent;
       color: var(--white);
+    }
+
+    /* ---- Page hero variant ----
+       Interior pages (About, Consultations, Workshops) use a shorter
+       photo hero in place of the in-page header, mirroring the
+       homepage structure. Each page supplies its own background-image
+       (overlay gradient + photo) in its extra_head block. */
+    .hero--page {
+      padding-block: 5rem 4.5rem;
+      background-size: cover;
+      background-position: center 40%;
+    }
+
+    .hero--page .hero__title {
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+    }
+
+    .hero--page .hero__tagline {
+      margin-bottom: 0;
     }
 
     /* Secondary link below the main CTA */
     .hero__secondary {
       display: block;
-      margin-top: 1.1rem;
+      margin-top: 1.25rem;
       font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 0.02em;
+      color: rgba(255, 255, 255, 0.7);
       text-decoration: underline;
-      text-underline-offset: 3px;
+      text-underline-offset: 4px;
+      text-decoration-color: rgba(255, 255, 255, 0.4);
     }
-    .hero__secondary:hover { color: rgba(255, 255, 255, 0.9); }
+    .hero__secondary:hover {
+      color: var(--white);
+      text-decoration-color: var(--accent-light);
+    }
+
+
+    /* ============================================================
+       SHARED COMPONENTS
+       Used across child templates — defined once here so every
+       page header, button, and chip looks identical site-wide.
+    ============================================================ */
+
+    /* ---- Page header (interior pages) ---- */
+    .page-header {
+      padding-block: 3.25rem 2.25rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2.75rem;
+    }
+
+    .page-header__eyebrow {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.85rem;
+    }
+
+    .page-header__title {
+      font-size: clamp(2.1rem, 4.5vw, 3rem);
+      font-weight: 400;
+      color: var(--yale-blue);
+      margin-bottom: 0.75rem;
+    }
+
+    .page-header__lead {
+      font-size: 1.12rem;
+      color: var(--text-muted);
+      max-width: 640px;
+      line-height: 1.65;
+    }
+
+    /* ---- Buttons ---- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.7rem 1.7rem;
+      border-radius: var(--radius);
+      font-size: 0.92rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background var(--ease), border-color var(--ease), color var(--ease);
+    }
+
+    .btn--primary {
+      background: var(--yale-blue);
+      color: var(--white);
+      border: 1px solid var(--yale-blue);
+    }
+    .btn--primary:hover {
+      background: var(--yale-blue-dark);
+      border-color: var(--yale-blue-dark);
+      color: var(--white);
+    }
+
+    /* Quiet outline button — fills navy on hover */
+    .btn--secondary {
+      background: transparent;
+      color: var(--yale-blue);
+      border: 1px solid rgba(0, 53, 107, 0.45);
+    }
+    .btn--secondary:hover {
+      background: var(--yale-blue);
+      border-color: var(--yale-blue);
+      color: var(--white);
+    }
+
+    /* White button for use on navy panels */
+    .btn--inverse {
+      background: var(--white);
+      color: var(--yale-blue);
+      border: 1px solid var(--white);
+    }
+    .btn--inverse:hover {
+      background: transparent;
+      color: var(--white);
+    }
+
+    /* ---- Chips (keywords, expertise tags) ---- */
+    .chip-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      padding: 0;
+    }
+
+    .chip {
+      display: inline-block;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.15rem 0.7rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.01em;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .chip--accent {
+      background: var(--white);
+      border-color: rgba(0, 53, 107, 0.22);
+      color: var(--yale-blue);
+      font-weight: 500;
+    }
+
+    /* ---- Section title (h2-level, used on long pages) ---- */
+    .section-title {
+      font-size: clamp(1.5rem, 3vw, 1.9rem);
+      font-weight: 400;
+      color: var(--yale-blue);
+      margin-bottom: 0.6rem;
+    }
+
+    /* ---- Keyboard focus ----
+       Orange ring plus a white halo so the indicator stays visible
+       on both white pages and the navy nav/hero/footer. */
+    a:focus-visible,
+    button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 2px;
+      box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.85);
+    }
 
 
     /* ============================================================
@@ -384,49 +607,64 @@
 
     .site-footer {
       background: var(--yale-blue-dark);
+      border-top: 3px solid var(--accent);
       color: rgba(255, 255, 255, 0.7);
-      padding-block: 1.75rem;
+      padding-block: 3rem 1.5rem;
       font-size: 0.875rem;
       /* Footer is always at the bottom because body is a flex column */
     }
 
-    .footer-inner {
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 2.5rem;
+      padding-bottom: 2rem;
+    }
+
+    .footer-brand__logo {
+      height: 24px;
+      width: auto;
+      filter: brightness(0) invert(1);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .footer-brand__blurb {
+      max-width: 320px;
+      line-height: 1.65;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .footer-heading {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.92);
+      margin-bottom: 0.9rem;
+      letter-spacing: 0.16em;
+    }
+
+    .footer-links {
+      list-style: none;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.75rem;
+      flex-direction: column;
+      gap: 0.45rem;
     }
 
-    .footer-brand {
-      font-family: var(--font-serif);
-      font-size: 1rem;
-      font-weight: 500;
-      color: var(--white);
-    }
-
-    .footer-right {
-      display: flex;
-      align-items: center;
-      gap: 1.75rem;
-      flex-wrap: wrap;
-    }
-
-    .footer-right a {
+    .footer-links a {
       color: rgba(255, 255, 255, 0.65);
       text-decoration: none;
       transition: color var(--ease);
     }
-    .footer-right a:hover { color: var(--white); }
+    .footer-links a:hover { color: var(--white); }
 
     .footer-copy {
-      width: 100%;
-      margin-top: 0.75rem;
-      padding-top: 0.75rem;
+      padding-top: 1.25rem;
       border-top: 1px solid rgba(255, 255, 255, 0.12);
       text-align: center;
       font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.4);
+      letter-spacing: 0.02em;
+      color: rgba(255, 255, 255, 0.55);
     }
 
 
@@ -460,40 +698,50 @@
       .nav-links > li { width: 100%; }
 
       .nav-links a {
-        border-radius: 0;
-        padding: 0.75rem 1.25rem;
+        padding: 0.8rem 1.25rem;
         font-size: 0.95rem;
       }
 
-      /* On mobile the dropdown is always expanded inline */
-      .nav-dropdown > a::after { content: ''; }
+      /* The desktop underline indicator doesn't suit a stacked menu;
+         mark the active item with an accent edge on the left instead. */
+      .nav-links > li > a::before { display: none; }
+      .nav-links > li > a.active { box-shadow: inset 3px 0 0 var(--accent-light); }
+
+      /* On mobile the dropdown is always expanded inline — no chevron */
+      .nav-dropdown > a::after { display: none; }
 
       .dropdown-menu {
         display: block;       /* always visible when mobile menu is open */
         position: static;
+        border: none;
         border-radius: 0;
         box-shadow: none;
-        border-top: none;
+        padding: 0;
         background: rgba(0, 0, 0, 0.18);
       }
 
       .dropdown-menu a {
-        padding-left: 2.25rem;
-        border-left: none;
+        padding: 0.7rem 1.25rem 0.7rem 2.25rem;
         font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.75);
+      }
+
+      .dropdown-menu a:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--white);
       }
 
       /* Tighter hero on small screens */
       .hero { padding-block: 4rem 3.5rem; }
 
-      /* Stack footer vertically and centre it */
-      .footer-inner {
-        flex-direction: column;
-        text-align: center;
-      }
+      /* Hide the wordmark on small screens — "StatLab" alone is enough */
+      .nav-brand__logo { display: none; }
+      .nav-brand__name { border-left: none; padding-left: 0; }
 
-      .footer-right {
-        justify-content: center;
+      /* Stack footer columns */
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
       }
     }
 
@@ -506,8 +754,8 @@
       position: absolute;
       top: -100%;
       left: 0;
-      background: var(--gold);
-      color: var(--text);
+      background: var(--accent);
+      color: var(--white);
       padding: 0.5rem 1rem;
       font-weight: 600;
       font-size: 0.9rem;
@@ -541,7 +789,11 @@
       {# Brand — always links home.
          Replace url_for('index') with url_for('main.index') if/when
          the app is refactored to use a Blueprint named 'main'. #}
-      <a href="{{ url_for('index') }}" class="nav-brand">Yale Library | StatLab</a>
+      <a href="{{ url_for('index') }}" class="nav-brand">
+        <img src="/assets/yale-logo/yale-library-long.png"
+             alt="Yale Library" class="nav-brand__logo" />
+        <span class="nav-brand__name">StatLab</span>
+      </a>
 
       {# Hamburger button — visible on mobile only (display:none in CSS) #}
       <button
@@ -568,7 +820,7 @@
         {# About — parent link + dropdown sub-pages #}
         <li class="nav-dropdown">
           <a href="/about"
-             {% if request.path.startswith('/about') %}class="active"{% endif %}>
+             {% if request.path.startswith('/about') %}class="active" aria-current="page"{% endif %}>
             About
           </a>
           <ul class="dropdown-menu" role="list">
@@ -579,21 +831,21 @@
 
         <li>
           <a href="/research-guides"
-             {% if request.path.startswith('/research-guides') %}class="active"{% endif %}>
+             {% if request.path.startswith('/research-guides') %}class="active" aria-current="page"{% endif %}>
             Research Guides
           </a>
         </li>
 
         <li>
           <a href="/workshops"
-             {% if request.path.startswith('/workshops') %}class="active"{% endif %}>
+             {% if request.path.startswith('/workshops') %}class="active" aria-current="page"{% endif %}>
             Workshops
           </a>
         </li>
 
         <li>
           <a href="/consultations"
-             {% if request.path.startswith('/consultations') %}class="active"{% endif %}>
+             {% if request.path.startswith('/consultations') %}class="active" aria-current="page"{% endif %}>
             Consultations
           </a>
         </li>
@@ -631,19 +883,49 @@
        FOOTER
   ============================================================ -->
   <footer class="site-footer" aria-label="Site footer">
-    <div class="container footer-inner">
+    <div class="container">
 
-      <span class="footer-brand">Yale Library | StatLab</span>
+      <div class="footer-grid">
 
-      <nav class="footer-right" aria-label="Footer links">
-        {# Yale Library link — primary external reference #}
-        <a href="https://library.yale.edu" target="_blank" rel="noopener noreferrer">
-          Yale Library
-        </a>
-        <a href="/research-guides">Research Guides</a>
-        <a href="/contact">Contact</a>
-        <a href="/about">About</a>
-      </nav>
+        <div class="footer-brand">
+          <img src="/assets/yale-logo/yale-library-long.png"
+               alt="Yale Library" class="footer-brand__logo" />
+          <p class="footer-brand__blurb">
+            StatLab provides free statistical consulting and research
+            support to students, faculty, and staff across the Yale community.
+          </p>
+        </div>
+
+        <nav aria-label="Footer site links">
+          <h2 class="footer-heading">Explore</h2>
+          <ul class="footer-links" role="list">
+            <li><a href="/about">About</a></li>
+            <li><a href="/about/team">Our Team</a></li>
+            <li><a href="/research-guides">Research Guides</a></li>
+            <li><a href="/workshops">Workshops</a></li>
+            <li><a href="/consultations">Consultations</a></li>
+          </ul>
+        </nav>
+
+        <nav aria-label="Footer contact links">
+          <h2 class="footer-heading">Connect</h2>
+          <ul class="footer-links" role="list">
+            <li><a href="mailto:statlab@yale.edu">statlab@yale.edu</a></li>
+            <li>
+              <a href="https://library.yale.edu" target="_blank" rel="noopener noreferrer">
+                Yale Library
+              </a>
+            </li>
+            <li>
+              <a href="https://schedule.yale.edu/appointments/statlab-consult#s-lc-public-pt"
+                 target="_blank" rel="noopener noreferrer">
+                Book a Consultation
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+      </div>
 
       <p class="footer-copy">
         &copy; {{ now.year if now else '2025' }} Yale University Library &mdash; Statistical Consulting &amp; Research Support

@@ -1,33 +1,31 @@
 """
-port_guides.py – render research guides in the upstream ResearchGuides repo
-and port them into the Flask app.
+port_guides.py – mirror the upstream repo's published guides into this app.
 
-Pipeline, per guide:
+The source of truth is the **main branch** of the sibling ResearchGuides repo,
+read directly through git — so it does not matter which branch happens to be
+checked out over there, and nothing in that repo's working tree is touched.
 
-  1. `quarto render` each top-level .qmd in the upstream guide directory
-     (skipped with --no-render, for guides whose committed HTML is current),
-  2. copy the rendered output — HTML, `_files/`, data; never .qmd/.Rmd
-     sources — into research-guides/<slug>/ in this repo, replacing what's
-     there,
-  3. normalize the main HTML file to <slug>.html (build.py and app.py both
-     assume that name); a guide with several candidate HTML files and no
-     <slug>.html fails loudly instead of guessing,
+Per run:
 
-then tools/build.py runs once to publish temp/ and guides_manifest.json.
+  1. list the guide directories committed under research-guides/ on `main`
+     (override the ref with --ref),
+  2. drop the authoring template (and anything else in guides.exclude),
+  3. extract each remaining guide's committed files from main into this repo's
+     research-guides/<slug>/ — main commits the rendered HTML and _files/, so
+     there is no quarto render step and no Stata/Julia/R dependency,
+  4. delete any research-guides/<slug>/ here that is no longer on main, so the
+     local set is an exact mirror, then
+  5. run tools/build.py --clean to publish temp/ and guides_manifest.json.
 
-Guide selection comes from guides.exclude — the same file build.py reads.
-This script validates every exclusion entry against the upstream catalog
-(the full set of guides), so typos fail here even though an entry excluded
-before porting never appears in this repo's research-guides/.
-
-Render failures don't abort the run: each failed guide is reported in a
-summary table at the end and the script exits non-zero.
+Because selection comes from main, the only thing you maintain by hand is the
+short guides.exclude list (the template). Switching branches in the upstream
+repo, renaming a guide, or adding one all flow through automatically.
 
 Usage
 -----
-    python tools/port_guides.py                        # render + port every non-excluded guide
-    python tools/port_guides.py --only standard-errors # one guide (repeatable)
-    python tools/port_guides.py --only standard-errors --no-render
+    python tools/port_guides.py                 # mirror main -> research-guides -> temp
+    python tools/port_guides.py --ref origin/main
+    python tools/port_guides.py --only logit-probit   # one guide (repeatable)
     python tools/port_guides.py --dry-run
     python tools/port_guides.py --list
 """
@@ -38,6 +36,7 @@ import argparse
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -48,66 +47,64 @@ from tools import build as build_mod
 from tools.build import load_exclusions
 
 # The two repos are siblings: …/StatLab/statlab and …/StatLab/ResearchGuides.
-DEFAULT_UPSTREAM = ROOT.parent / "ResearchGuides" / "research-guides"
+DEFAULT_UPSTREAM = ROOT.parent / "ResearchGuides"
+UPSTREAM_SUBDIR = "research-guides"
+DEFAULT_REF = "main"
 DEST_GUIDES = ROOT / "research-guides"
 
-# Mirrors the legacy deploy workflow's rsync excludes: rendered output only,
-# no sources, no render caches. verify_* are cross-lang-verify scratch files.
+# Rendered output only — never sources, render caches, or per-guide scratch.
 _COPY_IGNORE = shutil.ignore_patterns(
-    "*.qmd", "*.Rmd", "*.rmarkdown",
+    "*.qmd", "*.Rmd", "*.rmarkdown", "*.sh",
     "_freeze", ".quarto", ".git*",
     "renv", "renv.lock", ".Rproj.user",
+    "archive", "src", "notes-to-self*",
     ".DS_Store", "verify_*",
 )
 
-_STATA_BINARIES = ("stata-mp", "stata-se", "stata", "StataMP", "StataSE")
 
-
-def upstream_slugs(upstream: Path) -> list[str]:
-    return sorted(
-        p.name for p in upstream.iterdir()
-        if p.is_dir() and not p.name.startswith(".") and p.name not in build_mod.LEGACY_DIRS
+def _git(repo: Path, *args: str) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        ["git", "-C", str(repo), *args],
+        capture_output=True, text=True,
     )
 
 
-def guide_uses_stata(guide_dir: Path) -> bool:
-    for qmd in guide_dir.glob("*.qmd"):
-        if "{stata" in qmd.read_text(encoding="utf-8", errors="replace"):
-            return True
-    return False
+def is_git_repo(repo: Path) -> bool:
+    return repo.is_dir() and _git(repo, "rev-parse", "--git-dir").returncode == 0
 
 
-def render_guide(guide_dir: Path) -> tuple[bool, str]:
-    """Render every top-level .qmd in guide_dir. Returns (ok, detail)."""
-    qmds = sorted(guide_dir.glob("*.qmd"))
-    if not qmds:
-        return False, "no .qmd file to render"
-    for qmd in qmds:
-        proc = subprocess.run(
-            ["quarto", "render", qmd.name],
-            cwd=guide_dir,
-            capture_output=True,
-            text=True,
-        )
-        if proc.returncode != 0:
-            tail = "\n".join((proc.stderr or proc.stdout).strip().splitlines()[-8:])
-            return False, f"quarto render {qmd.name} failed:\n{tail}"
-    return True, f"rendered {', '.join(q.name for q in qmds)}"
+def ref_exists(repo: Path, ref: str) -> bool:
+    return _git(repo, "rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}").returncode == 0
 
 
-def copy_guide(src_dir: Path, dest_dir: Path) -> None:
-    if dest_dir.exists():
-        shutil.rmtree(dest_dir)
-    shutil.copytree(src_dir, dest_dir, ignore=_COPY_IGNORE)
+def catalog(repo: Path, ref: str) -> list[str]:
+    """Guide directory names committed under research-guides/ on `ref`."""
+    proc = _git(repo, "ls-tree", "-d", "--name-only", f"{ref}:{UPSTREAM_SUBDIR}")
+    if proc.returncode != 0:
+        raise RuntimeError(proc.stderr.strip() or f"cannot read {ref}:{UPSTREAM_SUBDIR}")
+    return sorted(
+        name for name in proc.stdout.splitlines()
+        if name and not name.startswith(".") and name not in build_mod.LEGACY_DIRS
+    )
+
+
+def extract_guide(repo: Path, ref: str, slug: str, dest_dir: Path) -> None:
+    """Replace dest_dir with the committed contents of <ref>:research-guides/<slug>."""
+    archive = subprocess.run(
+        ["git", "-C", str(repo), "archive", "--format=tar", f"{ref}:{UPSTREAM_SUBDIR}/{slug}"],
+        capture_output=True,
+    )
+    if archive.returncode != 0:
+        raise RuntimeError(archive.stderr.decode(errors="replace").strip())
+    with tempfile.TemporaryDirectory() as td:
+        subprocess.run(["tar", "-x", "-C", td], input=archive.stdout, check=True)
+        if dest_dir.exists():
+            shutil.rmtree(dest_dir)
+        shutil.copytree(td, dest_dir, ignore=_COPY_IGNORE)
 
 
 def normalize_main_html(dest_dir: Path, slug: str) -> tuple[bool, str]:
-    """Ensure dest_dir/<slug>.html exists; copy the sole candidate if needed.
-
-    The original file is kept — its relative asset paths (<name>_files/)
-    still resolve because the asset directories are copied under their
-    original names.
-    """
+    """Ensure dest_dir/<slug>.html exists (build.py and app.py assume that name)."""
     expected = dest_dir / f"{slug}.html"
     if expected.is_file():
         return True, ""
@@ -116,166 +113,146 @@ def normalize_main_html(dest_dir: Path, slug: str) -> tuple[bool, str]:
         shutil.copy(dest_dir / candidates[0], expected)
         return True, f"normalized {candidates[0]} -> {slug}.html"
     if not candidates:
-        return False, "render produced no HTML file"
-    return False, (
-        f"ambiguous main HTML — none named {slug}.html among {candidates}; "
-        "rename the upstream .qmd output so exactly one candidate remains"
-    )
+        return False, "no HTML committed on main for this guide"
+    return False, f"ambiguous main HTML — none named {slug}.html among {candidates}"
 
 
-def preflight(*, no_render: bool, slugs_using_stata: list[str]) -> bool:
-    """Report toolchain availability. Returns False only on hard blockers."""
-    if not no_render and shutil.which("quarto") is None:
-        print("error: quarto not found on PATH — required to render (or use --no-render)", file=sys.stderr)
-        return False
-    if not no_render:
-        if shutil.which("julia") is None:
-            print("note: julia not on PATH — guides with Julia chunks will fail to render")
-        if not any(shutil.which(b) for b in _STATA_BINARIES):
-            if slugs_using_stata:
-                print("note: Stata not on PATH — these guides use Stata chunks and will likely fail:")
-                for slug in slugs_using_stata:
-                    print(f"        {slug}")
-            else:
-                print("note: Stata not on PATH (no selected guide uses Stata chunks)")
-    return True
+def sync_dest(keep: set[str], *, dry_run: bool) -> list[str]:
+    """Remove research-guides/<slug>/ here that is not in `keep` (the mirror set)."""
+    removed = []
+    if not DEST_GUIDES.is_dir():
+        return removed
+    for entry in sorted(DEST_GUIDES.iterdir()):
+        if not entry.is_dir() or entry.name.startswith("."):
+            continue
+        if entry.name in build_mod.LEGACY_DIRS or entry.name in keep:
+            continue
+        removed.append(entry.name)
+        if not dry_run:
+            shutil.rmtree(entry)
+    return removed
 
 
 def port(
     upstream: Path = DEFAULT_UPSTREAM,
     *,
+    ref: str = DEFAULT_REF,
     only: list[str] | None = None,
-    no_render: bool = False,
     dry_run: bool = False,
 ) -> int:
     upstream = upstream.resolve()
-    if not upstream.is_dir():
-        print(f"error: upstream guides directory not found: {upstream}\n"
+    if not is_git_repo(upstream):
+        print(f"error: not a git repo: {upstream}\n"
               f"       (clone ResearchGuides next to this repo, or pass --upstream)", file=sys.stderr)
         return 1
+    if not ref_exists(upstream, ref):
+        print(f"error: ref '{ref}' not found in {upstream} (try --ref origin/main)", file=sys.stderr)
+        return 1
 
-    catalog = upstream_slugs(upstream)
+    try:
+        cat = catalog(upstream, ref)
+    except RuntimeError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+
     excluded = load_exclusions(build_mod.DEFAULT_EXCLUDE_FILE) if build_mod.DEFAULT_EXCLUDE_FILE.is_file() else set()
-
-    # Strict typo check: the upstream catalog is the authoritative guide list.
-    unmatched = sorted(slug for slug in excluded if slug not in catalog)
+    unmatched = sorted(slug for slug in excluded if slug not in cat)
     if unmatched:
         print(
-            "error: guides.exclude entries match no upstream guide:\n"
+            f"error: guides.exclude entries are not on {ref}:\n"
             + "".join(f"  - {slug}\n" for slug in unmatched)
-            + "Fix the typo or remove the entry (was the guide renamed?).",
+            + "Remove them — selection now comes from the upstream main branch.",
             file=sys.stderr,
         )
         return 1
 
     if only:
-        missing = sorted(s for s in only if s not in catalog)
+        missing = sorted(s for s in only if s not in cat)
         if missing:
-            print(f"error: not in upstream catalog: {', '.join(missing)}", file=sys.stderr)
-            print(f"       available: {', '.join(catalog)}", file=sys.stderr)
+            print(f"error: not on {ref}: {', '.join(missing)}", file=sys.stderr)
+            print(f"       available: {', '.join(cat)}", file=sys.stderr)
             return 1
-        blocked = sorted(s for s in only if s in excluded)
-        if blocked:
-            print(f"error: excluded by guides.exclude: {', '.join(blocked)} — "
-                  "remove the entry first if this guide should ship", file=sys.stderr)
-            return 1
-        selected = list(dict.fromkeys(only))
+        selected = [s for s in cat if s in set(only)]
     else:
-        selected = [s for s in catalog if s not in excluded]
-
-    stata_guides = [s for s in selected if guide_uses_stata(upstream / s)]
-    if not preflight(no_render=no_render, slugs_using_stata=stata_guides):
-        return 1
+        selected = [s for s in cat if s not in excluded]
 
     if dry_run:
         for slug in selected:
-            action = "copy" if no_render else "render + copy"
-            print(f"  would {action}: {slug}")
-        skipped = sorted(set(catalog) - set(selected))
-        if skipped and not only:
-            print(f"  excluded: {', '.join(skipped)}")
-        print(f"dry run: {len(selected)} guide(s); tools/build.py would publish to temp/ afterwards")
+            print(f"  would port: {slug}")
+        if not only:
+            for slug in sorted(set(cat) - set(selected)):
+                print(f"  excluded:   {slug}")
+            # --only never prunes; only a full mirror run removes orphans.
+            for name in sync_dest(set(selected), dry_run=True):
+                print(f"  would remove (not on {ref}): {name}")
+        print(f"dry run: {len(selected)} guide(s) from {ref}; build.py would publish temp/ afterwards")
         return 0
 
-    results: list[tuple[str, str, str]] = []  # slug, status, detail
-
+    results: list[tuple[str, str, str]] = []
     for slug in selected:
-        src_dir = upstream / slug
-
-        if not no_render:
-            ok, detail = render_guide(src_dir)
-            if not ok:
-                results.append((slug, "FAILED (render)", detail))
-                continue
-
-        dest_dir = DEST_GUIDES / slug
-        copy_guide(src_dir, dest_dir)
-
-        ok, detail = normalize_main_html(dest_dir, slug)
+        try:
+            extract_guide(upstream, ref, slug, DEST_GUIDES / slug)
+        except Exception as exc:
+            results.append((slug, "FAILED (extract)", str(exc)))
+            continue
+        ok, detail = normalize_main_html(DEST_GUIDES / slug, slug)
         if not ok:
-            shutil.rmtree(dest_dir)  # don't leave a half-ported guide behind
+            shutil.rmtree(DEST_GUIDES / slug, ignore_errors=True)
             results.append((slug, "FAILED (normalize)", detail))
             continue
-
         results.append((slug, "ported", detail))
+
+    # Mirror: a full run drops local guides no longer on the ref. A single-guide
+    # port (--only) touches just that guide and never prunes the existing mirror.
+    if only:
+        removed = []
+    else:
+        ported_ok = {s for s, status, _ in results if status == "ported"}
+        removed = sync_dest(ported_ok, dry_run=False)
 
     print("\n--- port summary " + "-" * 43)
     failures = 0
     for slug, status, detail in results:
         if status.startswith("FAILED"):
             failures += 1
-        line = f"  {slug:<34} {status}"
+        line = f"  {slug:<28} {status}"
         print(line if not detail else f"{line}\n      {detail}")
-    print(f"{len(results) - failures} ported, {failures} failed\n")
+    for name in removed:
+        print(f"  {name:<28} removed (not on {ref})")
+    print(f"{len(results) - failures} ported, {failures} failed, {len(removed)} removed\n")
 
-    print("running tools/build.py ...")
-    build_rc = build_mod.build()
-
+    print("running tools/build.py --clean ...")
+    build_rc = build_mod.build(clean=True)
     return 1 if failures or build_rc else 0
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Render upstream research guides and port them into the Flask app.",
+        description="Mirror the upstream repo's main-branch guides into the Flask app.",
     )
-    parser.add_argument(
-        "--upstream", type=Path, default=DEFAULT_UPSTREAM,
-        help="upstream guides directory (default: ../ResearchGuides/research-guides)",
-    )
-    parser.add_argument(
-        "--only", action="append", metavar="SLUG",
-        help="port only this guide (repeatable)",
-    )
-    parser.add_argument(
-        "--no-render", action="store_true",
-        help="skip quarto; copy already-rendered upstream HTML as-is",
-    )
-    parser.add_argument(
-        "--dry-run", action="store_true",
-        help="show what would happen; render, copy, and build nothing",
-    )
-    parser.add_argument(
-        "--list", action="store_true",
-        help="list the upstream guide catalog and exclusion status",
-    )
+    parser.add_argument("--upstream", type=Path, default=DEFAULT_UPSTREAM,
+                        help="upstream git repo (default: ../ResearchGuides)")
+    parser.add_argument("--ref", default=DEFAULT_REF,
+                        help="git ref to read guides from (default: main)")
+    parser.add_argument("--only", action="append", metavar="SLUG",
+                        help="port only this guide (repeatable); does not prune the rest")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="show what would be ported/removed; change nothing")
+    parser.add_argument("--list", action="store_true",
+                        help="list the guides on the ref and their exclusion status")
     args = parser.parse_args(argv)
 
     if args.list:
         upstream = args.upstream.resolve()
-        if not upstream.is_dir():
-            print(f"error: upstream guides directory not found: {upstream}", file=sys.stderr)
+        if not is_git_repo(upstream) or not ref_exists(upstream, args.ref):
+            print(f"error: cannot read {args.ref} in {upstream}", file=sys.stderr)
             return 1
         excluded = load_exclusions(build_mod.DEFAULT_EXCLUDE_FILE) if build_mod.DEFAULT_EXCLUDE_FILE.is_file() else set()
-        for slug in upstream_slugs(upstream):
+        for slug in catalog(upstream, args.ref):
             print(f"  {slug}{'   [excluded]' if slug in excluded else ''}")
         return 0
 
-    return port(
-        args.upstream,
-        only=args.only,
-        no_render=args.no_render,
-        dry_run=args.dry_run,
-    )
+    return port(args.upstream, ref=args.ref, only=args.only, dry_run=args.dry_run)
 
 
 if __name__ == "__main__":

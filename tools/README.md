@@ -11,42 +11,44 @@ Flask-served content.
 |------|---------|
 | `extractor.py` | Parse a single Quarto HTML file; extract content, metadata, assets |
 | `build.py` | Single ingestion command: walk `research-guides/`, smoke-check each guide with the extractor, verify local assets exist, copy accepted guides to `temp/`, write `guides_manifest.json` |
-| `port_guides.py` | Render guides in the upstream ResearchGuides repo (`quarto render`), copy the output into `research-guides/<slug>/` (normalizing the main HTML to `<slug>.html`), then run `build.py`. `--no-render` skips quarto; `--only <slug>` ports one guide |
+| `port_guides.py` | Mirror the guide directories committed on the upstream repo's **main** branch into `research-guides/`, reading via git so the upstream working tree / checked-out branch is irrelevant. Pulls main's committed rendered HTML (no `quarto render`), removes local guides no longer on main, then runs `build.py --clean`. `--ref` reads a different ref; `--only <slug>` ports one guide without pruning the rest |
 
 ---
 
 ## Quick start
 
 ```bash
-# Full pipeline: render every non-excluded upstream guide and publish it
+# Mirror main: port every guide on main (minus exclusions) and publish it
 python tools/port_guides.py
 
-# Port one guide whose upstream HTML is already rendered (no quarto run)
-python tools/port_guides.py --only standard-errors --no-render
+# Preview what would be ported/removed; change nothing
+python tools/port_guides.py --dry-run
+
+# List the guides on main and their exclusion status
+python tools/port_guides.py --list
+
+# Port a single guide (e.g. from a feature branch) without re-syncing the rest
+python tools/port_guides.py --only logit-probit --ref origin/logit-probit
 
 # Re-publish what's already in research-guides/ to temp/ + manifest
-python tools/build.py
-
-# Preview without writing anything
-python tools/build.py --dry-run
-
-# Also remove temp/ guides that are excluded or gone from research-guides/
-python tools/build.py --clean
+python tools/build.py            # (--clean also drops temp/ guides no longer present)
 
 # Human-readable summary of one guide
 python tools/extractor.py research-guides/mixed-effects-models/mixed-effects-models.html
 
 # Full JSON dump (pipe to jq, etc.)
-python tools/extractor.py research-guides/standard-errors/standard-errors.html --json
+python tools/extractor.py research-guides/olsregression/olsregression.html --json
 ```
 
-Guide selection is exclusion-based: every `research-guides/<slug>/` containing
-`<slug>.html` publishes unless the slug is listed in `guides.exclude` at the
-repo root (one slug per line, `#` comments). `port_guides.py` validates every
-exclusion entry against the upstream catalog, so typos and renamed guides
-surface immediately; `build.py` only warns on entries matching no local
-directory (expected for guides excluded upstream before porting — pass
-`--strict-exclusions` to make it fail instead).
+Guide selection is automatic. `port_guides.py` takes every guide directory on
+the upstream **main** branch, drops anything listed in `guides.exclude` (the
+authoring template), mirrors the rest into `research-guides/`, and removes
+local guides that are no longer on main. `build.py` then publishes
+`research-guides/` → `temp/`. The only hand-maintained input is
+`guides.exclude`; every entry must be a real directory on main or
+`port_guides.py` fails loudly. (`build.py` also reads `guides.exclude` and only
+warns — not fails — when an entry has no local directory, which is normal: the
+template is excluded and never copied locally.)
 
 `extract()` returns an `ExtractedGuide` dataclass with:
 

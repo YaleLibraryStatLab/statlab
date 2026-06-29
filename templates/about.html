@@ -4,15 +4,22 @@
 
 {% block meta_description %}Learn about Yale Library's Statistical Consulting Lab — who we are, what we do, and how we support the Yale research community.{% endblock %}
 
-{% block content %}
-<div class="container">
-
-  <header class="page-header">
-    <h1 class="page-header__title">About Yale StatLab</h1>
-    <p class="page-header__lead">
+{# ---- Photo hero, mirroring the homepage structure ---- #}
+{% block hero %}
+<section class="hero hero--page hero--about" aria-label="About Yale StatLab">
+  <div class="container">
+    <p class="hero__eyebrow">Yale University Library</p>
+    <h1 class="hero__title">About Yale StatLab</h1>
+    <p class="hero__tagline">
       Statistical consulting and research support, free for the Yale community.
     </p>
-  </header>
+  </div>
+</section>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
 
   <!-- ---- Mission ---- -->
   <section class="about-section" aria-labelledby="mission-heading">
@@ -30,13 +37,6 @@
       confidence.
     </p>
   </section>
-
-  <!-- ---- Photo ---- -->
-  <figure class="about-photo">
-    <img src="/assets/statlab-photos/2025_12_05 Yale DH Lab_Lavitt_32-Web High Quality.jpg"
-         alt="StatLab consultants at work in Yale's Digital Humanities Lab"
-         loading="lazy">
-  </figure>
 
   <!-- ---- What we offer ---- -->
   <section class="about-section" aria-labelledby="services-heading">
@@ -65,7 +65,7 @@
       alongside a team of advanced PhD student consultants drawn from departments across
       the university.
     </p>
-    <a href="/about/team" class="btn-primary">View the full team &rarr;</a>
+    <a href="/about/team" class="btn btn--primary">View the full team &rarr;</a>
   </section>
 
 </div>
@@ -74,34 +74,21 @@
 
 {% block extra_head %}
 <style>
-  /* ---- Page header ---- */
-  .page-header {
-    padding-block: 2.5rem 2rem;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 2.5rem;
+  /* ---- Hero photo (overlay keeps white text readable) ---- */
+  .hero--about {
+    background-image:
+      linear-gradient(rgba(0, 28, 64, 0.84), rgba(0, 45, 92, 0.80)),
+      url('/assets/statlab-photos/2025_12_05 Yale DH Lab_Lavitt_32-Web High Quality.jpg');
   }
 
-  .page-header__title {
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
-    color: var(--yale-blue);
-    margin-bottom: 0.5rem;
-  }
-
-  .page-header__lead {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    max-width: 580px;
-    line-height: 1.65;
-  }
-
-  /* ---- Body sections ---- */
+  /* ---- Body sections — full container width, matching the hero ---- */
   .about-section {
-    max-width: 720px;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2.75rem;
   }
 
   .about-section h2 {
-    font-size: 1.3rem;
+    font-size: 1.55rem;
+    font-weight: 400;
     color: var(--yale-blue);
     margin-bottom: 0.75rem;
   }
@@ -142,46 +129,15 @@
     background: var(--yale-blue);
   }
 
-  /* ---- Full-width photo ---- */
-  .about-photo {
-    margin: 0 0 2.5rem;
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  .about-photo img {
-    width: 100%;
-    max-height: 420px;
-    object-fit: cover;
-    display: block;
-  }
-
   /* ---- CTA section ---- */
   .about-cta {
-    padding: 2rem;
+    padding: 2.5rem;
     background: var(--bg-subtle);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-lg);
     max-width: 100%;
   }
 
-  .btn-primary {
-    display: inline-block;
-    margin-top: 1rem;
-    padding: 0.6rem 1.4rem;
-    background: var(--yale-blue);
-    color: var(--white);
-    text-decoration: none;
-    border-radius: var(--radius);
-    font-size: 0.9rem;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    transition: background var(--ease);
-  }
-
-  .btn-primary:hover {
-    background: var(--yale-blue-dark);
-    color: var(--white);
-  }
+  .about-cta .btn { margin-top: 1.25rem; }
 </style>
 {% endblock %}

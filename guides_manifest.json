@@ -24,6 +24,38 @@
     ]
   },
   {
+    "slug": "instrumental-variables",
+    "title": "Instrumental Variables",
+    "date": "2026-06-22",
+    "authors": [
+      "Jonathan Elkobi"
+    ],
+    "keywords": [
+      "instrumental variables",
+      "causal inference",
+      "experimental data"
+    ]
+  },
+  {
+    "slug": "logit-probit",
+    "title": "Logit and Probit Models for Binary Outcomes",
+    "date": "2026-06-15",
+    "authors": [
+      "Jiye Kwon"
+    ],
+    "keywords": [
+      "Binary Response Models",
+      "Limited Dependent Variables",
+      "Linear Probability Model",
+      "Logistic Regression",
+      "Probit Regression",
+      "Maximum Likelihood Estimation",
+      "Odds Ratios",
+      "Predicted Probabilities",
+      "Marginal Effects."
+    ]
+  },
+  {
     "slug": "mixed-effects-models",
     "title": "Linear Mixed-Effects Models: A Practical Guide",
     "date": "2025-12-02",
@@ -45,6 +77,26 @@
     ]
   },
   {
+    "slug": "olsregression",
+    "title": "Ordinary Least Square Regression",
+    "date": "2026-06-17",
+    "authors": [
+      "Muji Chughtai"
+    ],
+    "keywords": [
+      "OLS",
+      "Regression",
+      "Continuous Varibales",
+      "Categorical Variables",
+      "R",
+      "Julia",
+      "glm",
+      "lm",
+      "t.test",
+      "anova"
+    ]
+  },
+  {
     "slug": "panel-regression",
     "title": "Panel/Longitudinal Data and its Associated Regression Practices",
     "date": "2025-12-16",
@@ -60,6 +112,78 @@
       "clustered data",
       "R",
       "Julia"
+    ]
+  },
+  {
+    "slug": "rdd",
+    "title": "Regression Discontinuity Design",
+    "date": null,
+    "authors": [
+      "Jonathan Elkobi"
+    ],
+    "keywords": []
+  },
+  {
+    "slug": "standard-errors",
+    "title": "Standard Errors in Applied Research",
+    "date": "2026-06-29",
+    "authors": [
+      "Ted Ellsworth"
+    ],
+    "keywords": [
+      "standard errors",
+      "heteroskedasticity",
+      "robust inference",
+      "cluster-robust",
+      "Newey-West",
+      "HAC",
+      "Conley",
+      "bootstrap",
+      "wild cluster bootstrap",
+      "sandwich estimator"
+    ]
+  },
+  {
+    "slug": "survival-analysis",
+    "title": "Survival Analysis",
+    "date": "2026-06-22",
+    "authors": [
+      "Atalay Demiray, MD, MSc"
+    ],
+    "keywords": [
+      "Survival Analysis",
+      "Time-to-Event Analysis",
+      "Kaplan-Meier Estimator",
+      "Nelson-Aalen Estimator",
+      "Cox Proportional Hazards",
+      "Log-Rank Test",
+      "Censoring",
+      "Hazard Ratio",
+      "Proportional Hazards Assumption",
+      "Competing Risks",
+      "Time-Varying Covariates",
+      "Restricted Mean Survival Time",
+      "Parametric Survival Models"
+    ]
+  },
+  {
+    "slug": "variable-selection",
+    "title": "Selecting the Right Variables",
+    "date": "2026-06-22",
+    "authors": [
+      "Atalay Demiray, MD, MSc"
+    ],
+    "keywords": [
+      "covariate selection",
+      "confounding",
+      "causal inference",
+      "directed acyclic graphs",
+      "regression modeling",
+      "overfitting",
+      "model selection",
+      "AIC",
+      "BIC",
+      "cross-validation"
     ]
   }
 ]

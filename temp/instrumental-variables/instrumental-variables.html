@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.30">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jonathan Elkobi">
+<meta name="dcterms.date" content="2026-06-22">
+<meta name="keywords" content="<p>instrumental variables, causal inference, experimental data</p>">
+
+<title>Instrumental Variables</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="instrumental-variables_files/libs/clipboard/clipboard.min.js"></script>
+<script src="instrumental-variables_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="instrumental-variables_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="instrumental-variables_files/libs/quarto-html/popper.min.js"></script>
+<script src="instrumental-variables_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="instrumental-variables_files/libs/quarto-html/anchor.min.js"></script>
+<link href="instrumental-variables_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="instrumental-variables_files/libs/quarto-html/quarto-syntax-highlighting-de070a7b0ab54f8780927367ac907214.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="instrumental-variables_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="instrumental-variables_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="instrumental-variables_files/libs/bootstrap/bootstrap-81267100e462c21b3d6c0d5bf76a3417.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Instrumental Variables</h1>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Author</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author"><a href="https://authorwebpage1.com">Jonathan Elkobi</a> </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Yale University, Department of Political Science
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta">
+
+      
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 22, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+<div>
+  <div class="abstract">
+    <div class="block-title">Abstract</div>
+    <p>This guide covers the intuition, mechanics, and implementation of instrumental variables (IV) design. We will discuss applications in both experimental settings, where the instrument is randomized by the researcher, and observational studies, where we rely on “natural experiments” or policy shocks. We will also cover diagnostic tests to assess the validity of your instrument.</p>
+  </div>
+</div>
+
+<div>
+  <div class="keywords">
+    <div class="block-title">Keywords</div>
+    <p></p><p>instrumental variables, causal inference, experimental data</p><p></p>
+  </div>
+</div>
+
+</header>
+
+
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Causal inference fundamentally seeks to distinguish true treatment effects from the influence of confounding factors. When treatments are self-selected or non-random, standard correlations fail to identify causality. Instrumental Variables (IV) offer a powerful solution to this problem by separating the variation in treatment that is driven by exogenous forces from the variation driven by confounders. By leveraging an “instrument”—a variable that affects the treatment but has no direct effect on the outcome—researchers can isolate a clean source of variation, allowing for the estimation of causal effects even in the presence of unobserved confounding.</p>
+<section id="experimental-studies" class="level2">
+<h2 class="anchored" data-anchor-id="experimental-studies">Experimental Studies</h2>
+<p>In experimental studies, the distinction between treatment assignment and treatment receipt is crucial. Even when treatment is randomly assigned, some participants may not take it—a problem known as <strong>non-compliance</strong>. As a result, a simple comparison of assigned groups yields the Intention-to-Treat (ITT) effect, which measures the impact of the <em>offer</em> of treatment rather than the treatment itself.</p>
+<p>To estimate the effect of <em>actually taking</em> the treatment, we use the random assignment as an instrument. Since assignment is randomized, it is exogenous to potential outcomes but strongly predicts treatment receipt. IV uses this structure to isolate the causal effect for the subpopulation whose treatment behavior is determined by their assignment—known as <strong>compliers</strong>.</p>
+<section id="experimental-example-get-out-the-vote" class="level3">
+<h3 class="anchored" data-anchor-id="experimental-example-get-out-the-vote">Experimental Example: Get-Out-The-Vote</h3>
+<p>Consider a Get-Out-The-Vote experiment where a researcher randomly assigns households to receive a canvassing visit or phone call, denoted as assignment <span class="math inline">\(Z\)</span>. The intended treatment is exposure to the canvasser, <span class="math inline">\(D\)</span>, and the outcome <span class="math inline">\(Y\)</span> is whether the person votes.</p>
+<p>Non-compliance arises when some assigned households are not reached or some reached do not change their behavior. Here assignment <span class="math inline">\(Z\)</span> is an instrument for actual exposure <span class="math inline">\(D\)</span>. <span class="math inline">\(Z\)</span> affects <span class="math inline">\(D\)</span> but is plausibly exogenous to potential voting outcomes by design.</p>
+</section>
+</section>
+<section id="observational-studies" class="level2">
+<h2 class="anchored" data-anchor-id="observational-studies">Observational Studies</h2>
+<p>In observational studies, the treatment or variable of interest is often <strong>endogenous</strong>—that is, determined by self-selection or unobserved factors that also affect the outcome. This confounding makes standard regression estimates unreliable.</p>
+<p>To address this, researchers look for an <strong>exogenous</strong> source of variation—a “natural experiment” or instrument—that influences the treatment but affects the outcome <em>only</em> through that treatment. By isolating the variation in the endogenous variable that is driven by this instrument, IV allows us to recover causal effects even in the presence of unobserved confounding.</p>
+<section id="observational-example-rainfall-and-conflict" class="level3">
+<h3 class="anchored" data-anchor-id="observational-example-rainfall-and-conflict">Observational Example: Rainfall and Conflict</h3>
+<p>In observational studies, researchers often look for “natural experiments.” For example, researchers might use deviations in rainfall, <span class="math inline">\(Z\)</span>, as an instrument for economic growth, <span class="math inline">\(D\)</span>, to study the effect of economic conditions on civil conflict, <span class="math inline">\(Y\)</span>.</p>
+<p>Here, rainfall is the instrument because it drives economic productivity in agrarian societies but is arguably exogenous to political factors. The key challenge for inference in observational studies like this is the exclusion restriction, which requires arguing that rainfall affects conflict only through economic growth and not by other means, such as making roads impassable for troops.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="instrumental-variables_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="instrumental-variables_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="methods" class="level1">
+<h1>Methods</h1>
+<p>Instrumental variables rely on a specific causal structure. We assume there is unmeasured confounding between the treatment, <span class="math inline">\(D\)</span>, and outcome, <span class="math inline">\(Y\)</span>. However, we have an instrument, <span class="math inline">\(Z\)</span>, that affects <span class="math inline">\(D\)</span> but has no direct effect on <span class="math inline">\(Y\)</span> and is independent of confounders, <span class="math inline">\(U\)</span>.</p>
+<section id="core-assumptions" class="level2">
+<h2 class="anchored" data-anchor-id="core-assumptions">Core Assumptions</h2>
+<p>Instrumental variables rely on a small set of core assumptions — make them explicit when presenting an IV strategy:</p>
+<p><strong>Relevance:</strong> The instrument must affect treatment. Formally, <span class="math inline">\(\text{Cov}(Z,D) \neq 0\)</span>, or <span class="math inline">\(\pi_1 \neq 0\)</span> in the first-stage regression. This is testable via the first-stage regression and its F-statistic.</p>
+<p><strong>Independence / Exogeneity:</strong> The instrument must be as-good-as-randomly assigned with respect to potential outcomes and unobserved confounders. This is often satisfied by random assignment or a credible natural experiment. Notation: <span class="math inline">\(Z \perp\!\!\!\perp (Y(0), Y(1)) | X\)</span>.</p>
+<p><strong>Exclusion Restriction:</strong> The instrument affects the outcome only through the treatment, meaning there is no direct effect. In potential outcomes notation, <span class="math inline">\(Y(z,d) = Y(d)\)</span>. This assumption is generally not testable and must be argued on substantive grounds. Since this assumption is not empirically testable, it requires a strong theoretical argument. You must qualitatively think on all other possible channels through which <span class="math inline">\(Z\)</span> could affect <span class="math inline">\(Y\)</span> and explain why they are blocked or negligible.</p>
+<p><strong>Monotonicity:</strong> There are no “defiers”, which are units for which <span class="math inline">\(Z\)</span> increases the probability of treatment in the opposite direction. A common formulation: <span class="math inline">\(D_i(1) \geq D_i(0)\)</span> for all <span class="math inline">\(i\)</span>.</p>
+</section>
+<section id="constant-vs.-heterogeneous-effects" class="level2">
+<h2 class="anchored" data-anchor-id="constant-vs.-heterogeneous-effects">Constant vs.&nbsp;Heterogeneous Effects</h2>
+<p><strong>Constant Effects:</strong> If the treatment effect is the same for everyone, such that <span class="math inline">\(\beta_i = \beta\)</span>, IV identifies the Average Treatment Effect (ATE).</p>
+<p><strong>Heterogeneous Effects:</strong> If treatment effects vary across individuals, and Monotonicity holds, IV identifies the Local Average Treatment Effect (LATE). This is the average treatment effect for the subpopulation of compliers, defined as those who take treatment if assigned to it, but not otherwise.</p>
+</section>
+<section id="implementation" class="level2">
+<h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
+<section id="first-stage-reduced-form-and-2sls" class="level3">
+<h3 class="anchored" data-anchor-id="first-stage-reduced-form-and-2sls">First-stage, Reduced-form, and 2SLS</h3>
+<p><strong>First-stage</strong></p>
+<p>The regression that shows how the instrument moves treatment. Typically: <span class="math display">\[ D_i = \pi_0 + \pi_1 Z_i + \gamma X_i + u_i \]</span></p>
+<p>The estimated coefficient on <span class="math inline">\(Z\)</span> (<span class="math inline">\(\hat{\pi}_1\)</span>) measures relevance.</p>
+<p><strong>Reduced-form</strong></p>
+<p>The regression of the outcome on the instrument. It captures the total effect of <span class="math inline">\(Z\)</span> on <span class="math inline">\(Y\)</span>: <span class="math display">\[ Y_i = \alpha_0 + \alpha_1 Z_i + \delta X_i + v_i \]</span></p>
+<p>The reduced-form coefficient <span class="math inline">\(\hat{\alpha}_1\)</span> equals the intention-to-treat (ITT) effect in experiments.</p>
+<p><strong>Two-stage least squares (2SLS)</strong></p>
+<p>Implement IV by first predicting treatment from the instrument, known as the first stage, and then regressing the outcome on the predicted treatment, known as the second stage. <span class="math display">\[ Y_i = \beta_0 + \beta_1 \hat{D}_i + \theta X_i + \epsilon_i \]</span></p>
+<p>In the simple one-instrument setting, <span class="math inline">\(\hat{\beta}_{2SLS} = \hat{\alpha}_1 / \hat{\pi}_1\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Recreate Our Example Data
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For this exercise we’ll use simulated data to illustrate how to perform first-stage, reduced-form, and a simple 2SLS implementation.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Reproduce Our Data</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">2000</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>)            <span class="co"># instrument (random assignment)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)                     <span class="co"># observed covariate</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># compliance structure: some always-takers and never-takers</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>always <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.05</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>never  <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.10</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># compliers take treatment when Z==1, never-takers never take, always-takers always take</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(always<span class="sc">==</span><span class="dv">1</span>, <span class="dv">1</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>            <span class="fu">ifelse</span>(never<span class="sc">==</span><span class="dv">1</span>, <span class="dv">0</span>, Z))</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># True treatment effect is 2</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>beta <span class="ot">&lt;-</span> <span class="fl">2.0</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># outcome: depends on D and X plus noise plus 1</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">+</span> beta <span class="sc">*</span> D <span class="sc">+</span> <span class="fl">0.5</span> <span class="sc">*</span> X <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(Y, D, Z, X)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Stata</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">Julia</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First stage</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>fs <span class="ot">&lt;-</span> <span class="fu">lm</span>(D <span class="sc">~</span> Z <span class="sc">+</span> X, <span class="at">data =</span> df)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fs)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Reduced form</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>rf <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y <span class="sc">~</span> Z <span class="sc">+</span> X, <span class="at">data =</span> df)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(rf)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 2SLS using ivreg (Recommended)</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>iv_fit <span class="ot">&lt;-</span> <span class="fu">ivreg</span>(Y <span class="sc">~</span> D <span class="sc">+</span> X <span class="sc">|</span> Z <span class="sc">+</span> X, <span class="at">data =</span> df)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(iv_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> linearmodels.iv <span class="im">import</span> IV2SLS</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Access the simulated data frame created in the R chunk above via reticulate</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> r.df</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># First stage</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>fs <span class="op">=</span> sm.OLS.from_formula(<span class="st">'D ~ Z + X'</span>, data<span class="op">=</span>df).fit()</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fs.summary())</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Reduced form</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>rf <span class="op">=</span> sm.OLS.from_formula(<span class="st">'Y ~ Z + X'</span>, data<span class="op">=</span>df).fit()</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(rf.summary())</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 2SLS using linearmodels (Recommended)</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>iv_fit <span class="op">=</span> IV2SLS.from_formula(<span class="st">'Y ~ 1 + [D ~ Z] + X'</span>, data<span class="op">=</span>df).fit()</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(iv_fit.summary)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternative: Manual 2SLS</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co"># First stage: regress D on Z and X</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>fs_manual <span class="op">=</span> sm.OLS.from_formula(<span class="st">'D ~ Z + X'</span>, data<span class="op">=</span>df).fit()</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'D_hat'</span>] <span class="op">=</span> fs_manual.fittedvalues</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Second stage: regress Y on D_hat and X</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>ss_manual <span class="op">=</span> sm.OLS.from_formula(<span class="st">'Y ~ D_hat + X'</span>, data<span class="op">=</span>df).fit()</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ss_manual.summary())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>* First stage</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">regress</span> D Z X</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>* Reduced form</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">regress</span> Y Z X</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>* 2SLS <span class="kw">using</span> ivregress (Recommended)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>ivregress 2sls Y X (D = Z)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">DataFrames</span>, <span class="bu">FixedEffectModels</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 2SLS: outcome ~ exogenous covariates + (endogenous ~ instrument)</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>iv_fit <span class="op">=</span> <span class="fu">reg</span>(df, <span class="pp">@formula</span>(Y <span class="op">~</span> X <span class="op">+</span> (D <span class="op">~</span> Z)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="interpretation" class="level1">
+<h1>Interpretation</h1>
+<p>What is important here is that by design you will have an exogenous instrument and a strong first stage. What is also important is that the treatment is not spilled to always-takers or the defiers.</p>
+<section id="iv-in-experiments" class="level4">
+<h4 class="anchored" data-anchor-id="iv-in-experiments">IV in Experiments</h4>
+<p>In randomized experiments, random assignment, <span class="math inline">\(Z\)</span>, serves as an instrument for actual treatment receipt, <span class="math inline">\(D\)</span>.</p>
+<p>Under monotonicity, the population consists of four principal subgroups based on how their treatment status <span class="math inline">\(D\)</span> responds to the instrument <span class="math inline">\(Z\)</span>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 22%">
+<col style="width: 22%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th><span class="math inline">\(D(0)\)</span> (Control)</th>
+<th><span class="math inline">\(D(1)\)</span> (Treatment)</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Compliers</strong></td>
+<td>0</td>
+<td>1</td>
+<td>Take treatment only if assigned (<span class="math inline">\(D=Z\)</span>). Only this group contributes to the LATE estimate.</td>
+</tr>
+<tr class="even">
+<td><strong>Always-takers</strong></td>
+<td>1</td>
+<td>1</td>
+<td>Take treatment regardless of assignment.</td>
+</tr>
+<tr class="odd">
+<td><strong>Never-takers</strong></td>
+<td>0</td>
+<td>0</td>
+<td>Never take treatment regardless of assignment.</td>
+</tr>
+<tr class="even">
+<td><strong>Defiers</strong></td>
+<td>1</td>
+<td>0</td>
+<td>Take treatment only if <em>not</em> assigned. Ruled out by the monotonicity assumption.</td>
+</tr>
+</tbody>
+</table>
+<p>IV identifies the treatment effect for compliers, also known as the LATE. This is the average effect of treatment for those assigned to treatment who actually receive it because of the assignment. This is important to estimate the effect of the treatment in the presence of non-compliance.</p>
+</section>
+<section id="iv-in-observational-studies" class="level4">
+<h4 class="anchored" data-anchor-id="iv-in-observational-studies">IV in Observational Studies</h4>
+<p>In observational studies, the logic of LATE still applies: IV estimates the effect for the subpopulation whose treatment status is influenced by the instrument. For instance, these are “compliers” who experience economic growth because of rainfall.</p>
+<p>In experiments, “compliance” is often a choice, such as opening the door to a canvasser. In observational settings, “compliance” is determined by the structure of the natural experiment. For example, this could be regions where the economy is sensitive to rain. Thus, should be argued for by the researcher.</p>
+<p>Additionally, while experimental IVs rely on randomization for exogeneity, observational IVs require rigorous defense of the exclusion restriction and independence assumptions, as there is no physical randomization device. The interpretation is often more cautious, emphasizing that the estimated effect is local to the specific variation induced by the instrument.</p>
+</section>
+</section>
+<section id="faqs" class="level1">
+<h1>FAQs</h1>
+<section id="what-is-a-weak-instrument-how-do-i-know-if-my-instrument-is-weak" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-a-weak-instrument-how-do-i-know-if-my-instrument-is-weak">What is a weak instrument? How do I know if my instrument is weak?</h3>
+<p>A “weak instrument” is one that is only weakly correlated with the treatment.</p>
+<p>Why it matters: Weak instruments can lead to bias in the IV estimator that is larger than OLS bias in finite samples, and standard inference (t-tests) becomes unreliable.</p>
+<p>Diagnostics:</p>
+<p>F-statistic: The classic rule of thumb was <span class="math inline">\(F &gt; 10\)</span> (Staiger &amp; Stock, 1997). However, recent work suggests this is insufficient for valid inference. Lee et al.&nbsp;(2022) suggest a much higher threshold for t-ratio validity. Anderson-Rubin (AR) Test: A test that is robust to weak instruments. It tests the null hypothesis <span class="math inline">\(\beta = \beta_0\)</span>, usually where <span class="math inline">\(\beta_0\)</span> is 0, without relying on strong instrument asymptotics (Andrews et al., 2019).</p>
+</section>
+<section id="how-do-i-test-the-exclusion-restriction" class="level3">
+<h3 class="anchored" data-anchor-id="how-do-i-test-the-exclusion-restriction">How do I test the exclusion restriction?</h3>
+<p>The exclusion restriction (<span class="math inline">\(Z\)</span> affects <span class="math inline">\(Y\)</span> only through <span class="math inline">\(D\)</span>) is theoretically untestable, but you can probe the validity and the exogeneity of the instrument.</p>
+<p>Placebo Tests: Test if the instrument predicts outcomes it shouldn’t, such as pre-treatment outcomes. Balance Tests: Test if the instrument is exogenous to the covariates.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data with pre-treatment outcome</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>X1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>Z_exo <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>) <span class="co"># Exogenous</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>Y_pre <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="sc">+</span> <span class="fl">0.4</span> <span class="sc">*</span> X1 <span class="sc">+</span> <span class="fu">rnorm</span>(n) <span class="co"># Pre-treatment outcome, not affected by Z</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Placebo test: Regress pre-treatment Y on Z</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">lm</span>(Y_pre <span class="sc">~</span> Z_exo <span class="sc">+</span> X1))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Coefficient on Z should be insignificant</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Code: Balance on Observables</p>
+<p>Regress <span class="math inline">\(Z\)</span> on covariates <span class="math inline">\(X\)</span>. Significant correlations suggest <span class="math inline">\(Z\)</span> is not exogenous.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Balance check</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">lm</span>(Z_exo <span class="sc">~</span> X1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="can-i-still-use-iv-analysis-if-i-expect-to-see-heterogenious-treatment-effects" class="level3">
+<h3 class="anchored" data-anchor-id="can-i-still-use-iv-analysis-if-i-expect-to-see-heterogenious-treatment-effects">Can I still use IV analysis if I expect to see heterogenious treatment effects?</h3>
+<p>Yes. If treatment effects vary across individuals and the monotonicity assumption holds, IV identifies the Local Average Treatment Effect (LATE) — the average treatment effect for compliers. This is a well-defined causal parameter, though it applies only to the subpopulation whose treatment status is affected by the instrument.</p>
+</section>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<ul>
+<li>Andrews, I., Stock, J. H., &amp; Sun, L. (2019). Weak Instruments in Instrumental Variables Regression: Theory and Practice. Annual Review of Economics.</li>
+<li>Angrist, J. D. (1990). Lifetime Earnings and the Vietnam Era Draft Lottery. American Economic Review.</li>
+<li>Keane, M., &amp; Neal, T. (2023). Instrument strength in IV estimation and inference: A guide to theory and practice. Journal of Econometrics.</li>
+<li>Lee, D. S., McCrary, J., Moreira, M. J., &amp; Porter, J. (2022). Valid t-ratio Inference for IV. American Economic Review.</li>
+<li>Mellon, J. (2024). Rain, Rain, Go Away: 195 Potential Exclusion-Restriction Violations for Studies Using Weather as an Instrumental Variable. American Journal of Political Science.</li>
+<li>Staiger, D., &amp; Stock, J. H. (1997). Instrumental Variables Regression with Weak Instruments. Econometrica.</li>
+</ul>
+</section>
+<section id="appendix" class="level1">
+<h1>Appendix</h1>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -4,23 +4,23 @@
 
 {% block meta_description %}Book a free one-on-one statistical consultation with a Yale StatLab consultant. Available to all Yale students, faculty, and staff.{% endblock %}
 
-{% block content %}
-<div class="container">
-
-  <header class="page-header">
-    <h1 class="page-header__title">Statistical Consultations</h1>
-    <p class="page-header__lead">
+{# ---- Photo hero, mirroring the homepage structure ---- #}
+{% block hero %}
+<section class="hero hero--page hero--consult" aria-label="Statistical consultations">
+  <div class="container">
+    <p class="hero__eyebrow">Yale StatLab</p>
+    <h1 class="hero__title">Statistical Consultations</h1>
+    <p class="hero__tagline">
       Free one-on-one sessions for Yale students, faculty, and staff —
       at any stage of your research.
     </p>
-  </header>
+  </div>
+</section>
+{% endblock %}
 
-  <!-- ---- Photo ---- -->
-  <figure class="consult-photo">
-    <img src="/assets/statlab-photos/2025_12_05 Yale DISS CGS_Lavitt_58-Web High Quality.jpg"
-         alt="A StatLab consultation session at Yale"
-         loading="lazy">
-  </figure>
+
+{% block content %}
+<div class="container">
 
   <!-- ---- What to expect ---- -->
   <div class="consult-body">
@@ -49,14 +49,25 @@
           and the statistical methods they work with.
         </li>
         <li>
-          <strong>Request a session</strong> — email the consultant directly or reach
-          us at <a href="mailto:statlab@yale.edu">statlab@yale.edu</a> to schedule a time.
+          <strong>Schedule a session</strong> — book directly below, or reach
+          us at <a href="mailto:statlab@yale.edu">statlab@yale.edu</a> with questions.
         </li>
         <li>
           <strong>Come prepared</strong> — bring a brief description of your project,
           any data or code you're working with, and your specific question if you have one.
         </li>
       </ol>
+
+      <div class="book-buttons">
+        <a href="https://schedule.yale.edu/appointments/statlab-consult#s-lc-public-pt"
+           class="btn btn--primary" target="_blank" rel="noopener noreferrer">
+          Book In-Person
+        </a>
+        <a href="https://schedule.yale.edu/appointments/statlab-consult-virtual#s-lc-public-pt"
+           class="btn btn--secondary" target="_blank" rel="noopener noreferrer">
+          Book Virtual
+        </a>
+      </div>
     </section>
 
     <!-- ---- Who can use StatLab ---- -->
@@ -72,7 +83,11 @@
 
     <!-- ---- CTA ---- -->
     <div class="consult-cta">
-      <a href="mailto:statlab@yale.edu" class="btn-primary">Email us to get started &rarr;</a>
+      <p class="consult-cta__note">
+        Not sure where to start? Send us a note and we'll match you
+        with the right consultant.
+      </p>
+      <a href="mailto:statlab@yale.edu" class="btn btn--primary">Email statlab@yale.edu &rarr;</a>
     </div>
 
   </div><!-- /.consult-body -->
@@ -83,51 +98,21 @@
 
 {% block extra_head %}
 <style>
-  /* ---- Page header ---- */
-  .page-header {
-    padding-block: 2.5rem 2rem;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 2.5rem;
+  /* ---- Hero photo (overlay keeps white text readable) ---- */
+  .hero--consult {
+    background-image:
+      linear-gradient(rgba(0, 28, 64, 0.84), rgba(0, 45, 92, 0.80)),
+      url('/assets/statlab-photos/2025_12_05 Yale DISS CGS_Lavitt_58-Web High Quality.jpg');
   }
 
-  .page-header__title {
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
-    color: var(--yale-blue);
-    margin-bottom: 0.5rem;
-  }
-
-  .page-header__lead {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    max-width: 580px;
-    line-height: 1.65;
-  }
-
-  /* ---- Full-width photo ---- */
-  .consult-photo {
-    margin: 0 0 2.5rem;
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  .consult-photo img {
-    width: 100%;
-    max-height: 420px;
-    object-fit: cover;
-    display: block;
-  }
-
-  /* ---- Body sections ---- */
-  .consult-body {
-    max-width: 720px;
-  }
-
+  /* ---- Body sections — full container width, matching the hero ---- */
   .consult-section {
-    margin-bottom: 2.5rem;
+    margin-bottom: 2.75rem;
   }
 
   .consult-section h2 {
-    font-size: 1.3rem;
+    font-size: 1.55rem;
+    font-weight: 400;
     color: var(--yale-blue);
     margin-bottom: 0.75rem;
   }
@@ -142,19 +127,49 @@
     line-height: 1.75;
   }
 
-  /* ---- Numbered steps ---- */
+  /* ---- Numbered steps — serif numerals in quiet circles ---- */
   .book-steps {
-    padding-left: 1.25rem;
+    list-style: none;
+    counter-reset: step;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
+    gap: 1.35rem;
+    margin-top: 1.25rem;
   }
 
   .book-steps li {
+    counter-increment: step;
+    position: relative;
+    padding-left: 3.25rem;
     font-size: 1rem;
     color: var(--text);
     line-height: 1.7;
-    padding-left: 0.25rem;
+  }
+
+  .book-steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0.05em;
+    width: 2.1rem;
+    height: 2.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 53, 107, 0.4);
+    border-radius: 50%;
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    color: var(--yale-blue);
+  }
+
+  /* ---- Booking buttons ---- */
+  .book-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
   }
 
   /* ---- CTA ---- */
@@ -164,22 +179,9 @@
     border-top: 1px solid var(--border);
   }
 
-  .btn-primary {
-    display: inline-block;
-    padding: 0.65rem 1.5rem;
-    background: var(--yale-blue);
-    color: var(--white);
-    text-decoration: none;
-    border-radius: var(--radius);
-    font-size: 0.95rem;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    transition: background var(--ease);
-  }
-
-  .btn-primary:hover {
-    background: var(--yale-blue-dark);
-    color: var(--white);
+  .consult-cta__note {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
   }
 </style>
 {% endblock %}

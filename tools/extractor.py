@@ -83,6 +83,9 @@ class ExtractedGuide:
     stylesheets: list[Asset]
     images: list[Asset]          # images referenced in <head> (rare) + <main>
 
+    # Defaulted fields must come last in a dataclass.
+    toc_html: Optional[str] = None   # inner HTML of nav#TOC when toc: true
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -226,6 +229,11 @@ def _remove_quarto_chrome(main: Tag) -> None:
         for el in main.find_all(True, attrs=selector):
             el.decompose()
 
+    # A body-located TOC (toc-location: body) would duplicate the one the
+    # template renders from .toc_html; it is captured separately in extract().
+    for nav in main.find_all("nav", id="TOC"):
+        nav.decompose()
+
     # The title block's h1 is wrapped in a div.quarto-title-block alongside
     # the now-removed dropdown button; unwrap it so the h1 stands alone.
     for wrapper in main.find_all("div", class_="quarto-title-block"):
@@ -326,6 +334,13 @@ def extract(html_path: str | Path) -> ExtractedGuide:
 
     meta = _extract_metadata(soup)
     scripts, stylesheets, _ = _extract_assets(soup)
+
+    # Capture the TOC (rendered when the guide sets toc: true) before main
+    # extraction — Quarto places it in a sidebar outside <main>, or inside
+    # it with toc-location: body, where _remove_quarto_chrome drops it.
+    toc = soup.find("nav", id="TOC")
+    toc_html = toc.decode_contents().strip() if toc else None
+
     main_html = _extract_main(soup)
     images = _extract_images_from_main(main_html)
 
@@ -340,6 +355,7 @@ def extract(html_path: str | Path) -> ExtractedGuide:
         scripts=scripts,
         stylesheets=stylesheets,
         images=images,
+        toc_html=toc_html,
     )
 
 

@@ -26,7 +26,8 @@
       border-bottom: 1px solid var(--border);
     }
     .guide-header__title {
-      font-size: clamp(2rem, 4.5vw, 2.8rem);
+      font-size: clamp(2.1rem, 4.5vw, 3rem);
+      font-weight: 400;
       color: var(--yale-blue);
       margin-bottom: 0.75rem;
       line-height: 1.2;
@@ -56,7 +57,7 @@
       margin-top: 1rem;
       padding: 1rem 1.25rem;
       background: var(--bg-subtle);
-      border-left: 3px solid var(--gold);
+      border-left: 3px solid var(--accent);
       border-radius: var(--radius);
     }
     .guide-header__abstract p:last-child { margin-bottom: 0; }
@@ -76,6 +77,66 @@
     }
 
     .guide-article { max-width: 960px; margin-inline: auto; }
+
+    /* ---- Layout with table of contents ----
+       Single column by default; the TOC becomes a sticky right rail on
+       wide viewports. The article widens so the content column keeps
+       its 960px measure. */
+    .guide-toc { display: none; }
+    @media (min-width: 1200px) {
+      .guide-article:has(.guide-toc) { max-width: 1240px; }
+      .guide-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 960px) 240px;
+        gap: 2.5rem;
+        align-items: start;
+      }
+      .guide-toc {
+        display: block;
+        position: sticky;
+        top: calc(var(--nav-height) + 1.5rem);
+        max-height: calc(100vh - var(--nav-height) - 3rem);
+        overflow-y: auto;
+        font-size: 0.85rem;
+        padding-left: 1rem;
+        border-left: 1px solid var(--border);
+      }
+    }
+    .guide-toc #toc-title {
+      font-family: var(--font-serif);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 0.6rem;
+      border: 0;
+      padding: 0;
+    }
+    .guide-toc ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .guide-toc ul ul { padding-left: 0.9rem; }
+    .guide-toc li { margin: 0; }
+    .guide-toc a {
+      display: block;
+      padding: 0.22rem 0;
+      color: var(--text-muted);
+      text-decoration: none;
+      line-height: 1.4;
+      border-left: 2px solid transparent;
+      margin-left: -1rem;
+      padding-left: calc(1rem - 2px);
+      transition: color var(--ease), border-color var(--ease);
+    }
+    .guide-toc a:hover { color: var(--yale-blue); }
+    .guide-toc a.is-active {
+      color: var(--yale-blue);
+      font-weight: 600;
+      border-left-color: var(--yale-blue);
+    }
 
     /* Hide the Quarto-rendered title block; our own header above replaces it. */
     .guide-content > header#title-block-header { display: none; }
@@ -107,7 +168,7 @@
     .guide-content a { color: var(--yale-mid); }
     .guide-content a:hover { color: var(--yale-blue); }
     .guide-content blockquote {
-      border-left: 3px solid var(--gold);
+      border-left: 3px solid var(--accent);
       margin: 1.5rem 0;
       padding: 0.4rem 1rem;
       color: var(--text-muted);
@@ -462,9 +523,20 @@
       {% endif %}
     </header>
 
+    {% if guide.toc_html %}
+    <div class="guide-layout">
+      <div class="guide-content">
+        {{ guide.main_html | safe }}
+      </div>
+      <aside class="guide-toc" aria-label="Table of contents">
+        <nav>{{ guide.toc_html | safe }}</nav>
+      </aside>
+    </div>
+    {% else %}
     <div class="guide-content">
       {{ guide.main_html | safe }}
     </div>
+    {% endif %}
 
   </article>
 </div>
@@ -495,6 +567,7 @@
          4. Collapsible callouts
          5. Mermaid diagrams (loaded on demand when present)
          6. Code copy buttons
+         7. TOC scrollspy
     ============================================================ */
 
     /* ---- 1. MathJax: load from CDN only if the guide has math and
@@ -755,6 +828,36 @@
       s.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
       s.onload = renderLeftovers;
       document.head.appendChild(s);
+    })();
+
+    /* ---- 7. TOC scrollspy: highlight the section currently in view. ---- */
+    (function () {
+      var toc = document.querySelector('.guide-toc');
+      if (!toc) return;
+      var links = toc.querySelectorAll('a[href^="#"]');
+      if (!links.length) return;
+      var targets = [];
+      links.forEach(function (a) {
+        var el = document.getElementById(decodeURIComponent(a.hash.slice(1)));
+        if (el) targets.push([el, a]);
+      });
+      if (!targets.length) return;
+      var ticking = false;
+      function highlight() {
+        ticking = false;
+        var y = window.scrollY + 130;
+        var current = targets[0][1];
+        targets.forEach(function (t) {
+          if (t[0].offsetTop <= y) current = t[1];
+        });
+        links.forEach(function (a) {
+          a.classList.toggle('is-active', a === current);
+        });
+      }
+      document.addEventListener('scroll', function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(highlight); }
+      }, { passive: true });
+      highlight();
     })();
 
     /* ---- 6. Code copy buttons (replaces clipboard.js binding). ---- */

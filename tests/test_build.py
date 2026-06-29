@@ -207,17 +207,22 @@ def test_cli_dry_run_exits_zero(tree, capsys):
     assert "would publish: anova" in capsys.readouterr().out
 
 
-def test_repo_exclusion_file_matches_upstream_catalog():
-    """The committed guides.exclude must stay in sync with the upstream repo.
+def test_repo_exclusion_file_matches_main_catalog():
+    """Every guides.exclude entry must be a real guide on the upstream main branch.
 
-    Local research-guides/ is NOT the reference — guides excluded upstream
-    never get ported here, so their entries legitimately match no local
-    directory. The upstream catalog is authoritative.
+    Selection now comes from main (read via git), so main — not local
+    research-guides/ — is the authoritative catalog for the exclusion list.
     """
-    from tools.port_guides import DEFAULT_UPSTREAM, upstream_slugs
+    from tools.port_guides import (
+        DEFAULT_REF,
+        DEFAULT_UPSTREAM,
+        catalog,
+        is_git_repo,
+        ref_exists,
+    )
 
-    if not DEFAULT_UPSTREAM.is_dir():
-        pytest.skip("upstream ResearchGuides repo not present on this machine")
-    catalog = set(upstream_slugs(DEFAULT_UPSTREAM))
+    if not is_git_repo(DEFAULT_UPSTREAM) or not ref_exists(DEFAULT_UPSTREAM, DEFAULT_REF):
+        pytest.skip("upstream ResearchGuides repo / main ref not present on this machine")
+    cat = set(catalog(DEFAULT_UPSTREAM, DEFAULT_REF))
     excluded = load_exclusions(DEFAULT_EXCLUDE_FILE)
-    assert sorted(excluded - catalog) == []
+    assert sorted(excluded - cat) == []

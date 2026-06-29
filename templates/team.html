@@ -7,30 +7,22 @@
 
 {% block extra_head %}
 <style>
-  .team-header {
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-  .team-header__title {
-    font-size: clamp(2rem, 4.5vw, 2.8rem);
-    color: var(--yale-blue);
-    margin-bottom: 0.75rem;
-  }
-  .team-header__intro {
-    font-size: 1.05rem;
-    color: var(--text-muted);
-    max-width: 680px;
-    line-height: 1.7;
-  }
-
   .team-section-title {
     font-family: var(--font-serif);
-    font-size: 1.4rem;
+    font-size: 1.55rem;
+    font-weight: 400;
     color: var(--yale-blue);
     margin-bottom: 1.5rem;
-    padding-bottom: 0.4rem;
+    padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--border);
+  }
+
+  .team-note {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    max-width: 640px;
+    margin-bottom: 1.5rem;
+    line-height: 1.65;
   }
 
   /* ---- Consultant cards ---- */
@@ -44,16 +36,18 @@
   .consultant-card {
     display: flex;
     flex-direction: column;
+    background: var(--white);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-lg);
     overflow: hidden;
+    box-shadow: var(--shadow-sm);
     transition: box-shadow var(--ease), border-color var(--ease);
     text-decoration: none;
     color: inherit;
   }
   .consultant-card:hover {
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
-    border-color: var(--yale-mid);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(0, 53, 107, 0.28);
   }
 
   .consultant-card__avatar {
@@ -96,9 +90,11 @@
     color: var(--yale-blue);
   }
   .consultant-card__role {
-    font-size: 0.85rem;
+    font-size: 0.74rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     color: var(--text-muted);
-    letter-spacing: 0.02em;
   }
   .consultant-card__bio {
     font-size: 0.9rem;
@@ -106,9 +102,13 @@
     line-height: 1.6;
     margin-top: 0.4rem;
   }
-  .consultant-card__guides {
+  .consultant-card__tools {
     margin-top: auto;
-    padding-top: 0.75rem;
+    padding-top: 0.85rem;
+  }
+
+  .consultant-card__guides {
+    padding-top: 0.6rem;
     font-size: 0.8rem;
     color: var(--text-muted);
   }
@@ -117,21 +117,18 @@
     font-weight: 600;
   }
 
-  /* ---- Former consultants ---- */
+  /* ---- Former consultants — quiet hairline rows, not boxes ---- */
   .former-list {
     list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
     margin-bottom: 2.5rem;
+    border-top: 1px solid var(--border);
   }
   .former-item {
     display: flex;
     align-items: baseline;
     gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+    padding: 0.85rem 0.25rem;
+    border-bottom: 1px solid var(--border);
     font-size: 0.95rem;
   }
   .former-item__name {
@@ -172,9 +169,10 @@
 
 {% block content %}
 <div class="container">
-  <header class="team-header">
-    <h1 class="team-header__title">Our Team</h1>
-    <p class="team-header__intro">
+  <header class="page-header">
+    <span class="page-header__eyebrow">Yale StatLab</span>
+    <h1 class="page-header__title">Our Team</h1>
+    <p class="page-header__lead">
       Yale StatLab's consultants are graduate students and researchers across Yale's departments
       who provide free statistical support to the Yale community. They author our research guides
       and meet one-on-one with researchers at all levels.
@@ -205,6 +203,16 @@
             {% if display_bio %}
               <p class="consultant-card__bio">{{ display_bio | truncate(130, True) }}</p>
             {% endif %}
+            {% if c.coding_languages_and_tools %}
+              <ul class="chip-list consultant-card__tools" role="list">
+                {% for tool in c.coding_languages_and_tools[:4] %}
+                  <li class="chip chip--accent">{{ tool }}</li>
+                {% endfor %}
+                {% if c.coding_languages_and_tools | length > 4 %}
+                  <li class="chip">+{{ c.coding_languages_and_tools | length - 4 }}</li>
+                {% endif %}
+              </ul>
+            {% endif %}
             {% if c.guides %}
               <p class="consultant-card__guides">
                 <strong>{{ c.guides | length }}</strong>
@@ -221,7 +229,7 @@
 
   {# ---- Former consultants ---- #}
   <h2 class="team-section-title">Former Consultants</h2>
-  <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem;">
+  <p class="team-note">
     We are grateful to the consultants below who contributed guides and research support
     while at Yale StatLab.
   </p>
