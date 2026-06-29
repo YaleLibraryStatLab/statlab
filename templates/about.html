@@ -65,7 +65,7 @@
       alongside a team of advanced PhD student consultants drawn from departments across
       the university.
     </p>
-    <a href="/about/team" class="btn btn--primary">View the full team &rarr;</a>
+    <a href="{{ url_for('team') }}" class="btn btn--primary">View the full team &rarr;</a>
   </section>
 
 </div>
@@ -78,7 +78,7 @@
   .hero--about {
     background-image:
       linear-gradient(rgba(0, 28, 64, 0.84), rgba(0, 45, 92, 0.80)),
-      url('/assets/statlab-photos/2025_12_05 Yale DH Lab_Lavitt_32-Web High Quality.jpg');
+      url("{{ url_for('serve_statlab_photo', filename='2025_12_05 Yale DH Lab_Lavitt_32-Web High Quality.jpg') }}");
   }
 
   /* ---- Body sections — full container width, matching the hero ---- */

@@ -6,7 +6,7 @@ from dataclasses import replace
 from datetime import datetime
 from pathlib import Path
 
-from flask import Flask, abort, redirect, render_template, send_from_directory
+from flask import Flask, abort, redirect, render_template, send_from_directory, url_for
 
 from tools.extractor import extract
 
@@ -140,6 +140,18 @@ def friendly_date(value):
 
 ASSETS_DIR = Path(__file__).parent / "assets"
 
+# The Yale 2024 typeface is proprietary and must not be published. Its .otf
+# files live in assets/yale-font/ (gitignored) and are present only in local
+# dev; the public/CI build ships without them. Templates gate the @font-face
+# on this flag so the font is referenced only when it is actually served —
+# otherwise --font-serif falls back to the free EB Garamond / Georgia stack.
+HAS_YALE_FONT = any((ASSETS_DIR / "yale-font").glob("*.otf"))
+
+
+@app.context_processor
+def inject_has_yale_font():
+    return {"has_yale_font": HAS_YALE_FONT}
+
 
 @app.route("/assets/yale-font/<filename>")
 def serve_font(filename):
@@ -193,7 +205,7 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/research-guides")
+@app.route("/research-guides/")
 def research_guides():
     return render_template(
         "research_guides.html", guides=_enrich_guides(list_available_guides())
@@ -212,7 +224,7 @@ def guide_thumbnail(slug):
     if img is None:
         abort(404)
     if img.is_local:
-        return redirect(f"/guides/{slug}/{img.src}")
+        return redirect(url_for("guide_asset", slug=slug, filename=img.src))
     header, _, b64 = img.src.partition(",")
     mimetype = header.removeprefix("data:").split(";", 1)[0]
     try:
@@ -228,7 +240,7 @@ def guide_thumbnail(slug):
 def guide_no_slash(slug):
     # Force trailing slash so the browser resolves relative asset paths
     # (e.g. "mixed-effects-models_files/...") against the guide directory.
-    return redirect(f"/guides/{slug}/", code=301)
+    return redirect(url_for("guide_index", slug=slug), code=301)
 
 
 @app.route("/guides/<slug>/")
@@ -260,22 +272,22 @@ def guide_asset(slug, filename):
     return send_from_directory(guide_dir, filename)
 
 
-@app.route("/about")
+@app.route("/about/")
 def about():
     return render_template("about.html")
 
 
-@app.route("/consultations")
+@app.route("/consultations/")
 def consultations():
     return render_template("consultations.html")
 
 
-@app.route("/workshops")
+@app.route("/workshops/")
 def workshops():
     return render_template("workshops.html")
 
 
-@app.route("/about/team")
+@app.route("/about/team/")
 def team():
     consultants = load_consultants()
     current = [c for c in consultants if c.get("status") == "current"]
@@ -283,7 +295,7 @@ def team():
     return render_template("team.html", current=current, former=former)
 
 
-@app.route("/consultants/<slug>")
+@app.route("/consultants/<slug>/")
 def consultant_profile(slug):
     consultants = load_consultants()
     consultant = next((c for c in consultants if c["slug"] == slug), None)

@@ -26,9 +26,9 @@
     <h2 id="schedule-heading" class="section-title">Upcoming Schedule</h2>
     <p>
       The workshop schedule for the upcoming term is being finalized.
-      In the meantime, our <a href="/research-guides">research guides</a> cover
+      In the meantime, our <a href="{{ url_for('research_guides') }}">research guides</a> cover
       many of the same methods with worked examples you can follow at your own pace —
-      or <a href="/consultations">book a consultation</a> for one-on-one help.
+      or <a href="{{ url_for('consultations') }}">book a consultation</a> for one-on-one help.
     </p>
     <p>
       Questions about workshops, or a topic you'd like us to teach?
@@ -47,7 +47,7 @@
   .hero--workshops {
     background-image:
       linear-gradient(rgba(0, 28, 64, 0.84), rgba(0, 45, 92, 0.80)),
-      url('/assets/statlab-photos/2025_12_05 Yale DISS CGS_Lavitt_42-Web High Quality.jpg');
+      url("{{ url_for('serve_statlab_photo', filename='2025_12_05 Yale DISS CGS_Lavitt_42-Web High Quality.jpg') }}");
   }
 
   .workshops-notice p {

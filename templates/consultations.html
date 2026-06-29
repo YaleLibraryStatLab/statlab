@@ -45,7 +45,7 @@
       <ol class="book-steps">
         <li>
           <strong>Browse consultants</strong> — visit the
-          <a href="/about/team">team page</a> to see each consultant's expertise
+          <a href="{{ url_for('team') }}">team page</a> to see each consultant's expertise
           and the statistical methods they work with.
         </li>
         <li>
@@ -102,7 +102,7 @@
   .hero--consult {
     background-image:
       linear-gradient(rgba(0, 28, 64, 0.84), rgba(0, 45, 92, 0.80)),
-      url('/assets/statlab-photos/2025_12_05 Yale DISS CGS_Lavitt_58-Web High Quality.jpg');
+      url("{{ url_for('serve_statlab_photo', filename='2025_12_05 Yale DISS CGS_Lavitt_58-Web High Quality.jpg') }}");
   }
 
   /* ---- Body sections — full container width, matching the hero ---- */

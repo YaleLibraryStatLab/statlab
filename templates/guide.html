@@ -498,7 +498,7 @@
             <strong>By</strong>
             {% for a in guide.authors -%}
               {%- set profile = consultant_map.get(a.name | lower) -%}
-              {%- if profile %}<a href="/consultants/{{ profile.slug }}">{{ a.name }}</a>
+              {%- if profile %}<a href="{{ url_for('consultant_profile', slug=profile.slug) }}">{{ a.name }}</a>
               {%- elif a.url %}<a href="{{ a.url }}" target="_blank" rel="noopener noreferrer">{{ a.name }}</a>
               {%- else %}{{ a.name }}{% endif %}
               {%- if a.affiliation %} <span class="guide-header__affiliation">({{ a.affiliation }})</span>{% endif %}

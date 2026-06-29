@@ -18,8 +18,8 @@
       Free statistical consulting and research support
       for the Yale community — from study design to final analysis.
     </p>
-    <a href="/consultations" class="hero__cta">Book a Consultation</a>
-    <a href="/research-guides" class="hero__secondary">Browse Research Guides &rarr;</a>
+    <a href="{{ url_for('consultations') }}" class="hero__cta">Book a Consultation</a>
+    <a href="{{ url_for('research_guides') }}" class="hero__secondary">Browse Research Guides &rarr;</a>
   </div>
 </section>
 {% endblock %}
@@ -55,7 +55,7 @@
           One-on-one sessions with a statistical consultant.
           Bring a dataset, a design question, or a method you're unsure about.
         </p>
-        <a href="/consultations" class="card__link">Schedule a session &rarr;</a>
+        <a href="{{ url_for('consultations') }}" class="card__link">Schedule a session &rarr;</a>
       </article>
 
       <article class="card">
@@ -70,7 +70,7 @@
           Practical guides covering regression, mixed models, causal inference,
           and more — with code examples in R, Python, and Stata.
         </p>
-        <a href="/research-guides" class="card__link">Browse guides &rarr;</a>
+        <a href="{{ url_for('research_guides') }}" class="card__link">Browse guides &rarr;</a>
       </article>
 
       <article class="card">
@@ -85,7 +85,7 @@
           Hands-on workshops on statistical software and methods,
           open to all Yale affiliates throughout the academic year.
         </p>
-        <a href="/workshops" class="card__link">See upcoming workshops &rarr;</a>
+        <a href="{{ url_for('workshops') }}" class="card__link">See upcoming workshops &rarr;</a>
       </article>
 
     </div>
@@ -101,7 +101,7 @@
         Find the right person for your project.
       </p>
     </div>
-    <a href="/about/team" class="btn btn--inverse">Meet the team &rarr;</a>
+    <a href="{{ url_for('team') }}" class="btn btn--inverse">Meet the team &rarr;</a>
   </section>
 
 </div><!-- /.container -->
@@ -120,7 +120,7 @@
   .hero--photo {
     background-image:
       linear-gradient(rgba(0, 28, 64, 0.84), rgba(0, 45, 92, 0.80)),
-      url('/assets/statlab-photos/2025_12_05 Yale DH Lab_Lavitt_01-Web High Quality.jpg');
+      url("{{ url_for('serve_statlab_photo', filename='2025_12_05 Yale DH Lab_Lavitt_01-Web High Quality.jpg') }}");
     background-size: cover;
     background-position: center 35%;
   }

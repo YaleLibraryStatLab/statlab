@@ -188,10 +188,10 @@
         {# Initials avatar: first letter of first name + first letter of last name #}
         {%- set parts = c.name.split() -%}
         {%- set initials = (parts[0][0] if parts else '') + (parts[-1][0] if parts | length > 1 else '') -%}
-        <a href="/consultants/{{ c.slug }}" class="consultant-card">
+        <a href="{{ url_for('consultant_profile', slug=c.slug) }}" class="consultant-card">
           <div class="consultant-card__avatar">
             {% if c.photo %}
-              <img src="/assets/consultant-photos/{{ c.photo }}" alt="{{ c.name }}">
+              <img src="{{ url_for('serve_consultant_photo', filename=c.photo) }}" alt="{{ c.name }}">
             {% else %}
               {{ initials | upper }}
             {% endif %}
@@ -238,7 +238,7 @@
     <ul class="former-list" role="list">
       {% for c in former %}
         <li class="former-item">
-          <a href="/consultants/{{ c.slug }}" class="former-item__name">{{ c.name }}</a>
+          <a href="{{ url_for('consultant_profile', slug=c.slug) }}" class="former-item__name">{{ c.name }}</a>
           <span class="former-item__role">{{ c.role }}</span>
           {% if c.guides %}
             <span class="former-item__guides">{{ c.guides | length }} {{ 'guide' if c.guides | length == 1 else 'guides' }}</span>

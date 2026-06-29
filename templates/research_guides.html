@@ -25,7 +25,7 @@
 
             <div class="guide-card__figure" aria-hidden="true">
               {% if g.has_thumbnail %}
-                <img src="/guides/{{ g.slug }}/thumbnail"
+                <img src="{{ url_for('guide_thumbnail', slug=g.slug) }}"
                      alt="" loading="lazy">
               {% else %}
                 {# Placeholder for guides without figures #}

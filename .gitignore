@@ -1,10 +1,17 @@
 /.quarto/
 
-# Assets — fonts, photos, and bios are not tracked publicly
-/assets/
+# Generated static site — Frozen-Flask output, rebuilt in CI for Pages
+/docs/
+
+# Proprietary Yale typeface — must never be published (see app.py HAS_YALE_FONT).
+# The rest of assets/ (photos, logo, bios) is tracked and ships publicly.
+/assets/yale-font/
 
 # Python virtualenv and caches
 /.venv/
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# macOS
+.DS_Store

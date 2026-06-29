@@ -1,0 +1,66 @@
+# D-2 — build the static site with Frozen-Flask and publish it to GitHub Pages.
+#
+# The freeze reads what is committed in the repo (temp/ + guides_manifest.json,
+# assets/, data/consultants.json, templates/). It does NOT run `make port`:
+# porting from the upstream ResearchGuides repo is a local step the author runs
+# before pushing, so no cross-repo token lives in CI.
+#
+# One-time setup: repo Settings -> Pages -> Source = "GitHub Actions".
+# Live URL: https://yalelibrarystatlab.github.io/statlab/
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Least privilege the Pages deploy needs: read the repo, write Pages, mint the
+# OIDC token deploy-pages exchanges for the deployment.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One live deployment at a time; let a newer push cancel an in-flight run.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements-dev.txt
+
+      # Fast gate: if the app or a template is broken, fail before deploying.
+      # (The freeze below renders every page too, but this gives a clearer
+      # failure and is CI-safe — no upstream repo needed.)
+      - run: pytest tests/test_app.py -q
+
+      - name: Freeze the site into docs/
+        # Bake the real Pages path prefix from the repo name (/<repo>/), so a
+        # rename can't silently break every internal link.
+        env:
+          STATLAB_URL_PREFIX: ${{ github.event.repository.name }}
+        run: python tools/freeze.py
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

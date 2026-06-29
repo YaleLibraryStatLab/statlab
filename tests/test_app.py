@@ -16,7 +16,7 @@ def test_index(client):
 
 
 def test_research_guides(client):
-    assert client.get("/research-guides").status_code == 200
+    assert client.get("/research-guides/").status_code == 200
 
 
 def test_guide_page(client):

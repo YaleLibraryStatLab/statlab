@@ -282,7 +282,7 @@
 {% block content %}
 <div class="container">
 
-  <a href="/about/team" class="back-link">
+  <a href="{{ url_for('team') }}" class="back-link">
     &#8592; Our Team
   </a>
 
@@ -293,7 +293,7 @@
   <header class="profile-header">
     <div class="profile-avatar">
       {% if consultant.photo %}
-        <img src="/assets/consultant-photos/{{ consultant.photo }}" alt="{{ consultant.name }}">
+        <img src="{{ url_for('serve_consultant_photo', filename=consultant.photo) }}" alt="{{ consultant.name }}">
       {% else %}
         {{ initials | upper }}
       {% endif %}
@@ -356,10 +356,10 @@
         <ul class="profile-guides" role="list">
           {% for g in guides %}
             <li class="profile-guide-card">
-              <a href="/guides/{{ g.slug }}/" class="profile-guide-card__link">
+              <a href="{{ url_for('guide_index', slug=g.slug) }}" class="profile-guide-card__link">
                 <div class="profile-guide-card__figure" aria-hidden="true">
                   {% if g.has_thumbnail %}
-                    <img src="/guides/{{ g.slug }}/thumbnail" alt="" loading="lazy">
+                    <img src="{{ url_for('guide_thumbnail', slug=g.slug) }}" alt="" loading="lazy">
                   {% else %}
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                          stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">

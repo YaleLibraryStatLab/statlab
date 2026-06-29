@@ -24,37 +24,40 @@
         rel="stylesheet" />
 
   <style>
-    /* ============================================================
-       YALE 2024 TYPEFACE  (served from /assets/yale-font/)
-    ============================================================ */
+    {# Yale 2024 typeface (proprietary). The @font-face below is emitted only
+       when the .otf files are present on disk (local dev); the public build
+       ships without them and --font-serif falls back to EB Garamond / Georgia,
+       so the font is never published. app.py sets has_yale_font. #}
+    {% if has_yale_font %}
     @font-face {
       font-family: 'Yale';
-      src: url('/assets/yale-font/Yale2024-Roman.otf') format('opentype');
+      src: url("{{ url_for('serve_font', filename='Yale2024-Roman.otf') }}") format('opentype');
       font-weight: 400;
       font-style: normal;
       font-display: swap;
     }
     @font-face {
       font-family: 'Yale';
-      src: url('/assets/yale-font/Yale2024-Italic.otf') format('opentype');
+      src: url("{{ url_for('serve_font', filename='Yale2024-Italic.otf') }}") format('opentype');
       font-weight: 400;
       font-style: italic;
       font-display: swap;
     }
     @font-face {
       font-family: 'Yale';
-      src: url('/assets/yale-font/Yale2024-Bold.otf') format('opentype');
+      src: url("{{ url_for('serve_font', filename='Yale2024-Bold.otf') }}") format('opentype');
       font-weight: 700;
       font-style: normal;
       font-display: swap;
     }
     @font-face {
       font-family: 'Yale';
-      src: url('/assets/yale-font/Yale2024-BoldItalic.otf') format('opentype');
+      src: url("{{ url_for('serve_font', filename='Yale2024-BoldItalic.otf') }}") format('opentype');
       font-weight: 700;
       font-style: italic;
       font-display: swap;
     }
+    {% endif %}
 
     /* ============================================================
        DESIGN TOKENS
@@ -790,7 +793,7 @@
          Replace url_for('index') with url_for('main.index') if/when
          the app is refactored to use a Blueprint named 'main'. #}
       <a href="{{ url_for('index') }}" class="nav-brand">
-        <img src="/assets/yale-logo/yale-library-long.png"
+        <img src="{{ url_for('serve_logo', filename='yale-library-long.png') }}"
              alt="Yale Library" class="nav-brand__logo" />
         <span class="nav-brand__name">StatLab</span>
       </a>
@@ -819,32 +822,32 @@
 
         {# About — parent link + dropdown sub-pages #}
         <li class="nav-dropdown">
-          <a href="/about"
+          <a href="{{ url_for('about') }}"
              {% if request.path.startswith('/about') %}class="active" aria-current="page"{% endif %}>
             About
           </a>
           <ul class="dropdown-menu" role="list">
-            <li><a href="/about">About Us</a></li>
-            <li><a href="/about/team">Team</a></li>
+            <li><a href="{{ url_for('about') }}">About Us</a></li>
+            <li><a href="{{ url_for('team') }}">Team</a></li>
           </ul>
         </li>
 
         <li>
-          <a href="/research-guides"
+          <a href="{{ url_for('research_guides') }}"
              {% if request.path.startswith('/research-guides') %}class="active" aria-current="page"{% endif %}>
             Research Guides
           </a>
         </li>
 
         <li>
-          <a href="/workshops"
+          <a href="{{ url_for('workshops') }}"
              {% if request.path.startswith('/workshops') %}class="active" aria-current="page"{% endif %}>
             Workshops
           </a>
         </li>
 
         <li>
-          <a href="/consultations"
+          <a href="{{ url_for('consultations') }}"
              {% if request.path.startswith('/consultations') %}class="active" aria-current="page"{% endif %}>
             Consultations
           </a>
@@ -888,7 +891,7 @@
       <div class="footer-grid">
 
         <div class="footer-brand">
-          <img src="/assets/yale-logo/yale-library-long.png"
+          <img src="{{ url_for('serve_logo', filename='yale-library-long.png') }}"
                alt="Yale Library" class="footer-brand__logo" />
           <p class="footer-brand__blurb">
             StatLab provides free statistical consulting and research
@@ -899,11 +902,11 @@
         <nav aria-label="Footer site links">
           <h2 class="footer-heading">Explore</h2>
           <ul class="footer-links" role="list">
-            <li><a href="/about">About</a></li>
-            <li><a href="/about/team">Our Team</a></li>
-            <li><a href="/research-guides">Research Guides</a></li>
-            <li><a href="/workshops">Workshops</a></li>
-            <li><a href="/consultations">Consultations</a></li>
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            <li><a href="{{ url_for('team') }}">Our Team</a></li>
+            <li><a href="{{ url_for('research_guides') }}">Research Guides</a></li>
+            <li><a href="{{ url_for('workshops') }}">Workshops</a></li>
+            <li><a href="{{ url_for('consultations') }}">Consultations</a></li>
           </ul>
         </nav>
 

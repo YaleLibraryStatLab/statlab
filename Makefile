@@ -24,5 +24,8 @@ build:
 test:
 	$(PYTEST)
 
+# Freeze the current temp/ + manifest into a static site under docs/ for
+# GitHub Pages (served from the /statlab/ prefix). Run `make build` first to
+# refresh temp/ from research-guides/.
 freeze:
-	@echo "make freeze: placeholder — pending D-1 deploy-freeze plan (see ALPHA.md)"
+	$(PYTHON) tools/freeze.py
