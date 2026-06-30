@@ -143,6 +143,12 @@ def serve_font():
 
 
 @freezer.register_generator
+def serve_eb_garamond():
+    for name in _dir_files(ASSETS_DIR / "eb-garamond"):
+        yield {"filename": name}
+
+
+@freezer.register_generator
 def serve_logo():
     for name in _dir_files(ASSETS_DIR / "yale-logo"):
         yield {"filename": name}

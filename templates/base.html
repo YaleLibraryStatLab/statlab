@@ -60,6 +60,42 @@
     {% endif %}
 
     /* ============================================================
+       EB GARAMOND  (OFL, free — self-hosted from /assets/eb-garamond/)
+       The public serif: --font-serif lists it right after 'Yale', so
+       when the proprietary Yale font isn't served (the public build)
+       the site renders in EB Garamond instead of system Georgia. Always
+       emitted; browsers only fetch it when it's the family actually used.
+    ============================================================ */
+    @font-face {
+      font-family: 'EB Garamond';
+      src: url("{{ url_for('serve_eb_garamond', filename='eb-garamond-latin-400-normal.woff2') }}") format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'EB Garamond';
+      src: url("{{ url_for('serve_eb_garamond', filename='eb-garamond-latin-400-italic.woff2') }}") format('woff2');
+      font-weight: 400;
+      font-style: italic;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'EB Garamond';
+      src: url("{{ url_for('serve_eb_garamond', filename='eb-garamond-latin-700-normal.woff2') }}") format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'EB Garamond';
+      src: url("{{ url_for('serve_eb_garamond', filename='eb-garamond-latin-700-italic.woff2') }}") format('woff2');
+      font-weight: 700;
+      font-style: italic;
+      font-display: swap;
+    }
+
+    /* ============================================================
        DESIGN TOKENS
        All color, spacing, and type decisions live here.
        Change these custom properties to retheme the whole site.

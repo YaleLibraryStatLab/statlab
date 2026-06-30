@@ -158,6 +158,12 @@ def serve_font(filename):
     return send_from_directory(ASSETS_DIR / "yale-font", filename)
 
 
+@app.route("/assets/eb-garamond/<filename>")
+def serve_eb_garamond(filename):
+    # EB Garamond (OFL, free) — the public serif webfont; see base.html.
+    return send_from_directory(ASSETS_DIR / "eb-garamond", filename)
+
+
 @app.route("/assets/yale-logo/<filename>")
 def serve_logo(filename):
     return send_from_directory(ASSETS_DIR / "yale-logo", filename)
