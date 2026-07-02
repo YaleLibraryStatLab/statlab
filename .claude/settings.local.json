@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c ' *)",
+      "Bash(python3 -c \"import flask; print\\(flask.__version__\\)\")",
+      "Bash(python3 app.py)",
+      "Bash(curl -s -o /tmp/index_resp.html -w \"HTTP %{http_code}\\\\n\" http://127.0.0.1:5001/)",
+      "Read(//tmp/**)",
+      "Bash(mkdir -p /Users/te272/StatLab/statlab/temp)",
+      "Bash(cp -R /Users/te272/StatLab/statlab/research-guides/mixed-effects-models /Users/te272/StatLab/statlab/temp/)",
+      "Read(//private/tmp/**)",
+      "Bash(curl -s -o /tmp/rg.html -w \"HTTP %{http_code}  bytes %{size_download}\\\\n\" http://127.0.0.1:5001/research-guides)",
+      "Bash(python3 -c ' *)",
+      "Bash(curl -s -o /tmp/g.html -w \"HTTP %{http_code}  bytes %{size_download}\\\\n\" http://127.0.0.1:5001/guides/mixed-effects-models/)",
+      "Bash(/usr/bin/curl -s -o /dev/null -w '%{http_code}  __TRACKED_VAR__\\\\n' http://127.0.0.1:5001/guides/mixed-effects-models/__TRACKED_VAR__)",
+      "Bash(curl -s -o /tmp/g2.html -w \"HTTP %{http_code}  bytes %{size_download}\\\\n\" http://127.0.0.1:5001/guides/mixed-effects-models/)",
+      "Bash(python -c \"import app; print\\('OK'\\)\")"
+    ]
+  }
+}

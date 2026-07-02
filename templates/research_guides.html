@@ -1,0 +1,455 @@
+{% extends "base.html" %}
+
+{% block title %}Research Guides — Yale StatLab{% endblock %}
+
+{% block meta_description %}Practical statistics research guides from Yale StatLab — regression, mixed models, causal inference, and more.{% endblock %}
+
+
+{% block content %}
+<div class="container">
+
+  <header class="page-header">
+    <span class="page-header__eyebrow">Yale StatLab</span>
+    <h1 class="page-header__title">Research Guides</h1>
+    <p class="page-header__lead">
+      Practical, code-forward guides written by StatLab staff. Each guide
+      walks through a method end-to-end with worked examples.
+    </p>
+  </header>
+
+  {% if guides %}
+    <section class="guide-search" aria-labelledby="guide-search-title"
+             role="search" data-guide-search hidden>
+      <div class="guide-search__copy">
+        <h2 class="guide-search__title" id="guide-search-title">Search guides and answers</h2>
+        <p class="guide-search__help" id="guide-search-help">
+          Ask a question or search for a method. Results link directly to the
+          most relevant section of a guide.
+        </p>
+      </div>
+      <pagefind-config bundle-path="{{ request.script_root }}/pagefind/"
+                       base-url="{{ request.script_root }}/"
+                       excerpt-length="28"></pagefind-config>
+      <pagefind-searchbox
+        placeholder="For example: How do I know if my instrument is weak?"
+        debounce="250" max-results="6" show-sub-results hide-shortcut>
+      </pagefind-searchbox>
+    </section>
+
+    {% if topic_options %}
+      {# Hidden until its behavior is attached, so the no-JS page never
+         presents controls that appear clickable but do nothing. #}
+      <section class="guide-browse" aria-labelledby="guide-browse-title"
+               data-guide-filters hidden>
+        <div class="guide-browse__intro">
+          <div>
+            <h2 class="guide-browse__title" id="guide-browse-title">Browse by topic</h2>
+            <p class="guide-browse__help">Choose a topic to narrow the guide collection.</p>
+          </div>
+          <p class="guide-browse__status" id="guide-filter-status"
+             role="status" aria-live="polite" aria-atomic="true"></p>
+        </div>
+
+        <div class="guide-browse__filters" role="group" aria-label="Filter guides by topic">
+          <button class="topic-filter" type="button" data-topic=""
+                  aria-controls="guide-list" aria-pressed="true">All topics</button>
+          {% for topic in topic_options %}
+            <button class="topic-filter" type="button" data-topic="{{ topic.id }}"
+                    aria-controls="guide-list" aria-pressed="false">{{ topic.label }}</button>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    <ul class="guide-grid" id="guide-list" role="list">
+      {% for g in guides %}
+        <li class="guide-card" data-topics="{{ g.topics | join(' ') }}">
+          <a class="guide-card__link" href="{{ url_for('guide_index', slug=g.slug) }}">
+
+            <div class="guide-card__figure" aria-hidden="true">
+              {% if g.has_thumbnail %}
+                <img src="{{ url_for('guide_thumbnail', slug=g.slug) }}"
+                     alt="" loading="lazy">
+              {% else %}
+                {# Placeholder for guides without figures #}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="20" x2="20" y2="20"/>
+                  <line x1="4" y1="20" x2="4" y2="4"/>
+                  <polyline points="7 14 11 9 14 12 19 5"/>
+                </svg>
+              {% endif %}
+            </div>
+
+            <div class="guide-card__body">
+              <h2 class="guide-card__title">{{ g.title }}</h2>
+
+              <p class="guide-card__meta">
+                {%- if g.authors %}{{ g.authors | join(', ') }}{% endif -%}
+                {%- if g.authors and g.date %} &middot; {% endif -%}
+                {%- if g.date %}{{ g.date | friendly_date }}{% endif -%}
+              </p>
+
+              {% if g.topics %}
+                <ul class="guide-card__topics" role="list" aria-label="Topics">
+                  {% for topic_id in g.topics %}
+                    {% if topic_labels.get(topic_id) %}
+                      <li>{{ topic_labels[topic_id] }}</li>
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+              {% endif %}
+
+              {% if g.abstract %}
+                <p class="guide-card__excerpt">
+                  {{ g.abstract | striptags | truncate(150, False) }}
+                </p>
+              {% endif %}
+
+              <span class="guide-card__cta">Read the guide &rarr;</span>
+            </div>
+
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="guide-empty">No guides are available yet.</p>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+
+{% block extra_head %}
+<link rel="stylesheet"
+      href="{{ request.script_root }}/pagefind/pagefind-component-ui.css">
+<style>
+  .guide-search {
+    margin-bottom: 1.25rem;
+    padding: 1.35rem;
+    background: var(--white);
+    border: 1px solid rgba(0, 53, 107, 0.2);
+    border-top: 3px solid var(--yale-blue);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .guide-search[hidden] { display: none !important; }
+
+  .guide-search__copy { margin-bottom: 0.9rem; }
+
+  .guide-search__title {
+    color: var(--yale-blue);
+    font-size: 1.45rem;
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+  }
+
+  .guide-search__help {
+    max-width: 720px;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+  }
+
+  .guide-search pagefind-searchbox {
+    display: block;
+    width: 100%;
+    --pf-text: var(--text);
+    --pf-text-secondary: var(--text-muted);
+    --pf-background: var(--white);
+    --pf-border: var(--border);
+    --pf-border-focus: var(--yale-blue);
+    --pf-border-radius: var(--radius);
+    --pf-font: var(--font-body);
+    --pf-input-height: 48px;
+    --pf-outline-focus: var(--accent);
+    --pf-searchbox-max-width: 760px;
+  }
+
+  .guide-browse {
+    margin-bottom: 2rem;
+    padding: 1.25rem 1.35rem;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+
+  .guide-browse[hidden],
+  .guide-card[hidden] { display: none !important; }
+
+  .guide-browse__intro {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .guide-browse__title {
+    color: var(--yale-blue);
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-bottom: 0.15rem;
+  }
+
+  .guide-browse__help,
+  .guide-browse__status {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+
+  .guide-browse__status {
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .guide-browse__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+
+  .topic-filter {
+    min-height: 44px;
+    padding: 0.45rem 0.85rem;
+    border: 1px solid rgba(0, 53, 107, 0.24);
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--yale-blue);
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: background var(--ease), border-color var(--ease), color var(--ease);
+  }
+
+  .topic-filter:hover {
+    border-color: var(--yale-blue);
+    background: rgba(0, 53, 107, 0.05);
+  }
+
+  .topic-filter[aria-pressed="true"] {
+    background: var(--yale-blue);
+    border-color: var(--yale-blue);
+    color: var(--white);
+  }
+
+  .guide-grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 1.75rem;
+    padding: 0;
+  }
+
+  .guide-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--ease), border-color var(--ease);
+  }
+
+  .guide-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: rgba(0, 53, 107, 0.28);
+  }
+
+  .guide-card__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* Figure thumbnails are statistical plots on white backgrounds, so a
+     subtle backdrop + contain keeps them legible without odd cropping. */
+  .guide-card__figure {
+    height: 185px;
+    background: var(--bg-subtle);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0.75rem;
+  }
+
+  .guide-card__figure img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .guide-card__figure svg {
+    width: 56px;
+    height: 56px;
+    color: var(--yale-mid);
+    opacity: 0.45;
+  }
+
+  .guide-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 1.25rem 1.35rem 1.35rem;
+    flex: 1;
+  }
+
+  .guide-card__title {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--yale-blue);
+    line-height: 1.3;
+  }
+
+  .guide-card__meta {
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  .guide-card__topics {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding: 0;
+    margin: 0.1rem 0 0.25rem;
+  }
+
+  .guide-card__topics li {
+    padding: 0.12rem 0.55rem;
+    border: 1px solid rgba(0, 53, 107, 0.16);
+    border-radius: 999px;
+    background: var(--bg-subtle);
+    color: var(--yale-blue);
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .guide-card__excerpt {
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .guide-card__cta {
+    margin-top: 0.6rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--yale-mid);
+    transition: color var(--ease);
+  }
+
+  .guide-card:hover .guide-card__cta { color: var(--yale-blue); }
+
+  .guide-empty {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  @media (max-width: 640px) {
+    .guide-browse__intro {
+      align-items: start;
+      flex-direction: column;
+    }
+
+    .guide-browse__status { text-align: left; }
+  }
+</style>
+{% endblock %}
+
+
+{% block extra_scripts %}
+{% if guides %}
+<script type="module">
+  import "{{ request.script_root }}/pagefind/pagefind-component-ui.js";
+  await customElements.whenDefined('pagefind-searchbox');
+  var searchRegion = document.querySelector('[data-guide-search]');
+  if (searchRegion) {
+    var searchInput = searchRegion.querySelector('pagefind-searchbox input');
+    if (searchInput) {
+      searchInput.setAttribute('aria-labelledby', 'guide-search-title');
+      searchInput.setAttribute('aria-describedby', 'guide-search-help');
+    }
+    searchRegion.hidden = false;
+  }
+</script>
+{% endif %}
+{% if guides and topic_options %}
+<script>
+  (function () {
+    var region = document.querySelector('[data-guide-filters]');
+    var list = document.getElementById('guide-list');
+    var status = document.getElementById('guide-filter-status');
+    if (!region || !list || !status) return;
+
+    var buttons = Array.from(region.querySelectorAll('[data-topic]'));
+    var cards = Array.from(list.querySelectorAll('[data-topics]'));
+
+    function buttonFor(topic) {
+      return buttons.find(function (button) { return button.dataset.topic === topic; });
+    }
+
+    function applyFilter(topic, updateUrl) {
+      var selected = buttonFor(topic) || buttonFor('');
+      var selectedTopic = selected.dataset.topic;
+      var visible = 0;
+
+      buttons.forEach(function (button) {
+        button.setAttribute('aria-pressed', String(button === selected));
+      });
+
+      cards.forEach(function (card) {
+        var topics = (card.dataset.topics || '').split(/\s+/).filter(Boolean);
+        var show = !selectedTopic || topics.indexOf(selectedTopic) !== -1;
+        card.hidden = !show;
+        if (show) visible += 1;
+      });
+
+      if (selectedTopic) {
+        status.textContent = 'Showing ' + visible + ' of ' + cards.length
+          + ' guides in ' + selected.textContent.trim() + '.';
+      } else {
+        status.textContent = 'Showing all ' + cards.length + ' guides.';
+      }
+
+      if (updateUrl && window.history && window.URLSearchParams) {
+        var url = new URL(window.location.href);
+        if (selectedTopic) url.searchParams.set('topic', selectedTopic);
+        else url.searchParams.delete('topic');
+        window.history.pushState({ topic: selectedTopic }, '', url);
+      }
+    }
+
+    buttons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        applyFilter(button.dataset.topic, true);
+      });
+    });
+
+    window.addEventListener('popstate', function () {
+      var topic = new URL(window.location.href).searchParams.get('topic') || '';
+      applyFilter(topic, false);
+    });
+
+    region.hidden = false;
+    var initial = new URL(window.location.href).searchParams.get('topic') || '';
+    applyFilter(initial, false);
+  }());
+</script>
+{% endif %}
+{% endblock %}

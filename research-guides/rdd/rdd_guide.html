@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jonathan Elkobi">
+
+<title>Regression Discontinuity Design</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="rdd_guide_files/libs/clipboard/clipboard.min.js"></script>
+<script src="rdd_guide_files/libs/quarto-html/quarto.js"></script>
+<script src="rdd_guide_files/libs/quarto-html/popper.min.js"></script>
+<script src="rdd_guide_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="rdd_guide_files/libs/quarto-html/anchor.min.js"></script>
+<link href="rdd_guide_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="rdd_guide_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="rdd_guide_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="rdd_guide_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="rdd_guide_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Regression Discontinuity Design</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jonathan Elkobi </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Regression Discontinuity Design (RDD) is one of the most widely used tools in the causal inference toolkit. It is especially useful when treatment is assigned by a clear rule: units just above a cutoff receive a treatment, while units just below the cutoff do not. When the cutoff is applied consistently, researchers can compare observations very close to the threshold and estimate a causal effect in a non-experimental setting.</p>
+<p>This guide assumes that readers have some background in causal inference and basic regression. In particular, it assumes familiarity with the idea of omitted variable bias, the difference between correlation and causation, and how regression models can be used to estimate relationships between variables. The goal of this guide is to show how RDD builds on those ideas to estimate causal effects when treatment assignment depends on a cutoff.</p>
+<p>RDD is useful for questions where a rule creates a sharp contrast between treated and untreated cases. For example, students may receive a scholarship if their test score is above a threshold, municipalities may receive a grant if their population crosses a cutoff, or a political candidate may win office if their vote share exceeds 50 percent. In each case, observations near the cutoff are likely to be similar to one another, except for whether they received the treatment.</p>
+<p>Consider this running example: <strong>Do mayors with higher education levels improve their city’s economic growth?</strong></p>
+<p>Estimating this causal effect is challenging. Highly educated candidates may be more appealing to voters because they are perceived as more competent, or they may run in cities that are already wealthier and can attract stronger candidates. If we simply compare cities with highly educated mayors to cities without highly educated mayors, our estimate may be biased by these confounding factors.</p>
+<p>Ideally, we would run a randomized experiment: assign a high-education mayor to some cities and a low-education mayor to others. But this is politically impossible. Instead, RDD offers a quasi-experimental approach. In close elections, the winner is often determined by a very small margin. A highly educated candidate who wins with 50.1 percent of the vote is likely to be very similar to one who loses with 49.9 percent. Around this threshold, the election outcome is plausibly “as-if random.”</p>
+<p>RDD uses this logic to estimate the effect of barely crossing the cutoff. In this example, the running variable is the vote share of the highly educated candidate, the cutoff is 50 percent, and the treatment is whether the city elects a highly educated mayor. The key comparison is between cities where the highly educated candidate barely won and cities where the highly educated candidate barely lost.</p>
+<p>RDD is a model-based approach. Rather than simply comparing all treated and untreated cases, we estimate whether there is a discontinuous jump in the outcome at the cutoff. In practice, this usually means fitting regression models on either side of the threshold and estimating the size of the jump exactly at the cutoff. The identifying assumption is that, absent treatment, potential outcomes would have changed smoothly at the threshold. If we observe a sharp break at the cutoff, we attribute that break to the treatment.</p>
+<p>RDD can be applied across many disciplines:</p>
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 30%">
+<col style="width: 23%">
+<col style="width: 17%">
+<col style="width: 19%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Discipline</th>
+<th>Example Question</th>
+<th>Running Variable</th>
+<th>Cutoff</th>
+<th>Treatment</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Political Science</td>
+<td>Do highly educated mayors increase city economic growth?</td>
+<td>Vote share of the highly educated candidate</td>
+<td>50%</td>
+<td>Highly educated candidate wins</td>
+</tr>
+<tr class="even">
+<td>Education</td>
+<td>Do scholarships improve college enrollment?</td>
+<td>Exam score or GPA</td>
+<td>Scholarship eligibility threshold</td>
+<td>Student receives scholarship</td>
+</tr>
+<tr class="odd">
+<td>Public Health</td>
+<td>Do health insurance expansions improve health outcomes?</td>
+<td>Age, income, or risk score</td>
+<td>Eligibility threshold</td>
+<td>Individual receives coverage</td>
+</tr>
+<tr class="even">
+<td>Criminology</td>
+<td>Do harsher sentences reduce reoffending?</td>
+<td>Sentencing score</td>
+<td>Sentencing threshold</td>
+<td>Defendant receives longer sentence</td>
+</tr>
+</tbody>
+</table>
+<p>The strength of RDD is that it can produce credible causal estimates without random assignment. Its limitation is that the estimate is local: it tells us the effect of treatment for cases near the cutoff, not necessarily for all cases. In the mayoral example, RDD estimates the effect of electing a highly educated mayor in very close elections, not the effect of highly educated mayors in all cities.</p>
+<p>This guide introduces the basic intuition, assumptions, estimation strategy, and interpretation of RDD. We will use the mayoral education example throughout to show how researchers move from a substantive causal question to an empirical design.</p>
+</section>
+<section id="theory" class="level1">
+<h1>Theory</h1>
+<p>The core intuition of RDD rests on the <strong>continuity assumption</strong>: in the absence of treatment, the expected outcome would change smoothly across the threshold. Any jump at the cutoff can therefore be attributed to the treatment, provided units just above and below the threshold are comparable.</p>
+<section id="when-to-use-rdd" class="level3">
+<h3 class="anchored" data-anchor-id="when-to-use-rdd">When to Use RDD</h3>
+<p>Use RDD when the assignment rule is threshold-based and units near the cutoff are plausibly similar except for treatment status. That logic works for close elections, exam cutoffs, age thresholds, and policy eligibility rules.</p>
+<p>Do not use RDD if the threshold is arbitrary but unrelated to assignment, if there is strong evidence of sorting around the cutoff, or if the estimand of interest is inherently global rather than local.</p>
+</section>
+<section id="notation" class="level3">
+<h3 class="anchored" data-anchor-id="notation">Notation</h3>
+<p>Let:</p>
+<ul>
+<li><span class="math inline">\(Y_i\)</span>: the observed outcome of interest, such as city GDP growth.</li>
+<li><span class="math inline">\(D_i\)</span>: the treatment indicator, equal to 1 if the high-education candidate wins and 0 otherwise.</li>
+<li><span class="math inline">\(X_i\)</span>: the running variable or forcing variable, such as vote margin.</li>
+<li><span class="math inline">\(c\)</span>: the cutoff, such as 0 in a close election design.</li>
+</ul>
+<section id="potential-outcomes-box" class="level4">
+<h4 class="anchored" data-anchor-id="potential-outcomes-box">Potential Outcomes Box</h4>
+<p>RDD is easiest to understand in potential outcomes notation. Let <span class="math inline">\(Y_i(1)\)</span> be the outcome if unit <span class="math inline">\(i\)</span> is treated and <span class="math inline">\(Y_i(0)\)</span> the outcome if it is not treated. The observed outcome is</p>
+<p><span class="math display">\[ Y_i = D_i Y_i(1) + (1-D_i)Y_i(0). \]</span></p>
+<p>The treatment effect at the cutoff is the difference in expected potential outcomes right above and right below the threshold:</p>
+<p><span class="math display">\[ \tau_{RDD} = \lim_{x \to c^+} E[Y_i(1) - Y_i(0) \mid X_i = x]. \]</span></p>
+<p>For a sharp design, the assignment rule is</p>
+<p><span class="math display">\[ D_i = \begin{cases} 1 &amp; \text{if } X_i \ge c \\ 0 &amp; \text{if } X_i &lt; c \end{cases} \]</span></p>
+<p>The estimand is therefore local: it captures the effect for observations near the threshold, not for all cities or all elections.</p>
+</section>
+</section>
+</section>
+<section id="implementation" class="level1">
+<h1>Implementation</h1>
+<p>To implement this design, we first need to define our sample carefully.</p>
+<p><strong>Caveat</strong>: If we want to estimate the effect of a <em>high-education</em> mayor vs.&nbsp;a <em>low-education</em> mayor, we must restrict our analysis to races where the top two candidates differ in their educational background (one high, one low). If two high-education candidates run against each other, the “treatment” (having a high-education mayor) is constant regardless of who wins, so the margin of victory is irrelevant for this specific identification strategy.</p>
+<p>We will proceed with a full implementation using simulated data for a sharp RDD design.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<section id="data-simulation" class="level2">
+<h2 class="anchored" data-anchor-id="data-simulation">1. Data Simulation</h2>
+<p>First, let’s create a dataset that mimics the election setup. - <code>margin_victory</code>: The vote margin for the high-education candidate (running variable). - <code>high_educ_win</code>: Indicator if margin &gt; 0 (treatment). - <code>gdp_growth</code>: The outcome variable, constructed with a jump at the cutoff.</p>
+<p>Before running any models, it is crucial to visualize the data. We want to check for two things: 1. Is there a clear jump at the cutoff (<span class="math inline">\(c=0\)</span>)? 2. Does the relationship look linear or non-linear away from the cutoff?</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rdrobust)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate victory margin (running variable X) between -100% and 100%</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">margin_victory =</span> <span class="fu">runif</span>(n, <span class="sc">-</span><span class="dv">100</span>, <span class="dv">100</span>))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Define treatment: High Education wins if margin &gt; 0</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">high_educ_win =</span> <span class="fu">ifelse</span>(margin_victory <span class="sc">&gt;=</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>))</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate outcome: GDP Growth (Y)</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Baseline growth + effect of margin (slope) + effect of treatment (jump) + larger noise</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">gdp_growth =</span> <span class="dv">5</span> <span class="sc">+</span> <span class="fl">0.05</span> <span class="sc">*</span> margin_victory <span class="sc">+</span> <span class="fl">2.5</span> <span class="sc">*</span> high_educ_win <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">sd =</span> <span class="fl">2.5</span>),</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Lagged GDP growth (predetermined outcome for placebo test)</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">lagged_gdp_growth =</span> <span class="fl">4.8</span> <span class="sc">+</span> <span class="fl">0.04</span> <span class="sc">*</span> margin_victory <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">sd =</span> <span class="fl">2.3</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the raw data with the cutoff line</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> margin_victory, <span class="at">y =</span> gdp_growth, <span class="at">color =</span> <span class="fu">factor</span>(high_educ_win))) <span class="sc">+</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">"Raw Data: Election Margin vs GDP Growth"</span>,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">"Margin of Victory (%)"</span>,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">"GDP Growth (%)"</span>,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">color =</span> <span class="st">"Treatment"</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="rdd_guide_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The raw scatter plot should show clouds of points. Even with noise, if the effect is strong, you might see a vertical shift at <span class="math inline">\(X=0\)</span>.</p>
+</section>
+<section id="rdd-estimation-and-plotting" class="level2">
+<h2 class="anchored" data-anchor-id="rdd-estimation-and-plotting">2. RDD Estimation and Plotting</h2>
+<p>We use the <code>rdrobust</code> package because it is the modern default in the RD literature. Compared with older hand-tuned polynomial regressions, it gives a local linear estimate, chooses a data-driven bandwidth, and reports robust bias-corrected inference.</p>
+<p>The default triangular kernel is standard because it gives the highest weight to observations closest to the cutoff and downweights observations farther away smoothly rather than dropping them abruptly.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> That is a good compromise between bias and variance in a local design.</p>
+<p>The bias correction matters because local polynomial estimators can be biased in finite samples. <code>rdrobust</code> corrects for that bias and uses the corrected standard errors and confidence intervals, which is why it is preferred over simpler plug-in alternatives.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the RD estimation</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># c=0 specifies the cutoff</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">rdrobust</span>(<span class="at">y =</span> df<span class="sc">$</span>gdp_growth, <span class="at">x =</span> df<span class="sc">$</span>margin_victory, <span class="at">c =</span> <span class="dv">0</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sharp RD estimates using local polynomial regression.
+
+Number of Obs.                  500
+BW type                       mserd
+Kernel                   Triangular
+VCE method                       NN
+
+Number of Obs.                  265          235
+Eff. Number of Obs.              86           64
+Order est. (p)                    1            1
+Order bias  (q)                   2            2
+BW est. (h)                  30.286       30.286
+BW bias (b)                  52.669       52.669
+rho (h/b)                     0.575        0.575
+Unique Obs.                     265          235
+
+=====================================================================
+                   Point    Robust Inference
+                Estimate         z     P&gt;|z|      [ 95% C.I. ]       
+---------------------------------------------------------------------
+     RD Effect     2.069     2.246     0.025     [0.236 , 3.466]     
+=====================================================================</code></pre>
+</div>
+</div>
+<p><strong>Interpretation of Output</strong>: Look for the <code>Coeff</code> under <code>Robust</code>. This is the estimated treatment effect at the cutoff. The robust confidence interval and p-value are based on bias-corrected inference, so they are the numbers to report.</p>
+<p><strong>Visualization with <code>rdplot</code></strong>: <code>rdplot</code> creates a binned scatterplot with separate local fits on each side of the cutoff. It is cleaner than a raw scatter plot and is useful for checking whether the discontinuity is visible in the data before relying on the formal estimate.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Binned scatterplot with fitted regression lines</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rdplot</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> df<span class="sc">$</span>gdp_growth, <span class="at">x =</span> df<span class="sc">$</span>margin_victory, <span class="at">c =</span> <span class="dv">0</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"RDD Plot: Effect of High-Education Mayor"</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y.label =</span> <span class="st">"GDP Growth"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">p =</span> <span class="dv">1</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x.label =</span> <span class="st">"Margin of Victory"</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="rdd_guide_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The vertical distance between where the left line ends (at 0) and the right line starts (at 0) is the estimated treatment effect.</p>
+</section>
+</section>
+<section id="assumptions-check-and-robustness" class="level1">
+<h1>Assumptions Check and Robustness</h1>
+<p>Validity of RDD depends on several checks. The goal is not only to produce a statistically significant estimate, but to show that the estimate is credible under the identifying assumptions of the design.</p>
+<section id="mccrary-density-test-manipulation-check" class="level3">
+<h3 class="anchored" data-anchor-id="mccrary-density-test-manipulation-check">1. McCrary Density Test (Manipulation Check)</h3>
+<p>This test asks whether units sort around the cutoff. In a close-election design, for example, a discontinuity in the density of the vote margin would suggest that the running variable itself is being manipulated rather than assigned quasi-randomly.</p>
+<p>We use <code>rddensity</code>, the modern implementation of the McCrary-style density test. It improves finite-sample performance relative to older approaches and is now the preferred default in applied work.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Testing for manipulation in the density of the running variable</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rddensity)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the density test</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>rdd_test <span class="ot">&lt;-</span> <span class="fu">rddensity</span>(df<span class="sc">$</span>margin_victory, <span class="at">c =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="heaping-in-the-running-variable" class="level4">
+<h4 class="anchored" data-anchor-id="heaping-in-the-running-variable">Heaping in the Running Variable</h4>
+<p>In addition to testing for manipulation at the cutoff, we should visually inspect whether the running variable is <strong>heaped</strong>. Heaping means that many observations appear at round numbers or focal values, such as exactly 0, 5, 10, or 50. This can happen because of rounding, reporting conventions, or strategic behavior.</p>
+<p>Heaping is not always fatal to an RD design. For example, vote margins may be rounded in some datasets. But heaping becomes a concern when it is concentrated near the cutoff or when it suggests that units can precisely manipulate which side of the threshold they fall on. The example below creates artificial heaping in the running variable by rounding some election margins to the nearest 5 percentage points. This makes the problem visually clear: instead of a smooth spread of observations, the data begin to form vertical stripes.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an artificial heaping example based on the same simulated data</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>df_heap <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">margin_victory_heaped =</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">round</span>(margin_victory <span class="sc">/</span> <span class="dv">5</span>) <span class="sc">*</span> <span class="dv">5</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Treatment based on the heaped/recorded running variable</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">high_educ_win_heaped =</span> <span class="fu">ifelse</span>(margin_victory_heaped <span class="sc">&gt;=</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the heaped running variable in the same style as the main RD plot</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    df_heap,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> margin_victory_heaped,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> gdp_growth,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">color =</span> <span class="fu">factor</span>(high_educ_win_heaped)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.35</span>) <span class="sc">+</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">"Heaping Example: Election Margin vs GDP Growth"</span>,</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">subtitle =</span> <span class="st">"Vertical stripes show observations piling up at rounded values"</span>,</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">"Recorded Margin of Victory (%)"</span>,</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">"GDP Growth (%)"</span>,</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>        <span class="at">color =</span> <span class="st">"Treatment"</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="rdd_guide_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In this plot, heaping appears as vertical bands where many observations share the same recorded value of the running variable. Some heaping is caused by harmless rounding, but heaping near the cutoff can be more concerning. If many observations pile up exactly at or just above the cutoff, researchers should investigate whether the running variable is being rounded, strategically manipulated, or recorded with insufficient precision.</p>
+<p>A smooth distribution around the cutoff is reassuring. Large spikes exactly at the cutoff, or just above it, are more troubling. In an election RD, for example, a spike at exactly zero or just above zero could indicate recount rules, data rounding, or strategic behavior that makes the close-election comparison less credible. But, even in a hard-threshold setting with smooth distribution, sorting can still arise if the running variable is measured imprecisely or if units can strategically manipulate their score.</p>
+</section>
+</section>
+<section id="specification-checks" class="level3">
+<h3 class="anchored" data-anchor-id="specification-checks">2. Specification Checks</h3>
+<p>Ensure your results hold under different functional forms. Higher-order global polynomials can be misleading because they put too much weight on observations far from the cutoff and can introduce spurious wiggles near the threshold.</p>
+<ul>
+<li>Linear: <span class="math inline">\(Y = \alpha + \tau D + \beta_1 X + \epsilon\)</span></li>
+<li>Linear with interaction (different slopes on each side): <span class="math inline">\(Y = \alpha + \tau D + \beta_1 X + \beta_2 (D \cdot X) + \epsilon\)</span></li>
+<li>Quadratic: Add <span class="math inline">\(X^2\)</span> terms.</li>
+<li>Cubic: Add <span class="math inline">\(X^3\)</span> terms, but use this only as a sensitivity check, not as the main specification.</li>
+</ul>
+<p>The reason practitioners usually prefer local linear fits is that they behave better near the cutoff and are less sensitive to distant observations than cubic or quartic polynomials.</p>
+</section>
+<section id="bandwidth-sensitivity" class="level3">
+<h3 class="anchored" data-anchor-id="bandwidth-sensitivity">3. Bandwidth Sensitivity</h3>
+<p>The “bandwidth” determines how many observations around the cutoff are used. A smaller bandwidth reduces bias because observations are more similar, but it also reduces power. A larger bandwidth improves precision but increases the risk that the control function is no longer approximating the counterfactual trend well.</p>
+<p>The practical question is whether the estimate is stable over a reasonable window of cutoffs. Calonico, Cattaneo, and Farrell (2020) emphasize that stability should be judged relative to the scale of the running variable and the amount of data near the threshold. The <a href="https://mixtape.shinyapps.io/RD-Bandwidth/">RD bandwidth app</a> is a useful tool for exploring those tradeoffs.</p>
+<p>One way to assess robustness is to check whether the estimated effect remains stable across a range of bandwidths.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a range of bandwidths to test (from 3 to 25)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>bandwidths <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">3</span>, <span class="dv">25</span>, <span class="at">by =</span> <span class="dv">1</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize a data frame to store results</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">bandwidth =</span> bandwidths,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">estimate =</span> <span class="cn">NA</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">ci_lower =</span> <span class="cn">NA</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">ci_upper =</span> <span class="cn">NA</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop through bandwidths and estimate RDD using rdrobust</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(bandwidths)) {</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    bw <span class="ot">&lt;-</span> bandwidths[i]</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Run rdrobust with fixed bandwidth 'h'</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    model <span class="ot">&lt;-</span> <span class="fu">rdrobust</span>(<span class="at">y =</span> df<span class="sc">$</span>gdp_growth, <span class="at">x =</span> df<span class="sc">$</span>margin_victory, <span class="at">c =</span> <span class="dv">0</span>, <span class="at">h =</span> bw, <span class="at">p =</span> <span class="dv">1</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract coefficient and robust CI</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    results<span class="sc">$</span>estimate[i] <span class="ot">&lt;-</span> model<span class="sc">$</span>coef[<span class="dv">3</span>]</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    results<span class="sc">$</span>ci_lower[i] <span class="ot">&lt;-</span> model<span class="sc">$</span>ci[<span class="dv">3</span>] <span class="co"># Robust CI lower bound</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    results<span class="sc">$</span>ci_upper[i] <span class="ot">&lt;-</span> model<span class="sc">$</span>ci[<span class="dv">6</span>] <span class="co"># Robust CI upper bound</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the sensitivity analysis</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> bandwidth, <span class="at">y =</span> estimate)) <span class="sc">+</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> ci_lower, <span class="at">ymax =</span> ci_upper), <span class="at">width =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">2.5</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span> <span class="co"># True Effect</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">"RDD Sensitivity to Bandwidth Selection"</span>,</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">"Bandwidth (Margin of Victory %)"</span>,</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">"Estimated Treatment Effect (with 95% CI)"</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="rdd_guide_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This plot shows the estimated treatment effect (dots) and 95% confidence intervals (bars) for different bandwidths.</p>
+<ul>
+<li>The red dashed line represents the true effect (2.5).</li>
+<li>If the estimates are broadly stable, do not flip sign, and remain within a substantively similar range, the result is more credible.</li>
+<li>If the estimate only appears under a very narrow or very wide window, that is a warning sign.</li>
+<li>Smaller bandwidths usually have wider confidence intervals because there are fewer observations near the cutoff.</li>
+</ul>
+</section>
+<section id="placebo-test-other-outcomes" class="level3">
+<h3 class="anchored" data-anchor-id="placebo-test-other-outcomes">4. Placebo Test: Other Outcomes</h3>
+<p>Placebo tests should distinguish between two cases:</p>
+<ul>
+<li>Predetermined covariates, such as pre-election demographics or baseline city size, should be balanced at the cutoff.</li>
+<li>Predetermined outcomes, such as lagged GDP growth or pre-election crime rates, should show no discontinuity.</li>
+</ul>
+<p>If either one jumps at the cutoff, the design is likely not comparing like with like.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Placebo test: lagged GDP growth should not jump at the cutoff</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>fit_placebo <span class="ot">&lt;-</span> <span class="fu">rdrobust</span>(<span class="at">y =</span> df<span class="sc">$</span>lagged_gdp_growth, <span class="at">x =</span> df<span class="sc">$</span>margin_victory, <span class="at">c =</span> <span class="dv">0</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_placebo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sharp RD estimates using local polynomial regression.
+
+Number of Obs.                  500
+BW type                       mserd
+Kernel                   Triangular
+VCE method                       NN
+
+Number of Obs.                  265          235
+Eff. Number of Obs.             103           83
+Order est. (p)                    1            1
+Order bias  (q)                   2            2
+BW est. (h)                  36.838       36.838
+BW bias (b)                  57.752       57.752
+rho (h/b)                     0.638        0.638
+Unique Obs.                     265          235
+
+=====================================================================
+                   Point    Robust Inference
+                Estimate         z     P&gt;|z|      [ 95% C.I. ]       
+---------------------------------------------------------------------
+     RD Effect     0.152     0.303     0.762    [-1.536 , 2.097]     
+=====================================================================</code></pre>
+</div>
+</div>
+<p><strong>Interpretation</strong>: The estimated discontinuity in lagged GDP growth is close to zero and not statistically significant. This is reassuring: because lagged GDP growth was determined before the election outcome, any jump at the cutoff would indicate that the running variable itself (election margin) was correlated with pre-existing outcomes. That would violate the RD assumption that units near the cutoff are comparable. Here, the placebo test passes.</p>
+<p>For close-elections applications, a good placebo outcome is a pre-election economic trend, while a good placebo covariate is something like pre-election city population or partisan composition.</p>
+<p>For formal placebo testing across repeated cutoff assignments, Canay and Kamat (2018) provide permutation-style inference that can complement the standard placebo plots.</p>
+</section>
+<section id="placebo-test-artificial-cutoffs" class="level3">
+<h3 class="anchored" data-anchor-id="placebo-test-artificial-cutoffs">5. Placebo Test: Artificial Cutoffs</h3>
+<p>Test for discontinuities at fake thresholds where there should be no effect. In a close-election setting, that means checking margins such as +10% or -10%, not just the main 0% cutoff.</p>
+<ul>
+<li>If the estimate appears at many fake cutoffs, the real result may reflect functional form misspecification or random noise.</li>
+<li>If the jump only appears at the true cutoff and not nearby placebo thresholds, that is more reassuring.</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Placebo cutoff at +10%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rdplot</span>(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> df<span class="sc">$</span>gdp_growth, <span class="at">x =</span> df<span class="sc">$</span>margin_victory, <span class="at">c =</span> <span class="dv">10</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Placebo Test: Cutoff at +10%"</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x.label =</span> <span class="st">"Margin of Victory"</span>, <span class="at">y.label =</span> <span class="st">"GDP Growth"</span>, <span class="at">p =</span> <span class="dv">1</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="rdd_guide_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Formal test at fake cutoff</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">rdrobust</span>(<span class="at">y =</span> df<span class="sc">$</span>gdp_growth, <span class="at">x =</span> df<span class="sc">$</span>margin_victory, <span class="at">c =</span> <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sharp RD estimates using local polynomial regression.
+
+Number of Obs.                  500
+BW type                       mserd
+Kernel                   Triangular
+VCE method                       NN
+
+Number of Obs.                  285          215
+Eff. Number of Obs.              53           47
+Order est. (p)                    1            1
+Order bias  (q)                   2            2
+BW est. (h)                  21.824       21.824
+BW bias (b)                  35.941       35.941
+rho (h/b)                     0.607        0.607
+Unique Obs.                     285          215
+
+=====================================================================
+                   Point    Robust Inference
+                Estimate         z     P&gt;|z|      [ 95% C.I. ]       
+---------------------------------------------------------------------
+     RD Effect    -0.182    -0.395     0.693    [-2.806 , 1.866]     
+=====================================================================</code></pre>
+</div>
+</div>
+</section>
+<section id="power-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="power-analysis">6. Power Analysis</h3>
+<p>RDD often has limited power because identification relies on units very close to the cutoff. Even large datasets can have a small effective sample size if relatively few observations fall near the threshold.</p>
+<p>If you find a null result, it is important to ask whether the design is underpowered rather than concluding that the effect is zero. Likewise, before starting the analysis, it is useful to check whether the design can detect a substantively meaningful effect.</p>
+<p>We can use <code>rdpower</code> for power calculations and sample-size planning.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rdpower)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Power calculation with plot</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rdpower</span>(<span class="at">data =</span> <span class="fu">cbind</span>(df<span class="sc">$</span>gdp_growth, df<span class="sc">$</span>margin_victory), <span class="at">cutoff =</span> <span class="dv">0</span>, <span class="at">tau =</span> <span class="fl">2.5</span>, <span class="at">plot =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Number of obs =       500
+BW type       =       mserd
+Kernel type   =       Triangular
+VCE method    =       NN
+Derivative    =       0
+HA:       tau =       2.5
+
+
+Cutoff c = 0          Left of c       Right of c      
+Number of obs         265             235             
+Eff. number of obs    86              64              
+BW loc. poly.         30.286          30.286          
+Order loc. poly.      1               1               
+Sampling BW           30.286          30.286          
+New sample            86              64              
+
+
+=========================================================================================
+Power against:           H0: tau =      0.2*tau =      0.5*tau =      0.8*tau =    tau =          
+                         0              0.5            1.25           2            2.5            
+-----------------------------------------------------------------------------------------
+Robust bias-corrected    0.05           0.093          0.329          0.68         0.859          
+=========================================================================================</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="rdd_guide_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$power.rbc
+[1] 0.8585709
+
+$se.rbc
+[1] 0.8240264
+
+$sampsi.r
+[1] 64
+
+$sampsi.l
+[1] 86
+
+$samph.r
+[1] 30.28587
+
+$samph.l
+[1] 30.28587
+
+$N.r
+[1] 235
+
+$N.l
+[1] 265
+
+$Nh.l
+[1] 86
+
+$Nh.r
+[1] 64
+
+$tau
+[1] 2.5
+
+$bias.r
+[1] 0.0001512432
+
+$bias.l
+[1] -8.706161e-05
+
+$Vr.rb
+[1] 5396.111
+
+$Vl.rb
+[1] 4886.235
+
+$alpha
+[1] 0.05</code></pre>
+</div>
+</div>
+<p>If the target effect size yields adequate power, the design is better suited to detect that effect. If not, a null estimate may simply reflect limited precision.</p>
+<p>One way to deal with low power is to widen the bandwidth, but that comes at the cost of including observations farther from the cutoff. A 1 percent window may be very credible but underpowered, while a 15 percent window may be more precise but less defensible because it stretches the local design.</p>
+<p>Another way to improve precision is to use a lower-level outcome, such as zip-code-level economic indicators rather than city averages. That can reduce noise, but the treatment assignment still happens at the city-election level, so standard errors should still be clustered at the appropriate treatment level.</p>
+</section>
+</section>
+<section id="interpretation" class="level1">
+<h1>Interpretation</h1>
+<p>The RDD estimator provides the <strong>Local Average Treatment Effect (LATE)</strong>. “Local” is the key word. We are estimating the effect of education only for mayors in close elections, not for all mayors in all elections.</p>
+<p>This has two implications. First, treatment effects may be heterogeneous: the effect at the cutoff may differ from the effect in large-margin races because the municipalities, voters, and candidates are not the same. Second, generalization away from the cutoff is a separate problem. Cattaneo et al.&nbsp;(2020) discuss extrapolation methods that attempt to extend RD results beyond the local area of the threshold, but those are require additional assumptions. Commonly, practicioners supplement the RD design with another identification strategy (Like Difference in Difference) in order to generalize their claim to cases outside of threshold area.</p>
+<p>In practice, the estimator is best interpreted as the effect for units just at the margin. That is often the most credible causal estimate in the design, even if it is not the policy-relevant effect for every city.</p>
+<p>Armstrong and Kolesár (2020) show that honest confidence intervals can require a larger critical value than 1.96 in some RD settings. The good news is that <code>rdrobust</code> handles the appropriate bias correction and inference adjustments automatically, which is another reason it is the recommended default.</p>
+</section>
+<section id="implementation-checklist" class="level1">
+<h1>Implementation Checklist</h1>
+<ol type="1">
+<li><p><strong>Define the design</strong></p>
+<ul>
+<li>Outcome: What is <span class="math inline">\(Y_i\)</span>?</li>
+<li>Treatment: What is <span class="math inline">\(D_i\)</span>?</li>
+<li>Running variable: What is <span class="math inline">\(X_i\)</span>?</li>
+<li>Cutoff: What is <span class="math inline">\(c\)</span>?</li>
+</ul></li>
+<li><p><strong>Check that the sample matches the causal question</strong></p>
+<ul>
+<li>Keep only cases where crossing the cutoff changes treatment status.</li>
+<li>In the mayoral example, keep races where the top two candidates differ in education.</li>
+<li>Drop races where both candidates have the same education status.</li>
+</ul></li>
+<li><p><strong>Visualize the outcome around the cutoff</strong></p>
+<ul>
+<li>Plot the outcome against the running variable.</li>
+<li>Check whether there is a visible jump at the cutoff.</li>
+<li>Check whether the relationship looks smooth on both sides.</li>
+</ul></li>
+<li><p><strong>Check for manipulation, sorting, or heaping</strong></p>
+<ul>
+<li>Inspect the density of the running variable.</li>
+<li>Look for bunching near the cutoff.</li>
+<li>Check whether observations pile up at round numbers or focal values.</li>
+<li>Run a formal density test.</li>
+</ul></li>
+<li><p><strong>Estimate the main RD model</strong></p>
+<ul>
+<li>Use local linear estimation as the main specification.</li>
+<li>Report robust bias-corrected inference.</li>
+<li>Report the bandwidth, kernel, polynomial order, and observations used on each side.</li>
+</ul></li>
+<li><p><strong>Check bandwidth sensitivity</strong></p>
+<ul>
+<li>Re-estimate the model using several bandwidths.</li>
+<li>The estimate should not depend entirely on one bandwidth choice.</li>
+<li>Be cautious if the estimate changes sign or only appears in one narrow window.</li>
+</ul></li>
+<li><p><strong>Run placebo and balance checks</strong></p>
+<ul>
+<li>Predetermined covariates should not jump at the cutoff.</li>
+<li>Lagged outcomes should not jump at the cutoff.</li>
+<li>If pre-treatment variables are discontinuous, the RD comparison may not be credible.</li>
+<li>Estimate placebo discontinuities at thresholds where treatment should not change.</li>
+</ul></li>
+</ol>
+</section>
+<section id="faq-advanced-topics" class="level1">
+<h1>FAQ &amp; Advanced Topics</h1>
+<section id="building-base-rd-intuition-parametric-approach" class="level3">
+<h3 class="anchored" data-anchor-id="building-base-rd-intuition-parametric-approach">Building Base RD Intuition (Parametric Approach)</h3>
+<p>While it is most recommended to use a kernel or non-parametric estimator (like <code>rdrobust</code>) for RD, there are simpler ways to do so that can help build intuition. We can think of RDD as a regression problem where we carefully control for the running variable (<span class="math inline">\(X\)</span>).</p>
+<p>We will use <code>feols</code> from the <code>fixest</code> package to show how this works using linear regressions with increasing flexibility.</p>
+<p><strong>1. Linear Model (Same Slope)</strong> This assumes the relationship between the running variable and outcome is linear and has the same slope on both sides of the cutoff. It controls for <span class="math inline">\(X\)</span> but forces the trend to be parallel. <span class="math display">\[ Y = \alpha + \tau D + \beta X + \epsilon \]</span></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Simple linear control</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">feols</span>(gdp_growth <span class="sc">~</span> high_educ_win <span class="sc">+</span> margin_victory, <span class="at">data =</span> df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><strong>2. Linear Interaction Model (Different Slopes)</strong> This allows the slope of the running variable to be different for treated and control units (“linear from both sides”). This is the standard “local linear” intuition but applied to the whole window. <span class="math display">\[ Y = \alpha + \tau D + \beta_1 X + \beta_2 (D \times X) + \epsilon \]</span></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Allowing different slopes (interaction)</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">feols</span>(gdp_growth <span class="sc">~</span> high_educ_win <span class="sc">*</span> margin_victory, <span class="at">data =</span> df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><strong>3. Quadratic Model</strong> Allows for non-linear relationships (curvature) by adding a squared term. This helps if the underlying trend is curved. <span class="math display">\[ Y = \alpha + \tau D + \beta_1 X + \beta_2 X^2 + \dots \]</span></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Quadratic polynomial (interacted)</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">feols</span>(gdp_growth <span class="sc">~</span> high_educ_win <span class="sc">*</span> <span class="fu">poly</span>(margin_victory, <span class="dv">2</span>), <span class="at">data =</span> df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><strong>4. Cubic Model</strong> Adds even more flexibility with a cubic term.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cubic polynomial (interacted)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">feols</span>(gdp_growth <span class="sc">~</span> high_educ_win <span class="sc">*</span> <span class="fu">poly</span>(margin_victory, <span class="dv">3</span>), <span class="at">data =</span> df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>While these parametric models are intuitive, high-order global polynomials (like cubic or quartic) can be misleading and suffer from bias at the cutoff. This is why local linear regression (used in <code>rdrobust</code>) is preferred.</p>
+</section>
+<section id="common-pitfalls-in-rdd" class="level3">
+<h3 class="anchored" data-anchor-id="common-pitfalls-in-rdd">Common Pitfalls in RDD</h3>
+<p>RDD is easy to misuse. Here we overview some common mistakes to avoid.</p>
+<section id="overgeneralizing-the-coefficient" class="level4">
+<h4 class="anchored" data-anchor-id="overgeneralizing-the-coefficient">1. Overgeneralizing the coefficient</h4>
+<p>The RD estimate is local to the cutoff. It tells us the effect for units very close to the threshold, not necessarily for all units in the dataset.</p>
+<p>In the mayoral example, the estimate tells us the effect of electing a high-education mayor in close elections. It does <strong>not</strong> automatically tell us the effect of high-education mayors in landslide elections, in all cities, or in all political environments.</p>
+<p>Bad interpretation:</p>
+<blockquote class="blockquote">
+<p>High-education mayors increase economic growth by 2.5 percentage points.</p>
+</blockquote>
+<p>Better interpretation:</p>
+<blockquote class="blockquote">
+<p>In close elections where a high-education candidate barely wins rather than barely loses, cities experience an estimated 2.5 percentage-point increase in economic growth.</p>
+</blockquote>
+<p>The second interpretation is more accurate because it respects the local nature of the RD design.</p>
+</section>
+<section id="cherry-picking-bandwidths" class="level4">
+<h4 class="anchored" data-anchor-id="cherry-picking-bandwidths">2. Cherry-picking bandwidths</h4>
+<p>The bandwidth determines how close observations must be to the cutoff to enter the analysis. Because different bandwidths can produce different estimates, researchers should not search across bandwidths and report only the one that gives the desired result.</p>
+<p>A good RD analysis should:</p>
+<ul>
+<li>report a main bandwidth chosen by a principled method;</li>
+<li>show sensitivity to smaller and larger bandwidths;</li>
+<li>be transparent if the estimate changes substantially;</li>
+<li>avoid presenting one bandwidth as definitive when nearby bandwidths tell a different story.</li>
+</ul>
+</section>
+<section id="cherry-picking-cutoffs" class="level4">
+<h4 class="anchored" data-anchor-id="cherry-picking-cutoffs">3. Cherry-picking cutoffs</h4>
+<p>In a valid RD design, the cutoff should be determined by the assignment rule, not chosen by the researcher after looking at the data.</p>
+<p>For example, in a close-election design, the cutoff in respect ot vote margin is naturally 0: the point at which the candidate changes from losing to winning. It would be inappropriate to search over many possible cutoffs and then emphasize the one that produces the strongest result.</p>
+<p>Placebo cutoffs are useful. If similar jumps appear at many fake cutoffs, the estimated jump at the true cutoff may reflect noise, misspecification, or an underlying nonlinear trend rather than a treatment effect.</p>
+</section>
+<section id="ignoring-covariate-imbalance" class="level4">
+<h4 class="anchored" data-anchor-id="ignoring-covariate-imbalance">4. Ignoring covariate imbalance</h4>
+<p>Predetermined covariates should be smooth through the cutoff. These include variables measured before treatment, such as pre-election GDP, population, prior crime rates, or candidate characteristics.</p>
+<p>If these variables jump at the cutoff, it suggests that units just above and below the threshold may not be comparable. That weakens the core RD assumption.</p>
+<p>For example, suppose cities where high-education candidates barely win are already much wealthier before the election than cities where high-education candidates barely lose. Then a post-election GDP difference may reflect pre-existing differences rather than the effect of electing a high-education mayor.</p>
+<p>Covariate imbalance is not always fatal, especially if it is small or occurs by chance across many tests. But large or systematic imbalance is a warning sign. Adding covariates as controls can help with precision, but it does not automatically rescue a weak design. The researcher should investigate why imbalance exists and whether the continuity assumption is still credible.</p>
+</section>
+</section>
+<section id="discrete-running-variables" class="level3">
+<h3 class="anchored" data-anchor-id="discrete-running-variables">Discrete Running Variables</h3>
+<p>Sometimes the running variable is discrete rather than continuous. For example, age may be reported only in integers. In those cases, the support around the cutoff is sparse, so the usual smooth-continuity intuition needs to be interpreted more carefully. Kolesár and Rothe discuss how identification and inference change when the running variable is discrete, and the practical implication is that you should be cautious about over-interpreting very small jumps when there are only a few mass points near the cutoff.</p>
+</section>
+<section id="donut-rdd" class="level3">
+<h3 class="anchored" data-anchor-id="donut-rdd">Donut RDD</h3>
+<p>If there is heaping or obvious manipulation exactly at the cutoff, one option is a donut RD: drop observations in a small window around the threshold and estimate the effect using observations just outside the contaminated region. That approach is useful when the very closest observations are suspect, but it trades away some of the most informative data and should be justified carefully. Noack and Rothe (2023) discuss this strategy in settings with bunching or manipulation.</p>
+</section>
+<section id="clustering" class="level3">
+<h3 class="anchored" data-anchor-id="clustering">Clustering</h3>
+<p>If your data has a nested structure, cluster at the level where treatment is assigned, not necessarily at the level where the outcome is measured. In the mayor example, that usually means clustering at the city-election level even if the outcome is observed at a lower geographic unit.</p>
+<p><code>rdrobust</code> allows this via the <code>cluster</code> argument.</p>
+</section>
+<section id="rdd-with-sub-outcomes" class="level3">
+<h3 class="anchored" data-anchor-id="rdd-with-sub-outcomes">RDD with Sub-outcomes</h3>
+<p>Sometimes you might have data at a lower level than the assignment. For example, instead of city-level GDP, you might have neighborhood-level economic data. The assignment (mayor education) is at the city level. You can still run the RDD, but ensure your clustering accounts for the city-level assignment.</p>
+</section>
+<section id="panel-data-and-fixed-effects" class="level3">
+<h3 class="anchored" data-anchor-id="panel-data-and-fixed-effects">Panel Data and Fixed Effects</h3>
+<p>If you have panel data with repeated elections for the same city, you can sometimes include unit fixed effects to absorb time-invariant differences across cities. That can be helpful when the same unit appears multiple times, but it does not replace the RD identification argument at the cutoff.</p>
+<p>In many applications, it is simpler to treat the data as repeated cross-sections and cluster standard errors at the city level. If you use panel structure, be explicit about the level at which treatment is assigned and the level at which errors may be correlated.</p>
+<p>The <code>rdrobust</code> authors do not encourage fixed effects as a default RD strategy, but you can also implement an RD-style regression in <code>fixest</code> if your design needs panel controls.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">feols</span>(gdp_growth <span class="sc">~</span> high_education <span class="sc">+</span> election_margin, )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="what-if-there-is-imbalance" class="level3">
+<h3 class="anchored" data-anchor-id="what-if-there-is-imbalance">What if there is imbalance?</h3>
+<p>If baseline covariates are slightly imbalanced, you can include them as controls in the outcome equation, in a covariate-adjusted RDD. The important caveat is that covariates should help explain the outcome, not help to determine the bandwidth. In other words, covariates are a precision and robustness device.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rdrobust</span>(<span class="at">y =</span> Y, <span class="at">x =</span> X, <span class="at">covs =</span> <span class="fu">cbind</span>(cov1, cov2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>If the RD estimate is similar with and without covariates, that suggests the result is not driven by small residual imbalance. If the estimate changes substantially, you should investigate why the covariates matter so much and justify it. In a case of close elections between two candidate types, it could be that the type of the candidate is correlated withother covariate of the candidate that should be controlled. For instance, if high-education mayors are older on average, to estimate the effect of high-education mayors we need to control for the age.</p>
+</section>
+<section id="what-if-there-is-fuzzy-continuity-fuzzy-rdd" class="level3">
+<h3 class="anchored" data-anchor-id="what-if-there-is-fuzzy-continuity-fuzzy-rdd">What if there is fuzzy continuity? (Fuzzy RDD)</h3>
+<p>Sometimes the cutoff does not perfectly determine treatment assignment, but changes the <em>probability</em> of treatment.</p>
+<ul>
+<li><strong>Sharp RDD</strong>: <span class="math inline">\(P(D=1 | X \ge c) = 1\)</span> and <span class="math inline">\(P(D=1 | X &lt; c) = 0\)</span>.</li>
+<li><strong>Fuzzy RDD</strong>: <span class="math inline">\(P(D=1 | X \ge c) &gt; P(D=1 | X &lt; c)\)</span>, but not 0 and 1.
+<ul>
+<li>Example: Instead of a strict election rule, imagine a scholarship program where students above a test score cutoff are <em>eligible</em>, but not all take it, and some below might get exceptions.</li>
+</ul></li>
+</ul>
+<p>In this case, the RDD estimator is an <strong>Instrumental Variable (IV)</strong> estimator.</p>
+<ul>
+<li><strong>Instrument (<span class="math inline">\(Z\)</span>)</strong>: Being above the cutoff (<span class="math inline">\(Z = 1\)</span> if <span class="math inline">\(X \ge c\)</span>).</li>
+<li><strong>Treatment (<span class="math inline">\(D\)</span>)</strong>: Actually receiving the scholarship.</li>
+<li>We use Two-Stage Least Squares (2SLS):
+<ol type="1">
+<li>First Stage: Regress treatment <span class="math inline">\(D\)</span> on cutoff <span class="math inline">\(Z\)</span> (and X).</li>
+<li>Reduced Form: Regress outcome <span class="math inline">\(Y\)</span> on cutoff <span class="math inline">\(Z\)</span> (and X).</li>
+<li>Fuzzy Effect = (Reduced Form Jump) / (First Stage Jump).</li>
+</ol></li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fuzzy RDD using rdrobust</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 'fuzzy' argument takes the actual treatment indicator D</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>fit_fuzzy <span class="ot">&lt;-</span> <span class="fu">rdrobust</span>(<span class="at">y =</span> df<span class="sc">$</span>outcome, <span class="at">x =</span> df<span class="sc">$</span>score, <span class="at">c =</span> <span class="dv">0</span>, <span class="at">fuzzy =</span> df<span class="sc">$</span>actual_treatment)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_fuzzy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>This estimates the Local Average Treatment Effect (LATE) for <strong>compliers</strong>: students whose treatment status was determined by the cutoff rule.</p>
+</section>
+<section id="geographic-discontinuity" class="level3">
+<h3 class="anchored" data-anchor-id="geographic-discontinuity">Geographic Discontinuity</h3>
+<p>Instead of a vote margin, the “running variable” is distance to a border.</p>
+<ul>
+<li>Example: Comparing house prices across a school district boundary.</li>
+<li><span class="math inline">\(X\)</span> is distance (positive if inside, negative if outside).</li>
+<li>Assumption: Households just inside and just outside are similar. This is often violated if people “sort” (move) specifically for the school district.</li>
+</ul>
+</section>
+<section id="candidate-feature-discontinuity" class="level3">
+<h3 class="anchored" data-anchor-id="candidate-feature-discontinuity">Candidate Feature Discontinuity</h3>
+<p>Sometimes the “treatment” is bundled. A mayor with higher education might also naturally be older or have more reliable prior political experience.</p>
+<ul>
+<li>If high-education candidates are consistently 10 years older than low-education candidates at the cutoff, you cannot separate the effect of “education” from “age.”</li>
+<li>You are estimating the effect of the <em>bundle</em> of characteristics of the winning candidate.</li>
+</ul>
+<p><strong>Solution</strong>: Add predetermined characteristics as <strong>controls</strong> in the outcome equation. If age or experience are measured before the election and are not themselves affected by winning, they can improve precision and help separate education from correlated features.</p>
+<p>Controls do not change the RD logic; they only adjust for residual imbalance in observed covariates. If the estimate disappears only after adding a particular control, that is a signal to think carefully about whether the control is a confounder, a proxy, or a post-treatment variable.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Controlling for age and experience explicitly</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming 'age' and 'experience' are columns in your dataframe</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>fit_controls <span class="ot">&lt;-</span> <span class="fu">rdrobust</span>(</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> df<span class="sc">$</span>gdp_growth, <span class="at">x =</span> df<span class="sc">$</span>margin_victory, <span class="at">c =</span> <span class="dv">0</span>,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">covs =</span> <span class="fu">cbind</span>(df<span class="sc">$</span>age, df<span class="sc">$</span>experience)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_controls)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="difference-in-discontinuities-diff-in-disc" class="level3">
+<h3 class="anchored" data-anchor-id="difference-in-discontinuities-diff-in-disc">Difference in Discontinuities (Diff-in-Disc)</h3>
+<p>What if the effect of education depends on incentives?</p>
+<ul>
+<li>Imagine some cities pay mayors a high salary (based on a population threshold) and others pay less.</li>
+<li>You have two discontinuities:
+<ol type="1">
+<li>Close elections in “High Salary” cities.</li>
+<li>Close elections in “Low Salary” cities.</li>
+</ol></li>
+<li>You can estimate <span class="math inline">\(\tau_{high}\)</span> and <span class="math inline">\(\tau_{low}\)</span> and compare them: <span class="math inline">\(\tau_{diff} = \tau_{high} - \tau_{low}\)</span>.</li>
+<li>This allows you to answer: “Does the effect of a highly educated mayor on growth depend on whether they are financially incentivized?”</li>
+</ul>
+</section>
+</section>
+<section id="further-learning" class="level1">
+<h1>Further Learning</h1>
+<ul>
+<li><strong>Calonico, S., Cattaneo, M. D., &amp; Titiunik, R.</strong> (2014). Robust Nonparametric Confidence Intervals for Regression-Discontinuity Designs. <em>Econometrica</em>.</li>
+<li><strong>Imbens and Kalyanaraman</strong> (2012). Optimal bandwidth choice for the regression discontinuity estimator. <em>The Review of economic studies</em>.</li>
+<li><strong>Imbens, G. W., &amp; Lemieux, T.</strong> (2008). Regression discontinuity designs: A guide to practice. <em>Journal of Econometrics</em>.</li>
+<li><strong>Cattaneo, M. D., Idrobo, N., &amp; Titiunik, R.</strong> (2019). A Practical Introduction to Regression Discontinuity Designs. Cambridge University Press.</li>
+<li><strong>Cattaneo, M. D., Jansson, M., &amp; Ma, X.</strong> (2020). Simple local polynomial density estimators. <em>Journal of the American Statistical Association</em>.</li>
+<li><strong>Canay, I. A., &amp; Kamat, V.</strong> (2018). Approximate permutation tests and induced order statistics in regression discontinuity designs. <em>Review of Economic Studies</em>.</li>
+<li><strong>Kolesár, M., &amp; Rothe, C.</strong> (2018). Inference in regression discontinuity designs with a discrete running variable. <em>American Economic Review</em>.</li>
+<li><strong>Noack, C., &amp; Rothe, C.</strong> (2023). Donut regression discontinuity designs. Preprint</li>
+<li><strong>Armstrong, T. B., &amp; Kolesár, M.</strong> (2020). Simple and honest confidence intervals in nonparametric regression. <em>Quantitative Economics</em>.</li>
+<li><strong>De la Cuesta, B., &amp; Imai, K.</strong> (2016). Misunderstandings about the regression discontinuity design in the study of close elections. <em>Annual Review of Political Science</em>.</li>
+<li><strong>Cattaneo, M. D., &amp; Titiunik, R.</strong> (2022). Regression discontinuity designs. <em>Annual Review of Economics</em>.</li>
+<li><strong>Marshall J.</strong> (2024). Can close election regression discontinuity designs identify effects of winning politician characteristics? <em>American Journal of Political Science</em></li>
+</ul>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>For the distinction between sharp RDD and Fuzzy RDD please refer to the footnotes.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>A kernel is a weighting function. In local RD estimation, observations close to the cutoff receive more weight than observations farther away. The triangular kernel uses weights that decline linearly with distance from the cutoff: observations at the cutoff receive the most weight, and observations at the edge of the bandwidth receive zero weight. Formally, the triangular kernel is <span class="math inline">\(K(u) = (1 - |u|)\mathbf{1}{|u| \leq 1}\)</span>, where <span class="math inline">\(u\)</span> is the running variable scaled by the bandwidth.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

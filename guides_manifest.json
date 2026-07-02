@@ -1,0 +1,223 @@
+[
+  {
+    "slug": "glmms",
+    "title": "Generalized Mixed-Effects Models",
+    "date": "2026-06-01",
+    "authors": [
+      "Cole Brookson"
+    ],
+    "keywords": [
+      "glmm",
+      "generalized linear models",
+      "generalized linear mixed-effects models",
+      "hierarchical models",
+      "multilevel models",
+      "random effects",
+      "variance components",
+      "clustered data",
+      "R",
+      "Julia",
+      "lme4",
+      "MixedModels.jl",
+      "glmmTMB",
+      "TMB"
+    ],
+    "topics": [
+      "linear-generalized-models",
+      "mixed-longitudinal-models"
+    ]
+  },
+  {
+    "slug": "instrumental-variables",
+    "title": "Instrumental Variables",
+    "date": "2026-06-22",
+    "authors": [
+      "Jonathan Elkobi"
+    ],
+    "keywords": [
+      "instrumental variables",
+      "causal inference",
+      "experimental data"
+    ],
+    "topics": [
+      "causal-inference"
+    ]
+  },
+  {
+    "slug": "logit-probit",
+    "title": "Logit and Probit Models for Binary Outcomes",
+    "date": "2026-06-15",
+    "authors": [
+      "Jiye Kwon"
+    ],
+    "keywords": [
+      "Binary Response Models",
+      "Limited Dependent Variables",
+      "Linear Probability Model",
+      "Logistic Regression",
+      "Probit Regression",
+      "Maximum Likelihood Estimation",
+      "Odds Ratios",
+      "Predicted Probabilities",
+      "Marginal Effects."
+    ],
+    "topics": [
+      "linear-generalized-models",
+      "inference-model-building"
+    ]
+  },
+  {
+    "slug": "mixed-effects-models",
+    "title": "Linear Mixed-Effects Models: A Practical Guide",
+    "date": "2025-12-02",
+    "authors": [
+      "Cole Brookson"
+    ],
+    "keywords": [
+      "mixed-effects models",
+      "hierarchical models",
+      "multilevel models",
+      "random effects",
+      "variance components",
+      "longitudinal data",
+      "clustered data",
+      "R",
+      "Julia",
+      "lme4",
+      "MixedModels.jl"
+    ],
+    "topics": [
+      "mixed-longitudinal-models"
+    ]
+  },
+  {
+    "slug": "olsregression",
+    "title": "Ordinary Least Square Regression",
+    "date": "2026-06-17",
+    "authors": [
+      "Muji Chughtai"
+    ],
+    "keywords": [
+      "OLS",
+      "Regression",
+      "Continuous Varibales",
+      "Categorical Variables",
+      "R",
+      "Julia",
+      "glm",
+      "lm",
+      "t.test",
+      "anova"
+    ],
+    "topics": [
+      "linear-generalized-models",
+      "inference-model-building"
+    ]
+  },
+  {
+    "slug": "panel-regression",
+    "title": "Panel/Longitudinal Data and its Associated Regression Practices",
+    "date": "2025-12-16",
+    "authors": [
+      "Cole Brookson"
+    ],
+    "keywords": [
+      "panel data",
+      "fixed effects models",
+      "multilevel models",
+      "random effects",
+      "longitudinal data",
+      "clustered data",
+      "R",
+      "Julia"
+    ],
+    "topics": [
+      "mixed-longitudinal-models"
+    ]
+  },
+  {
+    "slug": "rdd",
+    "title": "Regression Discontinuity Design",
+    "date": null,
+    "authors": [
+      "Jonathan Elkobi"
+    ],
+    "keywords": [],
+    "topics": [
+      "causal-inference"
+    ]
+  },
+  {
+    "slug": "standard-errors",
+    "title": "Standard Errors in Applied Research",
+    "date": "2026-06-29",
+    "authors": [
+      "Ted Ellsworth"
+    ],
+    "keywords": [
+      "standard errors",
+      "heteroskedasticity",
+      "robust inference",
+      "cluster-robust",
+      "Newey-West",
+      "HAC",
+      "Conley",
+      "bootstrap",
+      "wild cluster bootstrap",
+      "sandwich estimator"
+    ],
+    "topics": [
+      "inference-model-building"
+    ]
+  },
+  {
+    "slug": "survival-analysis",
+    "title": "Survival Analysis",
+    "date": "2026-06-22",
+    "authors": [
+      "Atalay Demiray, MD, MSc"
+    ],
+    "keywords": [
+      "Survival Analysis",
+      "Time-to-Event Analysis",
+      "Kaplan-Meier Estimator",
+      "Nelson-Aalen Estimator",
+      "Cox Proportional Hazards",
+      "Log-Rank Test",
+      "Censoring",
+      "Hazard Ratio",
+      "Proportional Hazards Assumption",
+      "Competing Risks",
+      "Time-Varying Covariates",
+      "Restricted Mean Survival Time",
+      "Parametric Survival Models"
+    ],
+    "topics": [
+      "time-to-event-models"
+    ]
+  },
+  {
+    "slug": "variable-selection",
+    "title": "Selecting the Right Variables",
+    "date": "2026-06-22",
+    "authors": [
+      "Atalay Demiray, MD, MSc"
+    ],
+    "keywords": [
+      "covariate selection",
+      "confounding",
+      "causal inference",
+      "directed acyclic graphs",
+      "regression modeling",
+      "overfitting",
+      "model selection",
+      "AIC",
+      "BIC",
+      "cross-validation"
+    ],
+    "topics": [
+      "causal-inference",
+      "inference-model-building"
+    ]
+  }
+]

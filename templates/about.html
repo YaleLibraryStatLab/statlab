@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}About — Yale StatLab{% endblock %}
+
+{% block meta_description %}Learn about Yale Library's Statistical Consulting Lab — who we are, what we do, and how we support the Yale research community.{% endblock %}
+
+{# ---- Photo hero, mirroring the homepage structure ---- #}
+{% block hero %}
+<section class="hero hero--page hero--about" aria-label="About Yale StatLab">
+  <div class="container">
+    <p class="hero__eyebrow">Yale University Library</p>
+    <h1 class="hero__title">About Yale StatLab</h1>
+    <p class="hero__tagline">
+      Statistical consulting and research support, free for the Yale community.
+    </p>
+  </div>
+</section>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+
+  <!-- ---- Mission ---- -->
+  <section class="about-section" aria-labelledby="mission-heading">
+    <h2 id="mission-heading">Our Mission</h2>
+    <p>
+      Yale University Library's StatLab supports all data, computational, and statistical
+      inquiries across the Yale community. Whether you are an undergraduate researcher
+      encountering statistics for the first time or a seasoned faculty member developing a
+      complex multi-level model, we provide quality support at every stage — through
+      one-on-one consultations, specialized workshops, and expertly crafted research guides.
+    </p>
+    <p>
+      We believe that methodological rigor and accessibility go hand in hand.
+      Our goal is to meet researchers where they are and help them move forward with
+      confidence.
+    </p>
+  </section>
+
+  <!-- ---- What we offer ---- -->
+  <section class="about-section" aria-labelledby="services-heading">
+    <h2 id="services-heading">What We Offer</h2>
+    <ul class="about-list">
+      <li>
+        <strong>Free one-on-one consultations</strong> — bring a dataset, a design
+        question, or a method you want to understand better.
+      </li>
+      <li>
+        <strong>Research guides</strong> — practical, code-first guides covering regression,
+        mixed models, causal inference, and more in R, Python, and Stata.
+      </li>
+      <li>
+        <strong>Workshops</strong> — hands-on instruction in statistical software and methods,
+        open to all Yale affiliates throughout the academic year.
+      </li>
+    </ul>
+  </section>
+
+  <!-- ---- Team link ---- -->
+  <section class="about-section about-cta" aria-labelledby="team-heading">
+    <h2 id="team-heading">Meet the Team</h2>
+    <p>
+      Yale's StatLab is a part of the Computational Methods &amp; Data team. Consultants are advanced PhD student consultants drawn from departments across
+      the university.
+    </p>
+    <a href="{{ url_for('team') }}" class="btn btn--primary">View the full team &rarr;</a>
+  </section>
+
+</div>
+{% endblock %}
+
+
+{% block extra_head %}
+<style>
+  /* ---- Hero photo (overlay keeps white text readable) ---- */
+  .hero--about {
+    background-image:
+      linear-gradient(rgba(0, 28, 64, 0.84), rgba(0, 45, 92, 0.80)),
+      url("{{ url_for('serve_statlab_photo', filename='2025_12_05 Yale DH Lab_Lavitt_32-Web High Quality.jpg') }}");
+  }
+
+  /* ---- Body sections — full container width, matching the hero ---- */
+  .about-section {
+    margin-bottom: 2.75rem;
+  }
+
+  .about-section h2 {
+    font-size: 1.55rem;
+    font-weight: 400;
+    color: var(--yale-blue);
+    margin-bottom: 0.75rem;
+  }
+
+  .about-section p + p {
+    margin-top: 0.9rem;
+  }
+
+  .about-section p,
+  .about-section li {
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.75;
+  }
+
+  /* ---- List ---- */
+  .about-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .about-list li {
+    padding-left: 1.25rem;
+    position: relative;
+  }
+
+  .about-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--yale-blue);
+  }
+
+  /* ---- CTA section ---- */
+  .about-cta {
+    padding: 2.5rem;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    max-width: 100%;
+  }
+
+  .about-cta .btn { margin-top: 1.25rem; }
+</style>
+{% endblock %}

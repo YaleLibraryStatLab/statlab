@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block meta_description %}Yale StatLab offers free statistical consulting and research support for Yale students, faculty, and staff.{% endblock %}
+
+
+{# ================================================================
+   HERO  —  this block is defined empty in base.html; filling it
+   here is what makes the homepage the only page with a tall hero.
+================================================================= #}
+{% block hero %}
+<section class="hero hero--photo" aria-label="Site introduction">
+  <div class="container">
+    <p class="hero__eyebrow">Yale University Library</p>
+    <h1 class="hero__title">StatLab</h1>
+    <p class="hero__tagline">
+      Free statistical consulting and research support
+      for the Yale community — from study design to final analysis.
+    </p>
+    <a href="{{ url_for('consultations') }}" class="hero__cta">Book a Consultation</a>
+    <a href="{{ url_for('research_guides') }}" class="hero__secondary">Browse Research Guides &rarr;</a>
+  </div>
+</section>
+{% endblock %}
+
+
+{# ================================================================
+   MAIN CONTENT
+================================================================= #}
+{% block content %}
+<div class="container">
+
+  <!-- ---- Services overview ---- -->
+  <section class="home-section" aria-labelledby="services-heading">
+    <h2 id="services-heading" class="section-title">How we can help</h2>
+    <p class="section-intro">
+      StatLab staff are available to help at any stage of your research —
+      whether you're just getting started or interpreting final results.
+    </p>
+
+    <div class="card-grid">
+
+      <article class="card">
+        <div class="card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <h3 class="card__title">Consultations</h3>
+        <p class="card__body">
+          One-on-one sessions with a statistical consultant.
+          Bring a dataset, a design question, or a method you're unsure about.
+        </p>
+        <a href="{{ url_for('consultations') }}" class="card__link">Schedule a session &rarr;</a>
+      </article>
+
+      <article class="card">
+        <div class="card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+        </div>
+        <h3 class="card__title">Research Guides</h3>
+        <p class="card__body">
+          Practical guides covering regression, mixed models, causal inference,
+          and more — with code examples in R, Python, and Stata.
+        </p>
+        <a href="{{ url_for('research_guides') }}" class="card__link">Browse guides &rarr;</a>
+      </article>
+
+      <article class="card">
+        <div class="card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="13" rx="2"/>
+            <polyline points="8 21 12 17 16 21"/>
+          </svg>
+        </div>
+        <h3 class="card__title">Workshops</h3>
+        <p class="card__body">
+          Hands-on workshops on statistical software and methods,
+          open to all Yale affiliates throughout the academic year.
+        </p>
+        <a href="{{ url_for('workshops') }}" class="card__link">See upcoming workshops &rarr;</a>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ---- Team CTA band ---- -->
+  <section class="home-section team-band" aria-labelledby="team-band-heading">
+    <div class="team-band__text">
+      <h2 id="team-band-heading" class="team-band__title">Meet your consultants</h2>
+      <p class="team-band__body">
+        StatLab consultants are PhD students from departments across Yale —
+        psychology, epidemiology, political science, health policy, and more.
+        Find the right person for your project.
+      </p>
+    </div>
+    <a href="{{ url_for('team') }}" class="btn btn--inverse">Meet the team &rarr;</a>
+  </section>
+
+</div><!-- /.container -->
+{% endblock %}
+
+
+{# ================================================================
+   PAGE-SPECIFIC STYLES
+   Scoped to homepage content only — keeps base.html clean.
+================================================================= #}
+{% block extra_head %}
+<style>
+  /* ---- Photo hero ----
+     Library hall photo under a deep-blue overlay keeps the white
+     text readable while showing a real StatLab space. */
+  .hero--photo {
+    background-image:
+      linear-gradient(rgba(0, 28, 64, 0.84), rgba(0, 45, 92, 0.80)),
+      url("{{ url_for('serve_statlab_photo', filename='2025_12_05 Yale DH Lab_Lavitt_01-Web High Quality.jpg') }}");
+    background-size: cover;
+    background-position: center 35%;
+  }
+
+  /* ---- Section layout ---- */
+  .home-section {
+    margin-bottom: 4.5rem;
+  }
+
+  .home-section:last-child { margin-bottom: 1rem; }
+
+  .section-intro {
+    font-size: 1.08rem;
+    color: var(--text-muted);
+    max-width: 620px;
+    margin-bottom: 2.25rem;
+    line-height: 1.65;
+  }
+
+  /* ---- Card grid ---- */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.75rem;
+  }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    transition: box-shadow var(--ease), border-color var(--ease);
+  }
+
+  .card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: rgba(0, 53, 107, 0.28);
+  }
+
+  .card__icon {
+    width: 2rem;
+    height: 2rem;
+    margin-bottom: 0.65rem;
+    color: var(--yale-blue);
+  }
+
+  .card__icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .card__title {
+    font-size: 1.3rem;
+    color: var(--yale-blue);
+  }
+
+  .card__body {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    flex: 1;
+  }
+
+  .card__link {
+    display: inline-block;
+    margin-top: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--yale-mid);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: color var(--ease);
+  }
+
+  .card__link:hover {
+    color: var(--yale-blue);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  /* ---- Team CTA band — navy panel echoing the hero ---- */
+  .team-band {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+    padding: 3rem;
+    background-color: var(--yale-blue);
+    background-image: linear-gradient(135deg, #00356b 0%, #002050 100%);
+    border-radius: var(--radius-lg);
+    color: var(--white);
+  }
+
+  .team-band__title {
+    font-size: clamp(1.6rem, 3vw, 2rem);
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+
+  .team-band__body {
+    color: rgba(255, 255, 255, 0.78);
+    max-width: 560px;
+    line-height: 1.7;
+  }
+</style>
+{% endblock %}

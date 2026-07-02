@@ -1,0 +1,40 @@
+project:
+  type: website
+  output-dir: "."
+
+format:
+  html:
+    theme: statlab.scss
+    css: styles.css
+    toc: true
+    page-layout: full  # Add this for full-width content
+    grid:
+      sidebar-width: 300px  # Base size, will be overridden by CSS
+      body-width: 1400px    # Maximum content width
+      margin-width: 200px  
+
+
+execute: 
+  eval: false
+
+website:
+  title: "Yale Library StatLab"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: about.qmd
+        text: About
+      - href: research-guides.qmd
+        text: "Research Guides"
+      # Leave room for your future sections:
+      - href: workshops.qmd
+        text: Workshops
+      # - href: resources.qmd  
+      #   text: Resources
+      - href: consulting.qmd
+        text: Consulting
+
+
+
+

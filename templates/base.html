@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  {# ----------------------------------------------------------------
+     Each child template sets its own title via {% block title %}.
+     Falls back to the bare site name if the block is not overridden.
+  ----------------------------------------------------------------- #}
+  <title>{% block title %}Yale Library | StatLab{% endblock %}</title>
+
+  <meta name="description"
+        content="{% block meta_description %}Statistical consulting and research support for the Yale community.{% endblock %}" />
+
+  {# ----------------------------------------------------------------
+     Typography — Yale 2024 typeface served from /assets/yale-font/.
+     EB Garamond (Google Fonts) is kept as a web fallback for contexts
+     where the Yale font files are unavailable (e.g. public CDN builds).
+  ----------------------------------------------------------------- #}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+        rel="stylesheet" />
+
+  <style>
+    {# Yale 2024 typeface (proprietary). The @font-face below is emitted only
+       when the .otf files are present on disk (local dev); the public build
+       ships without them and --font-serif falls back to EB Garamond / Georgia,
+       so the font is never published. app.py sets has_yale_font. #}
+    {% if has_yale_font %}
+    @font-face {
+      font-family: 'Yale';
+      src: url("{{ url_for('serve_font', filename='Yale2024-Roman.otf') }}") format('opentype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Yale';
+      src: url("{{ url_for('serve_font', filename='Yale2024-Italic.otf') }}") format('opentype');
+      font-weight: 400;
+      font-style: italic;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Yale';
+      src: url("{{ url_for('serve_font', filename='Yale2024-Bold.otf') }}") format('opentype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Yale';
+      src: url("{{ url_for('serve_font', filename='Yale2024-BoldItalic.otf') }}") format('opentype');
+      font-weight: 700;
+      font-style: italic;
+      font-display: swap;
+    }
+    {% endif %}
+
+    /* ============================================================
+       EB GARAMOND  (OFL, free — self-hosted from /assets/eb-garamond/)
+       The public serif: --font-serif lists it right after 'Yale', so
+       when the proprietary Yale font isn't served (the public build)
+       the site renders in EB Garamond instead of system Georgia. Always
+       emitted; browsers only fetch it when it's the family actually used.
+    ============================================================ */
+    @font-face {
+      font-family: 'EB Garamond';
+      src: url("{{ url_for('serve_eb_garamond', filename='eb-garamond-latin-400-normal.woff2') }}") format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'EB Garamond';
+      src: url("{{ url_for('serve_eb_garamond', filename='eb-garamond-latin-400-italic.woff2') }}") format('woff2');
+      font-weight: 400;
+      font-style: italic;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'EB Garamond';
+      src: url("{{ url_for('serve_eb_garamond', filename='eb-garamond-latin-700-normal.woff2') }}") format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'EB Garamond';
+      src: url("{{ url_for('serve_eb_garamond', filename='eb-garamond-latin-700-italic.woff2') }}") format('woff2');
+      font-weight: 700;
+      font-style: italic;
+      font-display: swap;
+    }
+
+    /* ============================================================
+       DESIGN TOKENS
+       All color, spacing, and type decisions live here.
+       Change these custom properties to retheme the whole site.
+    ============================================================ */
+    :root {
+      /* Yale palette */
+      --yale-blue:      #00356B;   /* primary brand */
+      --yale-blue-dark: #002654;   /* nav hover, footer background */
+      --yale-mid:       #0059A8;   /* inline links, accents */
+      /* Yale web accent palette (yaleidentity.yale.edu).
+         Orange passes AA on white; on Yale Blue it falls below 3:1,
+         so dark-background accents use the palette's light blue. */
+      --accent:       #bd5319;   /* Yale accent orange — light backgrounds */
+      --accent-light: #63aaff;   /* Yale light blue — navy backgrounds */
+
+      /* Neutrals */
+      --white:          #ffffff;
+      --text:           #1d2939;
+      --text-muted:     #667085;
+      --bg-subtle:      #f8f9fc;
+      --border:         #e4e7ec;
+
+      /* Typography stacks */
+      --font-serif: 'Yale', 'EB Garamond', Georgia, 'Times New Roman', serif;
+      --font-body:  -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+      /* Elevation — one consistent shadow scale for the whole site */
+      --shadow-sm:  0 1px 2px rgba(16, 24, 40, 0.06);
+      --shadow-md:  0 6px 20px rgba(0, 33, 71, 0.10);
+      --shadow-lg:  0 16px 40px rgba(0, 33, 71, 0.16);
+
+      /* Layout */
+      --nav-height: 64px;
+      --site-max:   1160px;
+      --radius:     4px;     /* controls, chips */
+      --radius-lg:  8px;     /* cards, panels */
+      --ease:       180ms ease;
+    }
+
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--white);
+      /* flex column so the footer is always pushed to the bottom */
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    ::selection {
+      background: var(--yale-blue);
+      color: var(--white);
+    }
+
+    a {
+      color: var(--yale-mid);
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+    a:hover { color: var(--yale-blue); }
+
+    /* Headings use the serif stack. Large display sizes use the Roman
+       weight (400) — the Yale typeface is most elegant unbolded. */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-serif);
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+
+    /* Respect users who prefer reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+
+
+    /* ============================================================
+       LAYOUT HELPERS
+    ============================================================ */
+
+    /* Centred content column with generous horizontal padding */
+    .container {
+      width: 100%;
+      max-width: var(--site-max);
+      margin-inline: auto;
+      padding-inline: 1.5rem;
+    }
+
+    /* Main grows to fill available vertical space */
+    main {
+      flex: 1;
+      padding-block: 3rem;
+    }
+
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+
+    .site-nav {
+      background: var(--yale-blue);
+      height: var(--nav-height);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      /* Thin shadow separates the nav from page content */
+      box-shadow: 0 2px 12px rgba(0, 21, 44, 0.25);
+    }
+
+    .nav-inner {
+      height: 100%;
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    /* ---- Brand ---- */
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--white);
+      text-decoration: none;
+      letter-spacing: 0.015em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .nav-brand:hover { color: rgba(255, 255, 255, 0.85); }
+
+    /* Yale Library wordmark is Yale-blue on transparent; invert it to
+       white so it reads on the blue nav bar. */
+    .nav-brand__logo {
+      height: 26px;
+      width: auto;
+      filter: brightness(0) invert(1);
+    }
+
+    /* Thin divider between the wordmark and "StatLab" */
+    .nav-brand__name {
+      border-left: 1px solid rgba(255, 255, 255, 0.35);
+      padding-left: 0.75rem;
+      line-height: 1;
+    }
+
+    /* ---- Link list ----
+       Links run the full height of the bar; the current section is
+       marked with a thin accent rule along the bottom edge (no boxes). */
+    .nav-links {
+      list-style: none;
+      display: flex;
+      align-items: stretch;
+      gap: 0.25rem;
+    }
+
+    .nav-links > li {
+      position: relative;  /* anchor for dropdowns */
+      display: flex;
+      align-items: stretch;
+    }
+
+    .nav-links a {
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none;
+      font-size: 0.9rem;
+      letter-spacing: 0.03em;
+      transition: color var(--ease);
+      white-space: nowrap;
+    }
+
+    /* Underline indicator — ::before so it doesn't collide with the
+       dropdown chevron, which uses ::after */
+    .nav-links > li > a::before {
+      content: '';
+      position: absolute;
+      left: 1rem;
+      right: 1rem;
+      bottom: 0;
+      height: 2px;
+      background: transparent;
+      transition: background var(--ease);
+    }
+
+    .nav-links a:hover { color: var(--white); }
+    .nav-links > li > a:hover::before { background: rgba(255, 255, 255, 0.35); }
+
+    .nav-links > li > a.active { color: var(--white); }
+    .nav-links > li > a.active::before { background: var(--accent-light); }
+
+    /* ---- Dropdown trigger chevron ---- */
+    .nav-dropdown > a::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      margin-left: 0.5rem;
+      border-right: 1.5px solid rgba(255, 255, 255, 0.6);
+      border-bottom: 1.5px solid rgba(255, 255, 255, 0.6);
+      transform: rotate(45deg) translate(-1px, -1px);
+      transition: transform var(--ease);
+    }
+
+    /* Flip chevron when menu is open or hovered */
+    .nav-dropdown:hover > a::after,
+    .nav-dropdown:focus-within > a::after {
+      transform: rotate(225deg) translate(-2px, -2px);
+    }
+
+    /* ---- Dropdown menu — quiet white panel ---- */
+    .dropdown-menu {
+      /* Hidden by default; revealed on :hover / :focus-within */
+      display: none;
+      position: absolute;
+      top: 100%;          /* flush to parent — no gap that breaks hover */
+      left: 0;
+      min-width: 190px;
+      padding: 0.4rem 0;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent);
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Invisible bridge: fills any sub-pixel gap so the mouse never
+       leaves .nav-dropdown while moving from the trigger to the list */
+    .nav-dropdown::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      height: 4px;
+    }
+
+    /* Reveal on hover (desktop) and keyboard focus */
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu {
+      display: block;
+    }
+
+    .dropdown-menu li { list-style: none; }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 0.55rem 1.15rem;
+      color: var(--text);
+      font-size: 0.88rem;
+      letter-spacing: 0.01em;
+      transition: background var(--ease), color var(--ease);
+    }
+
+    .dropdown-menu a:hover {
+      background: var(--bg-subtle);
+      color: var(--yale-blue);
+    }
+
+
+    /* ---- Hamburger button (mobile only, hidden on desktop) ---- */
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: var(--radius);
+      cursor: pointer;
+      padding: 5px 8px;
+      color: var(--white);
+      line-height: 0;
+    }
+    .nav-toggle:hover {
+      border-color: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-toggle svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
+
+
+    /* ============================================================
+       HERO SECTION
+       Rendered only on the homepage — child templates fill the
+       'hero' block; all other pages leave it empty.
+    ============================================================ */
+
+    .hero {
+      background-color: var(--yale-blue);
+      /* Diagonal gradient adds depth without being busy */
+      background-image: linear-gradient(135deg, #00356b 0%, #002050 100%);
+      color: var(--white);
+      padding-block: 7rem 6.5rem;
+      text-align: center;
+    }
+
+    .hero__eyebrow {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: 1rem;
+    }
+
+    .hero__title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.75rem, 6vw, 4.5rem);
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.1;
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.015em;
+    }
+
+    .hero__tagline {
+      font-family: var(--font-serif);
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      color: rgba(255, 255, 255, 0.85);
+      max-width: 640px;
+      margin-inline: auto;
+      margin-bottom: 2.75rem;
+      line-height: 1.6;
+    }
+
+    /* Solid white button that inverts on hover */
+    .hero__cta {
+      display: inline-block;
+      background: var(--white);
+      color: var(--yale-blue);
+      border: 1px solid var(--white);
+      padding: 0.8rem 2.1rem;
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      transition: background var(--ease), color var(--ease);
+    }
+    .hero__cta:hover {
+      background: transparent;
+      color: var(--white);
+    }
+
+    /* ---- Page hero variant ----
+       Interior pages (About, Consultations, Workshops) use a shorter
+       photo hero in place of the in-page header, mirroring the
+       homepage structure. Each page supplies its own background-image
+       (overlay gradient + photo) in its extra_head block. */
+    .hero--page {
+      padding-block: 5rem 4.5rem;
+      background-size: cover;
+      background-position: center 40%;
+    }
+
+    .hero--page .hero__title {
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+    }
+
+    .hero--page .hero__tagline {
+      margin-bottom: 0;
+    }
+
+    /* Secondary link below the main CTA */
+    .hero__secondary {
+      display: block;
+      margin-top: 1.25rem;
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-color: rgba(255, 255, 255, 0.4);
+    }
+    .hero__secondary:hover {
+      color: var(--white);
+      text-decoration-color: var(--accent-light);
+    }
+
+
+    /* ============================================================
+       SHARED COMPONENTS
+       Used across child templates — defined once here so every
+       page header, button, and chip looks identical site-wide.
+    ============================================================ */
+
+    /* ---- Page header (interior pages) ---- */
+    .page-header {
+      padding-block: 3.25rem 2.25rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2.75rem;
+    }
+
+    .page-header__eyebrow {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.85rem;
+    }
+
+    .page-header__title {
+      font-size: clamp(2.1rem, 4.5vw, 3rem);
+      font-weight: 400;
+      color: var(--yale-blue);
+      margin-bottom: 0.75rem;
+    }
+
+    .page-header__lead {
+      font-size: 1.12rem;
+      color: var(--text-muted);
+      max-width: 640px;
+      line-height: 1.65;
+    }
+
+    /* ---- Buttons ---- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.7rem 1.7rem;
+      border-radius: var(--radius);
+      font-size: 0.92rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background var(--ease), border-color var(--ease), color var(--ease);
+    }
+
+    .btn--primary {
+      background: var(--yale-blue);
+      color: var(--white);
+      border: 1px solid var(--yale-blue);
+    }
+    .btn--primary:hover {
+      background: var(--yale-blue-dark);
+      border-color: var(--yale-blue-dark);
+      color: var(--white);
+    }
+
+    /* Quiet outline button — fills navy on hover */
+    .btn--secondary {
+      background: transparent;
+      color: var(--yale-blue);
+      border: 1px solid rgba(0, 53, 107, 0.45);
+    }
+    .btn--secondary:hover {
+      background: var(--yale-blue);
+      border-color: var(--yale-blue);
+      color: var(--white);
+    }
+
+    /* White button for use on navy panels */
+    .btn--inverse {
+      background: var(--white);
+      color: var(--yale-blue);
+      border: 1px solid var(--white);
+    }
+    .btn--inverse:hover {
+      background: transparent;
+      color: var(--white);
+    }
+
+    /* ---- Chips (keywords, expertise tags) ---- */
+    .chip-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      padding: 0;
+    }
+
+    .chip {
+      display: inline-block;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.15rem 0.7rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.01em;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .chip--accent {
+      background: var(--white);
+      border-color: rgba(0, 53, 107, 0.22);
+      color: var(--yale-blue);
+      font-weight: 500;
+    }
+
+    /* ---- Section title (h2-level, used on long pages) ---- */
+    .section-title {
+      font-size: clamp(1.5rem, 3vw, 1.9rem);
+      font-weight: 400;
+      color: var(--yale-blue);
+      margin-bottom: 0.6rem;
+    }
+
+    /* ---- Keyboard focus ----
+       Orange ring plus a white halo so the indicator stays visible
+       on both white pages and the navy nav/hero/footer. */
+    a:focus-visible,
+    button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 2px;
+      box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.85);
+    }
+
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+
+    .site-footer {
+      background: var(--yale-blue-dark);
+      border-top: 3px solid var(--accent);
+      color: rgba(255, 255, 255, 0.7);
+      padding-block: 3rem 1.5rem;
+      font-size: 0.875rem;
+      /* Footer is always at the bottom because body is a flex column */
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 2.5rem;
+      padding-bottom: 2rem;
+    }
+
+    .footer-brand__logo {
+      height: 24px;
+      width: auto;
+      filter: brightness(0) invert(1);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .footer-brand__blurb {
+      max-width: 320px;
+      line-height: 1.65;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .footer-heading {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.92);
+      margin-bottom: 0.9rem;
+      letter-spacing: 0.16em;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.65);
+      text-decoration: none;
+      transition: color var(--ease);
+    }
+    .footer-links a:hover { color: var(--white); }
+
+    .footer-copy {
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      text-align: center;
+      font-size: 0.8rem;
+      letter-spacing: 0.02em;
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+
+    /* ============================================================
+       RESPONSIVE  —  breakpoint at 768px
+    ============================================================ */
+
+    @media (max-width: 768px) {
+
+      /* Show hamburger, hide link list by default */
+      .nav-toggle { display: block; }
+
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        /* Drop below the fixed navbar */
+        position: absolute;
+        top: var(--nav-height);
+        left: 0;
+        right: 0;
+        background: var(--yale-blue-dark);
+        padding-block: 0.5rem;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      }
+
+      /* JS adds this class when the toggle is clicked */
+      .nav-links.is-open { display: flex; }
+
+      .nav-links > li { width: 100%; }
+
+      .nav-links a {
+        padding: 0.8rem 1.25rem;
+        font-size: 0.95rem;
+      }
+
+      /* The desktop underline indicator doesn't suit a stacked menu;
+         mark the active item with an accent edge on the left instead. */
+      .nav-links > li > a::before { display: none; }
+      .nav-links > li > a.active { box-shadow: inset 3px 0 0 var(--accent-light); }
+
+      /* On mobile the dropdown is always expanded inline — no chevron */
+      .nav-dropdown > a::after { display: none; }
+
+      .dropdown-menu {
+        display: block;       /* always visible when mobile menu is open */
+        position: static;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0;
+        background: rgba(0, 0, 0, 0.18);
+      }
+
+      .dropdown-menu a {
+        padding: 0.7rem 1.25rem 0.7rem 2.25rem;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.75);
+      }
+
+      .dropdown-menu a:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--white);
+      }
+
+      /* Tighter hero on small screens */
+      .hero { padding-block: 4rem 3.5rem; }
+
+      /* Hide the wordmark on small screens — "StatLab" alone is enough */
+      .nav-brand__logo { display: none; }
+      .nav-brand__name { border-left: none; padding-left: 0; }
+
+      /* Stack footer columns */
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+      }
+    }
+
+
+    /* ============================================================
+       SKIP LINK  (accessibility)
+    ============================================================ */
+
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 0;
+      background: var(--accent);
+      color: var(--white);
+      padding: 0.5rem 1rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      z-index: 999;
+    }
+    .skip-link:focus { top: 0; }
+
+  </style>
+
+  {# ----------------------------------------------------------------
+     Optional per-page <head> additions (extra CSS, meta tags, etc.)
+  ----------------------------------------------------------------- #}
+  {% block extra_head %}{% endblock %}
+
+</head>
+
+<body>
+
+  {# Skip to main content for keyboard / screen-reader users #}
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <!-- ============================================================
+       NAVIGATION
+       Active link detection uses request.path — Flask makes the
+       request object available in all templates automatically.
+  ============================================================ -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="container nav-inner">
+
+      {# Brand — always links home.
+         Replace url_for('index') with url_for('main.index') if/when
+         the app is refactored to use a Blueprint named 'main'. #}
+      <a href="{{ url_for('index') }}" class="nav-brand">
+        <img src="{{ url_for('serve_logo', filename='yale-library-long.png') }}"
+             alt="Yale Library" class="nav-brand__logo" />
+        <span class="nav-brand__name">StatLab</span>
+      </a>
+
+      {# Hamburger button — visible on mobile only (display:none in CSS) #}
+      <button
+        class="nav-toggle"
+        aria-controls="primary-nav"
+        aria-expanded="false"
+        aria-label="Open navigation menu"
+      >
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="2" y1="5"  x2="18" y2="5"  />
+          <line x1="2" y1="10" x2="18" y2="10" />
+          <line x1="2" y1="15" x2="18" y2="15" />
+        </svg>
+      </button>
+
+      {# ---- Primary nav links ----
+         TODO: replace the href="#" stubs with url_for() calls once
+         those views are registered in app.py (or a blueprint).
+         Example: href="{{ url_for('research_guides') }}"
+      #}
+      <ul class="nav-links" id="primary-nav" role="list">
+
+        {# About — parent link + dropdown sub-pages #}
+        <li class="nav-dropdown">
+          <a href="{{ url_for('about') }}"
+             {% if request.path.startswith('/about') %}class="active" aria-current="page"{% endif %}>
+            About
+          </a>
+          <ul class="dropdown-menu" role="list">
+            <li><a href="{{ url_for('about') }}">About Us</a></li>
+            <li><a href="{{ url_for('team') }}">Team</a></li>
+          </ul>
+        </li>
+
+        <li>
+          <a href="{{ url_for('research_guides') }}"
+             {% if request.path.startswith('/research-guides') %}class="active" aria-current="page"{% endif %}>
+            Research Guides
+          </a>
+        </li>
+
+        <li>
+          <a href="{{ url_for('workshops') }}"
+             {% if request.path.startswith('/workshops') %}class="active" aria-current="page"{% endif %}>
+            Workshops
+          </a>
+        </li>
+
+        <li>
+          <a href="{{ url_for('consultations') }}"
+             {% if request.path.startswith('/consultations') %}class="active" aria-current="page"{% endif %}>
+            Consultations
+          </a>
+        </li>
+
+        <li>
+          <a href="mailto:statlab@yale.edu">
+            Contact
+          </a>
+        </li>
+
+      </ul>
+    </div><!-- /.nav-inner -->
+  </nav>
+
+
+  <!-- ============================================================
+       HERO  (homepage only)
+       The index.html template fills this block with .hero markup.
+       All other child templates leave it empty.
+  ============================================================ -->
+  {% block hero %}{% endblock %}
+
+
+  <!-- ============================================================
+       MAIN CONTENT
+       Child templates fill the 'content' block.
+       The id="main-content" is the skip-link target.
+  ============================================================ -->
+  <main id="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="site-footer" aria-label="Site footer">
+    <div class="container">
+
+      <div class="footer-grid">
+
+        <div class="footer-brand">
+          <img src="{{ url_for('serve_logo', filename='yale-library-long.png') }}"
+               alt="Yale Library" class="footer-brand__logo" />
+          <p class="footer-brand__blurb">
+            StatLab provides free statistical consulting and research
+            support to students, faculty, and staff across the Yale community.
+          </p>
+        </div>
+
+        <nav aria-label="Footer site links">
+          <h2 class="footer-heading">Explore</h2>
+          <ul class="footer-links" role="list">
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            <li><a href="{{ url_for('team') }}">Our Team</a></li>
+            <li><a href="{{ url_for('research_guides') }}">Research Guides</a></li>
+            <li><a href="{{ url_for('workshops') }}">Workshops</a></li>
+            <li><a href="{{ url_for('consultations') }}">Consultations</a></li>
+          </ul>
+        </nav>
+
+        <nav aria-label="Footer contact links">
+          <h2 class="footer-heading">Connect</h2>
+          <ul class="footer-links" role="list">
+            <li><a href="mailto:statlab@yale.edu">statlab@yale.edu</a></li>
+            <li>
+              <a href="https://library.yale.edu" target="_blank" rel="noopener noreferrer">
+                Yale Library
+              </a>
+            </li>
+            <li>
+              <a href="https://schedule.yale.edu/appointments/statlab-consult#s-lc-public-pt"
+                 target="_blank" rel="noopener noreferrer">
+                Book a Consultation
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+      </div>
+
+      <p class="footer-copy">
+        &copy; {{ now.year if now else '2025' }} Yale University Library &mdash; Statistical Consulting &amp; Research Support
+      </p>
+
+    </div>
+  </footer>
+
+
+  <!-- ============================================================
+       JAVASCRIPT
+       Only the mobile nav toggle is here.  Keep this minimal —
+       heavier page-specific scripts belong in the 'extra_scripts' block.
+  ============================================================ -->
+  <script>
+    (function () {
+      var toggle = document.querySelector('.nav-toggle');
+      var menu   = document.getElementById('primary-nav');
+
+      if (!toggle || !menu) return;
+
+      /* Toggle the menu open/closed */
+      toggle.addEventListener('click', function () {
+        var isOpen = menu.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', String(isOpen));
+        toggle.setAttribute(
+          'aria-label',
+          isOpen ? 'Close navigation menu' : 'Open navigation menu'
+        );
+      });
+
+      /* Close when any nav link is clicked (handy for same-page anchors) */
+      menu.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') {
+          menu.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation menu');
+        }
+      });
+
+      /* Close when the user clicks outside the nav bar */
+      document.addEventListener('click', function (e) {
+        var nav = document.querySelector('.site-nav');
+        if (nav && !nav.contains(e.target)) {
+          menu.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }());
+  </script>
+
+  {# Per-page scripts (analytics, MathJax, Mermaid, etc.) go here #}
+  {% block extra_scripts %}{% endblock %}
+
+</body>
+</html>

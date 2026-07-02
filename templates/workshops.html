@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Workshops — Yale StatLab{% endblock %}
+
+{% block meta_description %}Hands-on statistical software and methods workshops from Yale StatLab, open to all Yale affiliates.{% endblock %}
+
+{# ---- Photo hero, mirroring the homepage structure ---- #}
+{% block hero %}
+<section class="hero hero--page hero--workshops" aria-label="StatLab workshops">
+  <div class="container">
+    <p class="hero__eyebrow">Yale StatLab</p>
+    <h1 class="hero__title">Workshops</h1>
+    <p class="hero__tagline">
+      Hands-on instruction in statistical software and methods,
+      open to all Yale affiliates throughout the academic year.
+    </p>
+  </div>
+</section>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+
+  <section class="workshops-notice" aria-labelledby="schedule-heading">
+    <h2 id="schedule-heading" class="section-title">Upcoming Schedule</h2>
+    <p>
+      The workshop schedule for the upcoming term is being finalized.
+      In the meantime, our <a href="{{ url_for('research_guides') }}">research guides</a> cover
+      many of the same methods with worked examples you can follow at your own pace —
+      or <a href="{{ url_for('consultations') }}">book a consultation</a> for one-on-one help.
+    </p>
+    <p>
+      Questions about workshops, or a topic you'd like us to teach?
+      We'd love to hear from you.
+    </p>
+    <a href="mailto:statlab@yale.edu" class="btn btn--primary">Email statlab@yale.edu &rarr;</a>
+  </section>
+
+</div>
+{% endblock %}
+
+
+{% block extra_head %}
+<style>
+  /* ---- Hero photo (overlay keeps white text readable) ---- */
+  .hero--workshops {
+    background-image:
+      linear-gradient(rgba(0, 28, 64, 0.84), rgba(0, 45, 92, 0.80)),
+      url("{{ url_for('serve_statlab_photo', filename='2025_12_05 Yale DISS CGS_Lavitt_42-Web High Quality.jpg') }}");
+  }
+
+  .workshops-notice p {
+    color: var(--text);
+    line-height: 1.75;
+    margin-bottom: 1rem;
+  }
+
+  .workshops-notice .btn {
+    margin-top: 0.5rem;
+  }
+</style>
+{% endblock %}

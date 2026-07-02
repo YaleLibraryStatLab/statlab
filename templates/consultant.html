@@ -1,0 +1,429 @@
+{% extends "base.html" %}
+
+{% block title %}{{ consultant.name }} — Yale StatLab{% endblock %}
+
+{% block meta_description %}{{ consultant.bio | truncate(180) }}{% endblock %}
+
+
+{% block extra_head %}
+<style>
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 2rem;
+    transition: color var(--ease);
+  }
+  .back-link:hover { color: var(--yale-blue); }
+
+  /* ---- Header ---- */
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .profile-avatar {
+    flex-shrink: 0;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: var(--yale-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    font-weight: 500;
+    color: var(--white);
+    letter-spacing: 0.04em;
+    overflow: hidden;
+    border: 3px solid var(--white);
+    box-shadow: 0 0 0 1px var(--border), 0 4px 14px rgba(0, 0, 0, 0.08);
+  }
+
+  .profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    border-radius: 50%;
+  }
+
+  .profile-header__info { flex: 1; }
+
+  .profile-header__name {
+    font-size: clamp(1.9rem, 4vw, 2.7rem);
+    font-weight: 400;
+    color: var(--yale-blue);
+    line-height: 1.2;
+    margin-bottom: 0.3rem;
+  }
+
+  .profile-header__role {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.02em;
+  }
+
+  .profile-header__status--former {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.65rem;
+    border-radius: 999px;
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  /* External / contact links (scheduling lives in the booking box below,
+     not here, so the actions aren't duplicated). */
+  .profile-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+  }
+  .profile-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    color: var(--yale-mid);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.2rem 0.75rem;
+    transition: border-color var(--ease), background var(--ease);
+  }
+  .profile-link:hover {
+    border-color: var(--yale-mid);
+    background: var(--bg-subtle);
+    color: var(--yale-blue);
+  }
+
+  /* ---- Book a consultation ---- */
+  .schedule-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2.75rem;
+    padding: 1.5rem 1.75rem;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    align-items: center;
+  }
+  .schedule-box__label {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+    min-width: 180px;
+  }
+  .schedule-box__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  /* ---- Two-column body: bio + guides | expertise sidebar ---- */
+  .profile-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(280px, 3fr);
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .profile-bio {
+    font-size: 1.05rem;
+    color: var(--text);
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+  }
+
+  .profile-section-title {
+    font-family: var(--font-serif);
+    font-size: 1.55rem;
+    font-weight: 400;
+    color: var(--yale-blue);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ---- Expertise sidebar ---- */
+  .expertise-panel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .expertise-group__title {
+    font-size: 0.74rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--yale-blue);
+    margin-bottom: 0.75rem;
+  }
+
+  /* ---- Authored guide cards ---- */
+  .profile-guides {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    padding: 0;
+  }
+
+  .profile-guide-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--ease), border-color var(--ease);
+  }
+  .profile-guide-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: rgba(0, 53, 107, 0.28);
+  }
+
+  .profile-guide-card__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .profile-guide-card__figure {
+    height: 150px;
+    background: var(--bg-subtle);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0.6rem;
+  }
+  .profile-guide-card__figure img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+  .profile-guide-card__figure svg {
+    width: 44px;
+    height: 44px;
+    color: var(--yale-mid);
+    opacity: 0.45;
+  }
+
+  .profile-guide-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1rem 1.1rem 1.1rem;
+    flex: 1;
+  }
+  .profile-guide-card__title {
+    font-family: var(--font-serif);
+    font-size: 1.08rem;
+    font-weight: 600;
+    color: var(--yale-blue);
+    line-height: 1.3;
+  }
+  .profile-guide-card__date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .profile-no-guides {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    padding: 1.25rem;
+    background: var(--bg-subtle);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  @media (max-width: 900px) {
+    .profile-grid { grid-template-columns: 1fr; gap: 2rem; }
+  }
+
+  @media (max-width: 600px) {
+    .profile-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .profile-avatar { width: 96px; height: 96px; font-size: 1.7rem; }
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+
+  <a href="{{ url_for('team') }}" class="back-link">
+    &#8592; Our Team
+  </a>
+
+  {# ---- Avatar initials ---- #}
+  {%- set parts = consultant.name.split() -%}
+  {%- set initials = (parts[0][0] if parts else '') + (parts[-1][0] if parts | length > 1 else '') -%}
+
+  <header class="profile-header">
+    <div class="profile-avatar">
+      {% if consultant.photo %}
+        <img src="{{ url_for('serve_consultant_photo', filename=consultant.photo) }}" alt="{{ consultant.name }}">
+      {% else %}
+        {{ initials | upper }}
+      {% endif %}
+    </div>
+    <div class="profile-header__info">
+      <h1 class="profile-header__name">{{ consultant.name }}</h1>
+      <p class="profile-header__role">{{ consultant.role }} &mdash; Yale StatLab</p>
+      {% if consultant.status == 'former' %}
+        <span class="profile-header__status--former">Former Consultant</span>
+      {% endif %}
+
+      <div class="profile-links">
+        {% if consultant.email %}
+          <a href="mailto:{{ consultant.email }}" class="profile-link">Email</a>
+        {% endif %}
+        {% if consultant.links and consultant.links.github %}
+          <a href="{{ consultant.links.github }}" class="profile-link" target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
+        {% endif %}
+        {% if consultant.links and consultant.links.website %}
+          <a href="{{ consultant.links.website }}" class="profile-link" target="_blank" rel="noopener noreferrer">
+            Website
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  {% if consultant.status == 'current' %}
+    <div class="schedule-box">
+      <span class="schedule-box__label">Book a consultation with {{ consultant.name.split()[0] }}</span>
+      <div class="schedule-box__links">
+        <a href="https://schedule.yale.edu/appointments/statlab-consult#s-lc-public-pt"
+           class="btn btn--primary"
+           target="_blank" rel="noopener noreferrer">
+          In-Person
+        </a>
+        <a href="https://schedule.yale.edu/appointments/statlab-consult-virtual#s-lc-public-pt"
+           class="btn btn--secondary"
+           target="_blank" rel="noopener noreferrer">
+          Virtual
+        </a>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="profile-grid">
+
+    {# ---- Main column: bio + authored guides ---- #}
+    <div class="profile-main">
+
+      {% if consultant.bio %}
+        <p class="profile-bio">{{ consultant.bio }}</p>
+      {% endif %}
+
+      <h2 class="profile-section-title">Research Guides</h2>
+
+      {% if guides %}
+        <ul class="profile-guides" role="list">
+          {% for g in guides %}
+            <li class="profile-guide-card">
+              <a href="{{ url_for('guide_index', slug=g.slug) }}" class="profile-guide-card__link">
+                <div class="profile-guide-card__figure" aria-hidden="true">
+                  {% if g.has_thumbnail %}
+                    <img src="{{ url_for('guide_thumbnail', slug=g.slug) }}" alt="" loading="lazy">
+                  {% else %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="4" y1="20" x2="20" y2="20"/>
+                      <line x1="4" y1="20" x2="4" y2="4"/>
+                      <polyline points="7 14 11 9 14 12 19 5"/>
+                    </svg>
+                  {% endif %}
+                </div>
+                <div class="profile-guide-card__body">
+                  <span class="profile-guide-card__title">{{ g.title }}</span>
+                  {% if g.date %}
+                    <span class="profile-guide-card__date">{{ g.date | friendly_date }}</span>
+                  {% endif %}
+                </div>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="profile-no-guides">No guides have been published yet.</p>
+      {% endif %}
+
+    </div>
+
+    {# ---- Sidebar: expertise from consultants.json ---- #}
+    <aside class="expertise-panel" aria-label="Areas of expertise">
+
+      {% if consultant.methodological_topics %}
+        <div class="expertise-group">
+          <h2 class="expertise-group__title">Methodological Expertise</h2>
+          <ul class="chip-list" role="list">
+            {% for topic in consultant.methodological_topics %}
+              <li class="chip">{{ topic }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      {% if consultant.coding_languages_and_tools %}
+        <div class="expertise-group">
+          <h2 class="expertise-group__title">Languages &amp; Tools</h2>
+          <ul class="chip-list" role="list">
+            {% for tool in consultant.coding_languages_and_tools %}
+              <li class="chip chip--accent">{{ tool }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      {% if consultant.ai_coding_agents %}
+        <div class="expertise-group">
+          <h2 class="expertise-group__title">AI Coding Agents</h2>
+          <ul class="chip-list" role="list">
+            {% for agent in consultant.ai_coding_agents %}
+              <li class="chip chip--accent">{{ agent }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+    </aside>
+
+  </div><!-- /.profile-grid -->
+
+</div>
+{% endblock %}

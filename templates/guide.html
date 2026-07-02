@@ -1,0 +1,883 @@
+{% extends "base.html" %}
+
+{% block title %}{{ guide.title }}{% endblock %}
+
+{% block meta_description %}{{ (guide.abstract or 'Yale StatLab research guide.') | striptags | truncate(180) }}{% endblock %}
+
+
+{% block extra_head %}
+  {# ---- Quarto support stylesheets (full Bootstrap is filtered out in the route) ---- #}
+  {% for css in guide.stylesheets %}
+    <link rel="stylesheet" href="{{ css.src }}"
+      {%- for k, v in css.attrs.items() %} {{ k }}="{{ v }}"{% endfor -%}
+    />
+  {% endfor %}
+
+  <style>
+    /* ============================================================
+       GUIDE PAGE — Yale-styled overrides for Quarto content.
+       Scoped to .guide-content so site-wide elements (nav, footer,
+       hero, cards) are untouched.
+    ============================================================ */
+
+    .guide-header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .guide-header__title {
+      font-size: clamp(2.1rem, 4.5vw, 3rem);
+      font-weight: 400;
+      color: var(--yale-blue);
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
+    .guide-header__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .guide-header__meta strong {
+      color: var(--text);
+      font-weight: 600;
+      margin-right: 0.4rem;
+    }
+    .guide-header__meta a {
+      color: var(--yale-mid);
+      text-decoration: none;
+    }
+    .guide-header__meta a:hover { text-decoration: underline; }
+    .guide-header__abstract {
+      font-size: 1.02rem;
+      color: var(--text);
+      line-height: 1.7;
+      margin-top: 1rem;
+      padding: 1rem 1.25rem;
+      background: var(--bg-subtle);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+    }
+    .guide-header__abstract p:last-child { margin-bottom: 0; }
+    .guide-header__keywords {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .guide-header__keywords li {
+      display: inline-block;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.15rem 0.7rem;
+      margin: 0 0.3rem 0.3rem 0;
+      font-size: 0.78rem;
+    }
+
+    .guide-article { max-width: 960px; margin-inline: auto; }
+
+    /* ---- Layout with table of contents ----
+       Single column by default; the TOC becomes a sticky right rail on
+       wide viewports. The article widens so the content column keeps
+       its 960px measure. */
+    .guide-toc { display: none; }
+    @media (min-width: 1200px) {
+      .guide-article:has(.guide-toc) { max-width: 1240px; }
+      .guide-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 960px) 240px;
+        gap: 2.5rem;
+        align-items: start;
+      }
+      .guide-toc {
+        display: block;
+        position: sticky;
+        top: calc(var(--nav-height) + 1.5rem);
+        max-height: calc(100vh - var(--nav-height) - 3rem);
+        overflow-y: auto;
+        font-size: 0.85rem;
+        padding-left: 1rem;
+        border-left: 1px solid var(--border);
+      }
+    }
+    .guide-toc #toc-title {
+      font-family: var(--font-serif);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 0.6rem;
+      border: 0;
+      padding: 0;
+    }
+    .guide-toc ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .guide-toc ul ul { padding-left: 0.9rem; }
+    .guide-toc li { margin: 0; }
+    .guide-toc a {
+      display: block;
+      padding: 0.22rem 0;
+      color: var(--text-muted);
+      text-decoration: none;
+      line-height: 1.4;
+      border-left: 2px solid transparent;
+      margin-left: -1rem;
+      padding-left: calc(1rem - 2px);
+      transition: color var(--ease), border-color var(--ease);
+    }
+    .guide-toc a:hover { color: var(--yale-blue); }
+    .guide-toc a.is-active {
+      color: var(--yale-blue);
+      font-weight: 600;
+      border-left-color: var(--yale-blue);
+    }
+
+    /* Hide the Quarto-rendered title block; our own header above replaces it. */
+    .guide-content > header#title-block-header { display: none; }
+
+    /* ---- Typography inside guide content ---- */
+    .guide-content { font-size: 1.02rem; line-height: 1.75; color: var(--text); }
+    .guide-content h1,
+    .guide-content h2,
+    .guide-content h3,
+    .guide-content h4,
+    .guide-content h5,
+    .guide-content h6 {
+      font-family: var(--font-serif);
+      color: var(--yale-blue);
+      margin-top: 2.25rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.25;
+    }
+    .guide-content h2 {
+      font-size: 1.7rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .guide-content h3 { font-size: 1.35rem; }
+    .guide-content h4 { font-size: 1.1rem; }
+    .guide-content p { margin-bottom: 1rem; }
+    .guide-content ul, .guide-content ol { margin: 0 0 1rem 1.5rem; }
+    .guide-content li { margin-bottom: 0.35rem; }
+    .guide-content a { color: var(--yale-mid); }
+    .guide-content a:hover { color: var(--yale-blue); }
+    .guide-content blockquote {
+      border-left: 3px solid var(--accent);
+      margin: 1.5rem 0;
+      padding: 0.4rem 1rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .guide-content hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+
+    /* ---- Code blocks ---- */
+    .guide-content pre {
+      background: #f6f8fa;
+      border: 1px solid var(--border);
+      padding: 0.9rem 1.1rem;
+      border-radius: var(--radius);
+      overflow-x: auto;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      margin: 1.25rem 0;
+    }
+    .guide-content code {
+      font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+    }
+    .guide-content :not(pre) > code {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      padding: 0.05rem 0.35rem;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+    .guide-content pre code { padding: 0; background: transparent; border: 0; }
+
+    /* Code output (cell-output-stdout etc.) — subtle distinction from input */
+    .guide-content .cell-output pre {
+      background: #fff;
+      border-color: var(--border);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* Display math can be wider than the column on small screens */
+    .guide-content .math.display {
+      display: block;
+      overflow-x: auto;
+      padding-block: 0.25rem;
+    }
+
+    /* ---- Tables ---- */
+    .guide-content table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+    .guide-content th, .guide-content td {
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+    }
+    .guide-content thead th { background: var(--bg-subtle); }
+    .guide-content tbody tr:nth-child(even) { background: var(--bg-subtle); }
+
+    /* ---- Figures ---- */
+    .guide-content figure { margin: 2rem 0; }
+    .guide-content figure img {
+      display: block;
+      margin-inline: auto;
+      max-width: 100%;
+      border-radius: var(--radius);
+    }
+    .guide-content figcaption,
+    .guide-content .figure-caption,
+    .guide-content .quarto-figure figcaption {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+
+    /* ---- Callouts (Quarto markup, restyled without Bootstrap) ----
+       Header stacked above body; icon (when present) sits inline with title. */
+    .guide-content .callout {
+      display: block;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--text-muted);
+      border-radius: var(--radius);
+      background: var(--bg-subtle);
+      padding: 0.9rem 1.1rem;
+      margin: 1.5rem 0;
+    }
+    .guide-content .callout-note      { border-left-color: var(--yale-mid); }
+    .guide-content .callout-tip       { border-left-color: #2e7d32; }
+    .guide-content .callout-warning   { border-left-color: #ed6c02; }
+    .guide-content .callout-caution   { border-left-color: #d32f2f; }
+    .guide-content .callout-important { border-left-color: #d32f2f; }
+
+    .guide-content .callout-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .guide-content .callout-title-container,
+    .guide-content .callout-title,
+    .guide-content .callout-caption-container {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      color: var(--yale-blue);
+      font-size: 1.02rem;
+    }
+    .guide-content .callout-icon-container {
+      display: inline-flex;
+      align-items: center;
+    }
+    .guide-content .callout-icon-container .callout-icon,
+    .guide-content .callout-icon-container .bi {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+    }
+    .guide-content .callout-body,
+    .guide-content .callout-body-container { display: block; }
+    .guide-content .callout-body p:last-child,
+    .guide-content .callout-body-container p:last-child { margin-bottom: 0; }
+
+    /* ---- Footnote / citation links ---- */
+    .guide-content a.quarto-xref { font-variant-numeric: tabular-nums; }
+    .guide-content sup a { text-decoration: none; }
+
+    /* ---- Bibliography ---- */
+    .guide-content #refs.references {
+      font-size: 0.92rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    .guide-content #refs .csl-entry {
+      padding-left: 1.5rem;
+      text-indent: -1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ---- Section number prefixes that Quarto emits inside h2/h3 ---- */
+    .guide-content .header-section-number {
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-right: 0.5rem;
+    }
+
+    /* ---- Panel tabsets ----
+       JS marks PURE language tabsets with .is-lang-tabset (every tab label
+       is a recognised coding language); only those get their nav-tabs hidden.
+       Mixed tabsets (language tabs alongside others) keep a visible tab bar
+       but still respond to the global switcher; non-language tabsets
+       (package comparisons, output-vs-plot) keep their own tab bar, switched
+       by the delegated click handler.
+       Without JS, Quarto's static .active marker keeps the first pane shown. */
+    .guide-content .panel-tabset.is-lang-tabset > .nav-tabs { display: none; }
+    .guide-content .panel-tabset .tab-content > .tab-pane { display: none; }
+    .guide-content .panel-tabset .tab-content > .tab-pane.active { display: block; }
+
+    /* Visible tab bar for non-language tabsets (Bootstrap CSS is stripped,
+       so style Quarto's .nav-tabs markup from scratch). */
+    .guide-content .panel-tabset > .nav-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      list-style: none;
+      margin: 1.5rem 0 0;
+      padding: 0;
+      border-bottom: 2px solid var(--border);
+    }
+    .guide-content .panel-tabset > .nav-tabs .nav-item { margin: 0; }
+    .guide-content .panel-tabset > .nav-tabs .nav-link {
+      display: inline-block;
+      padding: 0.45rem 1rem;
+      margin-bottom: -2px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      cursor: pointer;
+      transition: color var(--ease), border-color var(--ease);
+    }
+    .guide-content .panel-tabset > .nav-tabs .nav-link:hover {
+      color: var(--yale-blue);
+    }
+    .guide-content .panel-tabset > .nav-tabs .nav-link.active {
+      color: var(--yale-blue);
+      border-bottom-color: var(--yale-blue);
+    }
+    .guide-content .panel-tabset .tab-content {
+      padding-top: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ---- Collapsible callouts (Bootstrap Collapse JS replaced by ours) ---- */
+    .guide-content .callout .callout-collapse.collapse:not(.show) { display: none; }
+    .guide-content .callout-header[data-bs-toggle="collapse"] { cursor: pointer; }
+    .guide-content .callout-toggle::before {
+      content: "\25B8";               /* ▸ */
+      display: inline-block;
+      color: var(--text-muted);
+      font-style: normal;
+      transition: transform var(--ease);
+    }
+    .guide-content .callout-header[aria-expanded="true"] .callout-toggle::before {
+      transform: rotate(90deg);
+    }
+    .guide-content .callout-btn-toggle { margin-left: auto; }
+
+    /* Callout type icons (bootstrap-icons font isn't loaded; use glyphs) */
+    .guide-content .callout-icon::before {
+      font-style: normal;
+      font-size: 1rem;
+      line-height: 1;
+    }
+    .guide-content .callout-note      .callout-icon::before { content: "\2139";  color: var(--yale-mid); }  /* ℹ */
+    .guide-content .callout-tip       .callout-icon::before { content: "\2714";  color: #2e7d32; }          /* ✔ */
+    .guide-content .callout-warning   .callout-icon::before { content: "\26A0";  color: #ed6c02; }          /* ⚠ */
+    .guide-content .callout-caution   .callout-icon::before { content: "\26A0";  color: #d32f2f; }
+    .guide-content .callout-important .callout-icon::before { content: "\2757";  color: #d32f2f; }          /* ❗ */
+
+    /* ---- Code copy button (clipboard handled by our JS) ---- */
+    .guide-content div.sourceCode { position: relative; }
+    .guide-content .code-copy-button {
+      position: absolute;
+      top: 0.45rem;
+      right: 0.45rem;
+      padding: 0.15rem 0.6rem;
+      font-size: 0.72rem;
+      font-family: inherit;
+      color: var(--text-muted);
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity var(--ease), color var(--ease), border-color var(--ease);
+    }
+    .guide-content div.sourceCode:hover .code-copy-button,
+    .guide-content .code-copy-button:focus-visible { opacity: 1; }
+    .guide-content .code-copy-button::after { content: "Copy"; }
+    .guide-content .code-copy-button.code-copy-button-checked::after { content: "Copied"; }
+    .guide-content .code-copy-button.code-copy-button-checked {
+      color: #2e7d32;
+      border-color: #2e7d32;
+    }
+    .guide-content .code-copy-button .bi { display: none; }
+
+    /* ---- Mermaid diagrams ----
+       Rendered client-side into the <pre class="mermaid"> block; it must
+       not look like a code block once (or before) the SVG lands. */
+    .guide-content pre.mermaid {
+      background: transparent;
+      border: 0;
+      text-align: center;
+      /* Hide the raw flowchart source until mermaid replaces it */
+      visibility: hidden;
+    }
+    .guide-content pre.mermaid[data-processed="true"] { visibility: visible; }
+    .guide-content pre.mermaid svg { margin-inline: auto; }
+
+    /* ---- Global language switcher ---- */
+    .lang-switcher {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.65rem 0.9rem;
+      margin: 0 0 1.75rem;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.92rem;
+      position: sticky;
+      top: var(--nav-height);
+      z-index: 5;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+    .lang-switcher__label {
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      margin-right: 0.35rem;
+    }
+    .lang-switcher__btn {
+      appearance: none;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.25rem 0.85rem;
+      font: inherit;
+      font-size: 0.88rem;
+      color: var(--text);
+      cursor: pointer;
+      transition: background var(--ease), border-color var(--ease), color var(--ease);
+    }
+    .lang-switcher__btn:hover {
+      border-color: var(--yale-mid);
+      color: var(--yale-blue);
+    }
+    .lang-switcher__btn.is-active {
+      background: var(--yale-blue);
+      color: var(--white);
+      border-color: var(--yale-blue);
+    }
+  </style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+  <article class="guide-article" data-pagefind-body>
+
+    <header class="guide-header">
+      <h1 class="guide-header__title" data-pagefind-meta="title">{{ guide.title }}</h1>
+
+      {% if guide.authors or guide.date %}
+      <div class="guide-header__meta">
+        {% if guide.authors %}
+          <span>
+            <strong>By</strong>
+            {% for a in guide.authors -%}
+              {%- set profile = consultant_map.get(a.name | lower) -%}
+              {%- if profile %}<a href="{{ url_for('consultant_profile', slug=profile.slug) }}">{{ a.name }}</a>
+              {%- elif a.url %}<a href="{{ a.url }}" target="_blank" rel="noopener noreferrer">{{ a.name }}</a>
+              {%- else %}{{ a.name }}{% endif %}
+              {%- if a.affiliation %} <span class="guide-header__affiliation">({{ a.affiliation }})</span>{% endif %}
+              {%- if not loop.last %}, {% endif %}
+            {%- endfor %}
+          </span>
+        {% endif %}
+        {% if guide.date %}
+          <span><strong>Published</strong> {{ guide.date }}</span>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% if guide.abstract %}
+        <div class="guide-header__abstract">{{ guide.abstract | safe }}</div>
+      {% endif %}
+
+      {% if guide.keywords %}
+        <ul class="guide-header__keywords" role="list" aria-label="Keywords">
+          {% for k in guide.keywords %}<li>{{ k }}</li>{% endfor %}
+        </ul>
+      {% endif %}
+    </header>
+
+    {% if guide.toc_html %}
+    <div class="guide-layout">
+      <div class="guide-content">
+        {{ guide.main_html | safe }}
+      </div>
+      <aside class="guide-toc" aria-label="Table of contents">
+        <nav>{{ guide.toc_html | safe }}</nav>
+      </aside>
+    </div>
+    {% else %}
+    <div class="guide-content">
+      {{ guide.main_html | safe }}
+    </div>
+    {% endif %}
+
+  </article>
+</div>
+{% endblock %}
+
+
+{% block extra_scripts %}
+  {% for js in guide.scripts %}
+    <script src="{{ js.src }}"
+      {%- for k, v in js.attrs.items() %} {{ k }}="{{ v }}"{% endfor -%}
+    ></script>
+  {% endfor %}
+
+  <script>
+    /* ============================================================
+       Guide runtime.
+
+       Quarto's own interactive runtime (Bootstrap JS + quarto.js +
+       MathJax loader) is deliberately not loaded here: file-based
+       renders get their Bootstrap stripped to protect site styles,
+       and self-contained renders inline everything in <head>, which
+       the extractor drops. The handlers below replace exactly what
+       guides need, for both render styles:
+
+         1. MathJax (loaded on demand when math is present)
+         2. Global language switcher for code tabsets
+         3. Tab switching for every other tabset
+         4. Collapsible callouts
+         5. Mermaid diagrams (loaded on demand when present)
+         6. Code copy buttons
+         7. TOC scrollspy
+    ============================================================ */
+
+    /* ---- 1. MathJax: load from CDN only if the guide has math and
+       no other script has already brought MathJax in. ---- */
+    (function () {
+      if (window.MathJax) return;
+      if (!document.querySelector('.guide-content .math')) return;
+      window.MathJax = {
+        tex: {
+          inlineMath: [['\\(', '\\)']],
+          displayMath: [['\\[', '\\]']],
+          processEscapes: true
+        },
+        options: {
+          ignoreHtmlClass: 'lang-switcher'
+        }
+      };
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js';
+      document.head.appendChild(s);
+    })();
+
+    /* ============================================================
+       2. Global language switcher.
+
+       Quarto emits one .panel-tabset per code chunk that has multiple
+       language variants (R, Julia, Python, ...). Each tabset carries
+       its own .nav-tabs list. We hide those per-tabset tabs (via CSS)
+       and inject a single switcher at the top of .guide-content that
+       drives every tabset simultaneously.
+
+       THE RULE — tabsets fall into three classes by their tab labels:
+
+       • PURE language tabsets (every label is a recognised coding
+         language — any subset counts, e.g. R+Julia before the other
+         languages are written): tab bar hidden, fully switcher-driven.
+       • MIXED tabsets (at least one language label alongside others,
+         e.g. R | Julia | Interpretation): tab bar stays VISIBLE so the
+         non-language tabs remain reachable, but the switcher also
+         activates the matching language tab when one exists.
+       • NON-language tabsets (no language labels at all — package
+         comparisons like lme4 / glmmTMB / MCMCglmm, output-vs-plot):
+         untouched; their own tab bar is handled by section 3.
+
+       The switcher appears once the guide has two or more distinct
+       language tabs anywhere. Choice persists in localStorage so it
+       survives reloads and navigations between guides.
+    ============================================================ */
+    (function () {
+      var STORAGE_KEY = 'statlab.guide.lang';
+
+      // Canonical coding languages the switcher understands.
+      // Add entries here as new guides introduce new languages.
+      // 'ai prompt' / 'ai' cover the agent-prompt tab in the 5-tab standard.
+      var KNOWN_LANGS = [
+        'r', 'python', 'julia', 'stata', 'sas', 'matlab', 'sql',
+        'bash', 'shell', 'javascript', 'typescript', 'c', 'c++', 'cpp',
+        'ai', 'ai prompt', 'agent prompt'
+      ];
+
+      function isKnownLang(label) {
+        return KNOWN_LANGS.indexOf(label.toLowerCase()) !== -1;
+      }
+
+      var guide = document.querySelector('.guide-content');
+      if (!guide) return;
+      var allTabsets = guide.querySelectorAll('.panel-tabset');
+      if (!allTabsets.length) return;
+
+      // Classify tabsets. "Controlled" = pure + mixed (the switcher drives
+      // them); only pure ones get is-lang-tabset, which hides the tab bar.
+      var controlled = [];
+      allTabsets.forEach(function (ts) {
+        var links = ts.querySelectorAll('.nav-tabs .nav-link');
+        if (!links.length) return;
+        var langCount = 0;
+        links.forEach(function (link) {
+          if (isKnownLang((link.textContent || '').trim())) langCount += 1;
+        });
+        if (langCount === 0) return;                       // non-language: untouched
+        if (langCount === links.length && links.length >= 2) {
+          ts.classList.add('is-lang-tabset');              // pure: hide tab bar
+        }
+        controlled.push(ts);                               // pure or mixed
+      });
+      if (!controlled.length) return;
+
+      // Collect unique language labels from controlled tabsets, in
+      // first-seen order. Non-language labels in mixed tabsets are skipped.
+      var langs = [];
+      var seen = {};
+      controlled.forEach(function (ts) {
+        ts.querySelectorAll('.nav-tabs .nav-link').forEach(function (link) {
+          var label = (link.textContent || '').trim();
+          var key = label.toLowerCase();
+          if (label && isKnownLang(label) && !seen[key]) {
+            seen[key] = true;
+            langs.push(label);
+          }
+        });
+      });
+      if (langs.length < 2) return;   // nothing to switch between
+
+      // Restore saved choice (case-insensitive) or fall back to first.
+      var saved = null;
+      try { saved = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+      var current = langs[0];
+      if (saved) {
+        for (var i = 0; i < langs.length; i++) {
+          if (langs[i].toLowerCase() === saved.toLowerCase()) {
+            current = langs[i];
+            break;
+          }
+        }
+      }
+
+      // Build the switcher
+      var switcher = document.createElement('div');
+      switcher.className = 'lang-switcher';
+      switcher.setAttribute('role', 'group');
+      switcher.setAttribute('aria-label', 'Code language selector');
+
+      var label = document.createElement('span');
+      label.className = 'lang-switcher__label';
+      label.textContent = 'Code language';
+      switcher.appendChild(label);
+
+      langs.forEach(function (lang) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'lang-switcher__btn';
+        btn.dataset.lang = lang;
+        btn.textContent = lang;
+        btn.setAttribute('aria-pressed', 'false');
+        btn.addEventListener('click', function () { switchTo(lang); });
+        switcher.appendChild(btn);
+      });
+
+      guide.insertBefore(switcher, guide.firstChild);
+
+      function switchTo(lang) {
+        current = lang;
+        try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+
+        switcher.querySelectorAll('.lang-switcher__btn').forEach(function (btn) {
+          var on = btn.dataset.lang === lang;
+          btn.classList.toggle('is-active', on);
+          btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+
+        controlled.forEach(function (ts) {
+          var links = ts.querySelectorAll('.nav-tabs .nav-link');
+          var panes = ts.querySelectorAll('.tab-content > .tab-pane');
+          var matchIdx = -1;
+          links.forEach(function (link, idx) {
+            if ((link.textContent || '').trim().toLowerCase() === lang.toLowerCase()) {
+              matchIdx = idx;
+            }
+          });
+          // If this tabset doesn't have the chosen language (a partial
+          // tabset, or a mixed one currently on a non-language tab),
+          // leave its current active pane alone rather than blanking it.
+          if (matchIdx < 0) return;
+          links.forEach(function (link, idx) {
+            link.classList.toggle('active', idx === matchIdx);
+            link.setAttribute('aria-selected', idx === matchIdx ? 'true' : 'false');
+          });
+          panes.forEach(function (pane, idx) {
+            pane.classList.toggle('active', idx === matchIdx);
+          });
+        });
+      }
+
+      switchTo(current);
+    })();
+
+    /* ---- 3. Tab switching for non-language tabsets.
+       Bootstrap's Tab plugin is never loaded, so handle clicks on any
+       visible .nav-tabs ourselves. Language tabsets have their nav
+       hidden; if a click reaches one anyway the same logic applies. ---- */
+    (function () {
+      var guide = document.querySelector('.guide-content');
+      if (!guide) return;
+      guide.addEventListener('click', function (ev) {
+        var link = ev.target.closest('.panel-tabset .nav-tabs .nav-link');
+        if (!link || !guide.contains(link)) return;
+        ev.preventDefault();
+        var tabset = link.closest('.panel-tabset');
+        var links = tabset.querySelectorAll(':scope > .nav-tabs .nav-link');
+        var panes = tabset.querySelectorAll(':scope > .tab-content > .tab-pane');
+        var idx = Array.prototype.indexOf.call(links, link);
+        if (idx < 0) return;
+        links.forEach(function (l, i) {
+          l.classList.toggle('active', i === idx);
+          l.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+        });
+        panes.forEach(function (p, i) {
+          p.classList.toggle('active', i === idx);
+        });
+      });
+    })();
+
+    /* ---- 4. Collapsible callouts (replaces Bootstrap Collapse).
+       Quarto markup: .callout-header[data-bs-toggle=collapse] with a
+       data-bs-target class selector pointing at the .callout-collapse
+       body inside the same callout. ---- */
+    (function () {
+      var guide = document.querySelector('.guide-content');
+      if (!guide) return;
+      guide.addEventListener('click', function (ev) {
+        var header = ev.target.closest('.callout-header[data-bs-toggle="collapse"]');
+        if (!header || !guide.contains(header)) return;
+        var callout = header.closest('.callout') || guide;
+        var targetSel = header.getAttribute('data-bs-target');
+        if (!targetSel) return;
+        var body = callout.querySelector(targetSel) || guide.querySelector(targetSel);
+        if (!body) return;
+        var open = body.classList.toggle('show');
+        header.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+
+    /* ---- 5. Mermaid diagrams.
+       File-based renders keep their own runtime (quarto-diagram libs
+       survive extraction as <script src> assets) and render themselves —
+       running a second pass over the same node produces mermaid's
+       "Syntax error in text" overlay, so when window.mermaid exists we
+       only keep a delayed fallback for blocks its init never touched.
+       Self-contained renders inline the runtime in <head>, which the
+       extractor drops — for those, load mermaid from CDN and render. ---- */
+    (function () {
+      if (!document.querySelector('.guide-content pre.mermaid:not([data-processed])')) {
+        return;
+      }
+
+      function renderLeftovers() {
+        var left = document.querySelectorAll(
+          '.guide-content pre.mermaid:not([data-processed])'
+        );
+        if (!left.length) return;
+        try {
+          window.mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
+          window.mermaid.run({ nodes: left });
+        } catch (e) {
+          // Leave the raw source hidden rather than show broken output.
+        }
+      }
+
+      if (window.mermaid) {
+        // The guide's own runtime renders on DOMContentLoaded; only pick
+        // up blocks it left unprocessed.
+        setTimeout(renderLeftovers, 1500);
+        return;
+      }
+
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+      s.onload = renderLeftovers;
+      document.head.appendChild(s);
+    })();
+
+    /* ---- 7. TOC scrollspy: highlight the section currently in view. ---- */
+    (function () {
+      var toc = document.querySelector('.guide-toc');
+      if (!toc) return;
+      var links = toc.querySelectorAll('a[href^="#"]');
+      if (!links.length) return;
+      var targets = [];
+      links.forEach(function (a) {
+        var el = document.getElementById(decodeURIComponent(a.hash.slice(1)));
+        if (el) targets.push([el, a]);
+      });
+      if (!targets.length) return;
+      var ticking = false;
+      function highlight() {
+        ticking = false;
+        var y = window.scrollY + 130;
+        var current = targets[0][1];
+        targets.forEach(function (t) {
+          if (t[0].offsetTop <= y) current = t[1];
+        });
+        links.forEach(function (a) {
+          a.classList.toggle('is-active', a === current);
+        });
+      }
+      document.addEventListener('scroll', function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(highlight); }
+      }, { passive: true });
+      highlight();
+    })();
+
+    /* ---- 6. Code copy buttons (replaces clipboard.js binding). ---- */
+    (function () {
+      var guide = document.querySelector('.guide-content');
+      if (!guide || !navigator.clipboard) return;
+      guide.addEventListener('click', function (ev) {
+        var btn = ev.target.closest('.code-copy-button');
+        if (!btn || !guide.contains(btn)) return;
+        var container = btn.closest('div.sourceCode') || btn.closest('pre');
+        if (!container) return;
+        var code = container.querySelector('code');
+        var text = (code || container).innerText;
+        navigator.clipboard.writeText(text).then(function () {
+          btn.classList.add('code-copy-button-checked');
+          setTimeout(function () {
+            btn.classList.remove('code-copy-button-checked');
+          }, 1500);
+        });
+      });
+    })();
+  </script>
+{% endblock %}
