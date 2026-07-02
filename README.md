@@ -32,13 +32,13 @@ before relying on those assets locally.
 
 | Target            | What it does                                              |
 |-------------------|------------------------------------------------------------|
-| `make dev`        | Run the Flask debug server on `http://localhost:5001`      |
+| `make dev`        | Build the static search index, then run Flask on `http://localhost:5001` |
 | `make port`       | Copy one already-rendered guide from the upstream ResearchGuides repo through the pipeline (no quarto run). Usage: `make port SLUG=<slug>` |
 | `make port-render`| Render one guide upstream with quarto, then port it. Usage: `make port-render SLUG=<slug>` |
 | `make port-all`   | Render + port every non-excluded upstream guide (the full pipeline) |
 | `make build`      | Re-publish `research-guides/` → `temp/` + manifest (`tools/build.py`) |
 | `make test`       | Run the pytest suite                                        |
-| `make freeze`     | Placeholder — deploy-freeze plan is tracked for milestone D-1 |
+| `make freeze`     | Freeze the site into `docs/` and build the Pagefind search index |
 
 ## Dev loop for research guides
 
@@ -53,6 +53,10 @@ runs `tools/build.py` to publish `temp/` and `guides_manifest.json`.
    `make port SLUG=<slug>` to skip the quarto step).
 3. With `make dev` running, check the result at
    `http://localhost:5001/guides/<slug>/`.
+
+The Research Guides search reads the generated Pagefind bundle from `docs/`.
+`make dev` refreshes that bundle before starting Flask, so search behaves the
+same way in the local preview as it does after deployment.
 
 Guide selection is exclusion-based — see `guides.exclude`. Render failures
 are collected into a summary table; the run continues past them. Note that

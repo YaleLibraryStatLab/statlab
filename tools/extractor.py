@@ -242,6 +242,35 @@ def _remove_quarto_chrome(main: Tag) -> None:
             wrapper.replace_with(h1)
 
 
+def _ensure_heading_ids(main: Tag) -> None:
+    """Give rendered headings stable, unique deep-link targets.
+
+    Quarto commonly puts the anchor on a surrounding ``section`` while the
+    heading itself has only ``data-anchor-id``. Search results need an ID on
+    the heading to link to the exact answer. Existing IDs and section anchors
+    are left untouched so TOC and cross-reference links keep working.
+    """
+    used = {tag["id"] for tag in main.find_all(id=True)}
+    for heading in main.find_all(re.compile(r"^h[1-6]$")):
+        if heading.get("id"):
+            continue
+        section = heading.find_parent("section", id=True)
+        source = (
+            heading.get("data-anchor-id")
+            or (section.get("id") if section else None)
+            or heading.get_text(" ", strip=True)
+            or "section"
+        )
+        base = re.sub(r"[^a-z0-9]+", "-", source.casefold()).strip("-") or "section"
+        candidate = base if base not in used else f"{base}-heading"
+        suffix = 2
+        while candidate in used:
+            candidate = f"{base}-heading-{suffix}"
+            suffix += 1
+        heading["id"] = candidate
+        used.add(candidate)
+
+
 def _extract_main(soup: BeautifulSoup) -> str:
     main = soup.find("main", id="quarto-document-content")
     if main is None:
@@ -250,6 +279,7 @@ def _extract_main(soup: BeautifulSoup) -> str:
         raise ValueError("Could not find <main> content in this Quarto HTML file.")
 
     _remove_quarto_chrome(main)
+    _ensure_heading_ids(main)
     return main.decode_contents()
 
 

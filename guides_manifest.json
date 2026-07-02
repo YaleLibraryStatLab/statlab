@@ -21,6 +21,10 @@
       "MixedModels.jl",
       "glmmTMB",
       "TMB"
+    ],
+    "topics": [
+      "linear-generalized-models",
+      "mixed-longitudinal-models"
     ]
   },
   {
@@ -34,6 +38,9 @@
       "instrumental variables",
       "causal inference",
       "experimental data"
+    ],
+    "topics": [
+      "causal-inference"
     ]
   },
   {
@@ -53,6 +60,10 @@
       "Odds Ratios",
       "Predicted Probabilities",
       "Marginal Effects."
+    ],
+    "topics": [
+      "linear-generalized-models",
+      "inference-model-building"
     ]
   },
   {
@@ -74,6 +85,9 @@
       "Julia",
       "lme4",
       "MixedModels.jl"
+    ],
+    "topics": [
+      "mixed-longitudinal-models"
     ]
   },
   {
@@ -94,6 +108,10 @@
       "lm",
       "t.test",
       "anova"
+    ],
+    "topics": [
+      "linear-generalized-models",
+      "inference-model-building"
     ]
   },
   {
@@ -112,6 +130,9 @@
       "clustered data",
       "R",
       "Julia"
+    ],
+    "topics": [
+      "mixed-longitudinal-models"
     ]
   },
   {
@@ -121,7 +142,10 @@
     "authors": [
       "Jonathan Elkobi"
     ],
-    "keywords": []
+    "keywords": [],
+    "topics": [
+      "causal-inference"
+    ]
   },
   {
     "slug": "standard-errors",
@@ -141,6 +165,9 @@
       "bootstrap",
       "wild cluster bootstrap",
       "sandwich estimator"
+    ],
+    "topics": [
+      "inference-model-building"
     ]
   },
   {
@@ -164,6 +191,9 @@
       "Time-Varying Covariates",
       "Restricted Mean Survival Time",
       "Parametric Survival Models"
+    ],
+    "topics": [
+      "time-to-event-models"
     ]
   },
   {
@@ -184,6 +214,10 @@
       "AIC",
       "BIC",
       "cross-validation"
+    ],
+    "topics": [
+      "causal-inference",
+      "inference-model-building"
     ]
   }
 ]

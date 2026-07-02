@@ -88,6 +88,7 @@ def test_full_build_copies_guides_and_writes_manifest(tree):
     assert entry["date"] == "2026-01-15"
     assert entry["authors"] == ["Jane Doe"]
     assert entry["keywords"] == ["testing", "pipelines"]
+    assert entry["topics"] == ["inference-model-building"]
 
 
 def test_unmatched_exclusion_warns_but_builds(tree, capsys):
@@ -205,6 +206,19 @@ def test_cli_dry_run_exits_zero(tree, capsys):
     ])
     assert rc == 0
     assert "would publish: anova" in capsys.readouterr().out
+
+
+def test_invalid_topic_override_fails_before_publishing(tree, tmp_path, capsys):
+    make_guide(tree["source"], "anova")
+    overrides = tmp_path / "topic-overrides.json"
+    overrides.write_text(json.dumps({
+        "guides": {"typo-slug": {"include": ["causal-inference"]}}
+    }))
+
+    assert run_build(tree, topic_overrides_path=overrides) == 1
+    assert "unknown guide slug" in capsys.readouterr().err
+    assert not tree["dest"].exists()
+    assert not tree["manifest"].exists()
 
 
 def test_repo_exclusion_file_matches_main_catalog():

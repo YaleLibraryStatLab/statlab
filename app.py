@@ -9,6 +9,7 @@ from pathlib import Path
 from flask import Flask, abort, redirect, render_template, send_from_directory, url_for
 
 from tools.extractor import extract
+from tools.guide_topics import TOPICS, TOPIC_LABELS
 
 app = Flask(__name__)
 logger = logging.getLogger(__name__)
@@ -16,6 +17,7 @@ logger = logging.getLogger(__name__)
 TEMP_GUIDES_DIR = Path(__file__).parent / "temp"
 CONSULTANTS_FILE = Path(__file__).parent / "data" / "consultants.json"
 GUIDES_MANIFEST_FILE = Path(__file__).parent / "guides_manifest.json"
+PAGEFIND_DIR = Path(__file__).parent / "docs" / "pagefind"
 
 # Assets that must never load inside base.html:
 #   • Full Bootstrap distribution — clobbers site nav/footer styles.
@@ -117,7 +119,12 @@ def list_available_guides():
         )
         return _scan_temp_guides()
     return [
-        {"slug": g["slug"], "title": g["title"], "date": g.get("date")}
+        {
+            "slug": g["slug"],
+            "title": g["title"],
+            "date": g.get("date"),
+            "topics": g.get("topics", []),
+        }
         for g in manifest
     ]
 
@@ -179,6 +186,16 @@ def serve_statlab_photo(filename):
     return send_from_directory(ASSETS_DIR / "statlab-photos", filename)
 
 
+@app.route("/pagefind/<path:filename>")
+def serve_pagefind(filename):
+    """Serve the generated static-search bundle in local Flask previews.
+
+    Production serves the same files directly from GitHub Pages. ``make dev``
+    runs the freeze first so this directory is fresh before Flask starts.
+    """
+    return send_from_directory(PAGEFIND_DIR, filename)
+
+
 def _first_guide_image(guide):
     """First usable figure in a guide — a local file path or a data: URI."""
     for img in guide.images:
@@ -213,8 +230,13 @@ def index():
 
 @app.route("/research-guides/")
 def research_guides():
+    guides = _enrich_guides(list_available_guides())
+    used_topics = {topic_id for guide in guides for topic_id in guide.get("topics", [])}
     return render_template(
-        "research_guides.html", guides=_enrich_guides(list_available_guides())
+        "research_guides.html",
+        guides=guides,
+        topic_options=[topic for topic in TOPICS if topic.id in used_topics],
+        topic_labels=TOPIC_LABELS,
     )
 
 

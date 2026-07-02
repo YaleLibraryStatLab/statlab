@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import subprocess
 import sys
 import warnings
 from pathlib import Path
@@ -183,6 +184,19 @@ def freeze() -> Path:
         shutil.copyfile(NOJEKYLL, DOCS_DIR / ".nojekyll")
     else:
         (DOCS_DIR / ".nojekyll").touch()
+
+    # Pagefind runs after the static HTML exists. It sees data-pagefind-body
+    # only on guide articles, so raw Quarto files and site chrome stay out of
+    # the index while headings become direct section-level results.
+    try:
+        subprocess.run(
+            [sys.executable, "-m", "pagefind", "--site", str(DOCS_DIR)],
+            check=True,
+        )
+    except (OSError, subprocess.CalledProcessError) as exc:
+        raise RuntimeError(
+            "Pagefind indexing failed; install requirements-dev.txt and retry"
+        ) from exc
 
     print(f"froze {len(urls)} URLs -> {DOCS_DIR.relative_to(ROOT)}/")
     return DOCS_DIR

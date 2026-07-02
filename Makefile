@@ -4,7 +4,7 @@ PYTEST := $(VENV)/bin/pytest
 
 .PHONY: dev port port-one build test freeze
 
-dev:
+dev: freeze
 	$(PYTHON) app.py
 
 # Mirror every guide on the upstream main branch into research-guides/ + temp/

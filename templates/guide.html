@@ -486,10 +486,10 @@
 
 {% block content %}
 <div class="container">
-  <article class="guide-article">
+  <article class="guide-article" data-pagefind-body>
 
     <header class="guide-header">
-      <h1 class="guide-header__title">{{ guide.title }}</h1>
+      <h1 class="guide-header__title" data-pagefind-meta="title">{{ guide.title }}</h1>
 
       {% if guide.authors or guide.date %}
       <div class="guide-header__meta">

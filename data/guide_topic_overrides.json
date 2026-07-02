@@ -1,0 +1,4 @@
+{
+  "_comment": "Optional per-guide topic corrections. Each guide may list topic IDs under include and/or exclude.",
+  "guides": {}
+}

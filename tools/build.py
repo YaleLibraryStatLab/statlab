@@ -15,7 +15,8 @@ not excluded and contains <slug>/<slug>.html, the build:
 2. verifies every local asset referenced by the extracted HTML exists on
    disk (the asset-404 smoke test from ALPHA.md) and reports missing files,
 3. copies the guide directory into the publish dir (default temp/), and
-4. records slug / title / date / authors / keywords in guides_manifest.json
+4. classifies each guide into stable browse topics, and
+5. records slug / title / date / authors / keywords / topics in guides_manifest.json
    at the repo root.
 
 Guide selection is exclusion-based: a finished guide publishes by default,
@@ -43,6 +44,12 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from tools.extractor import ExtractedGuide, extract
+from tools.guide_topics import (
+    DEFAULT_OVERRIDES as DEFAULT_TOPIC_OVERRIDES,
+    TopicConfigError,
+    classify_manifest,
+    load_overrides,
+)
 
 DEFAULT_SOURCE = ROOT / "research-guides"
 DEFAULT_DEST = ROOT / "temp"
@@ -131,6 +138,7 @@ def build(
     dest: Path = DEFAULT_DEST,
     exclude_file: Path = DEFAULT_EXCLUDE_FILE,
     manifest_path: Path = DEFAULT_MANIFEST,
+    topic_overrides_path: Path = DEFAULT_TOPIC_OVERRIDES,
     *,
     dry_run: bool = False,
     clean: bool = False,
@@ -170,11 +178,21 @@ def build(
         if strict_exclusions:
             return 1
 
+    guide_dirs = discover_guide_dirs(source, excluded)
+    try:
+        topic_overrides = load_overrides(
+            topic_overrides_path,
+            known_slugs=(guide_dir.name for guide_dir in guide_dirs),
+        )
+    except TopicConfigError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+
     manifest = []
     skipped = 0
     missing_total = 0
 
-    for guide_dir in discover_guide_dirs(source, excluded):
+    for guide_dir in guide_dirs:
         slug = guide_dir.name
         html_file = guide_dir / f"{slug}.html"
         if not html_file.is_file():
@@ -209,12 +227,22 @@ def build(
             "date": guide.date,
             "authors": [a.name for a in guide.authors],
             "keywords": guide.keywords,
+            # Used only by the classifier and removed before JSON is written.
+            "_abstract": guide.abstract,
         })
         print(f"  {'would publish' if dry_run else 'published'}: {slug}")
 
     if clean:
         for name in clean_dest(dest, source, excluded, dry_run=dry_run):
             print(f"  {'would remove' if dry_run else 'removed'}: {dest.name}/{name}")
+
+    manifest, unclassified = classify_manifest(manifest, topic_overrides)
+    for slug in unclassified:
+        print(
+            f"WARNING: no browse topic matched {slug}; it will remain visible "
+            "under All guides. Add guide keywords or a topic override.",
+            file=sys.stderr,
+        )
 
     manifest_json = json.dumps(manifest, indent=2, ensure_ascii=False)
     if dry_run:
@@ -247,6 +275,10 @@ def main(argv: list[str] | None = None) -> int:
         help="exclusion list, one slug per line (default: guides.exclude)",
     )
     parser.add_argument(
+        "--topic-overrides", type=Path, default=DEFAULT_TOPIC_OVERRIDES,
+        help="per-guide topic corrections (default: data/guide_topic_overrides.json)",
+    )
+    parser.add_argument(
         "--dry-run", action="store_true",
         help="print the manifest and planned actions; write nothing",
     )
@@ -263,6 +295,7 @@ def main(argv: list[str] | None = None) -> int:
         source=args.source,
         dest=args.dest,
         exclude_file=args.exclude_file,
+        topic_overrides_path=args.topic_overrides,
         dry_run=args.dry_run,
         clean=args.clean,
         strict_exclusions=args.strict_exclusions,

@@ -11,6 +11,7 @@ Flask-served content.
 |------|---------|
 | `extractor.py` | Parse a single Quarto HTML file; extract content, metadata, assets |
 | `build.py` | Single ingestion command: walk `research-guides/`, smoke-check each guide with the extractor, verify local assets exist, copy accepted guides to `temp/`, write `guides_manifest.json` |
+| `guide_topics.py` | Assign stable browse topics from guide metadata; imported by `build.py`, with preview/check/write commands and optional overrides in `data/guide_topic_overrides.json` |
 | `port_guides.py` | Mirror the guide directories committed on the upstream repo's **main** branch into `research-guides/`, reading via git so the upstream working tree / checked-out branch is irrelevant. Pulls main's committed rendered HTML (no `quarto render`), removes local guides no longer on main, then runs `build.py --clean`. `--ref` reads a different ref; `--only <slug>` ports one guide without pruning the rest |
 
 ---
