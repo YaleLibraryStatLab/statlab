@@ -63,7 +63,7 @@
     "department": "Computational Biology and Biomedical Informatics",
     "email": "kevin.jin@yale.edu",
     "webpage": "https://kevinwjin.com",
-    "photo": "kjin.JPEG",
+    "photo": "kjin.jpeg",
     "short_bio": "Kevin is a PhD Candidate in Computational Biology and Biomedical Informatics. His research specializes in large language models for psychiatric treatment recommendation, natural language processing, and causal inference.",
     "bio": "Hey! Thanks for checking out my profile. My research centers on training a large language model for evidence-grounded psychiatric treatment recommendation. I specialize in LLMs but have secondary interests in classical natural language processing, classical machine learning, causal inference, time series, model interpretability, and Bayesian reasoning. I love advising on types of analyses to perform, interpreting results, understanding models and coefficients, and learning more statistics in general! If you're not sure whether your project fits, just hit me up and let's chat — I'd love to see what I can do for you, and if I can't help you directly, I'll be sure to point you in the direction of someone who can.",
     "status": "current",
