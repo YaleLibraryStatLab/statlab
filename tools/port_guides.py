@@ -44,6 +44,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from tools import build as build_mod
+from tools import consult as consult_mod
 from tools.build import load_exclusions
 
 # The two repos are siblings: …/StatLab/statlab and …/StatLab/ResearchGuides.
@@ -223,6 +224,11 @@ def port(
 
     print("running tools/build.py --clean ...")
     build_rc = build_mod.build(clean=True)
+    # Now that the manifest is fresh, recount authored guides per consultant and
+    # post the counts to their profiles. Advisory (always 0) — a stale count
+    # never fails a port.
+    print("recounting guides per consultant ...")
+    consult_mod.sync()
     return 1 if failures or build_rc else 0
 
 

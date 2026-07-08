@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from tools import build as build_mod
+from tools import consult as consult_mod
 from tools import port_guides as pg
 
 GUIDE_HTML = """<!DOCTYPE html>
@@ -66,7 +67,14 @@ def env(tmp_path: Path, monkeypatch):
 
     calls = []
     monkeypatch.setattr(build_mod, "build", lambda *a, **k: calls.append(k) or 0)
-    return {"upstream": upstream, "dest": dest, "exclude": exclude, "build_calls": calls}
+
+    # Stub the recount so tests never read/rewrite the real data/consultants.json.
+    consult_calls = []
+    monkeypatch.setattr(consult_mod, "sync", lambda *a, **k: consult_calls.append((a, k)) or 0)
+    return {
+        "upstream": upstream, "dest": dest, "exclude": exclude,
+        "build_calls": calls, "consult_calls": consult_calls,
+    }
 
 
 def make_orphan(dest: Path, slug: str) -> Path:
@@ -87,6 +95,7 @@ def test_mirrors_main_guides_and_strips_sources(env):
         assert (ported / f"{slug}_files" / "libs" / "quarto.js").is_file()
         assert not (ported / f"{slug}.qmd").exists()   # source stripped
     assert env["build_calls"] == [{"clean": True}]      # build run with --clean
+    assert len(env["consult_calls"]) == 1               # recount run after build
 
 
 def test_excluded_guide_is_not_ported(env):
@@ -152,6 +161,7 @@ def test_dry_run_changes_nothing(env, capsys):
     assert not (env["dest"] / "anova").exists()          # nothing ported
     assert (env["dest"] / "stale-guide").exists()        # nothing removed
     assert not env["build_calls"]
+    assert not env["consult_calls"]                      # dry run recounts nothing
     out = capsys.readouterr().out
     assert "would port: anova" in out
     assert "would remove (not on main): stale-guide" in out
