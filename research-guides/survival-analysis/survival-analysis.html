@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Atalay Demiray, MD, MSc">
+<meta name="author" content="Atalay Demiray">
 <meta name="dcterms.date" content="2026-08-17">
 <meta name="keywords" content="<p>Survival Analysis, Time-to-Event Analysis, Kaplan-Meier Estimator, Nelson-Aalen Estimator, Cox Proportional Hazards, Log-Rank Test, Censoring, Hazard Ratio, Proportional Hazards Assumption, Competing Risks, Time-Varying Covariates, Restricted Mean Survival Time, Parametric Survival Models</p>">
 
@@ -299,7 +299,7 @@ window.Quarto = {
   <div class="quarto-title-meta-heading">Affiliation</div>
   
     <div class="quarto-title-meta-contents">
-    <p class="author"><a href="https://ysph.yale.edu/profile/atalay-demiray/">Atalay Demiray, MD, MSc</a> </p>
+    <p class="author"><a href="https://ysph.yale.edu/profile/atalay-demiray/">Atalay Demiray</a> </p>
   </div>
   <div class="quarto-title-meta-contents">
         <p class="affiliation">
@@ -4270,8 +4270,8 @@ Zabor, Emily C. 2024. <span>“Survival Analysis in r.”</span> 2024. <a href="
 <li id="fn12"><p><strong>RMST to a horizon.</strong> Neither Stata nor <code>Survival.jl</code> has a one-call RMST-at-<span class="math inline">\(\tau\)</span> routine. In Stata, administratively censor at <span class="math inline">\(\tau\)</span> (<code>replace status = 0 if time &gt; tau</code>; <code>replace time = tau if time &gt; tau</code>) and then read off <code>stci, rmean</code>. In Julia, integrate the Kaplan-Meier step function up to <span class="math inline">\(\tau\)</span> by hand. Both reproduce R’s <code>rmean</code> column exactly.<a href="#fnref12" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn13"><p><code>lifelines</code> estimates cumulative incidence with <code>AalenJohansenFitter</code> but has no Fine-Gray subdistribution model; use R’s <code>finegray()</code> + <code>coxph()</code> or Stata’s <code>stcrreg</code>. <code>Survival.jl</code> offers no competing-risks tools.<a href="#fnref13" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
-</section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{demiray,_md,_msc2026,
-  author = {Demiray, MD, MSc, Atalay},
+</section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{demiray2026,
+  author = {Demiray, Atalay},
   publisher = {Yale Library StatLab},
   title = {Survival {Analysis}},
   date = {2026-08-17},
@@ -4289,9 +4289,9 @@ Zabor, Emily C. 2024. <span>“Survival Analysis in r.”</span> 2024. <a href="
     topics including competing risks, time-varying covariates, and
     restricted mean survival time.}
 }
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-demiray,_md,_msc2026" class="csl-entry quarto-appendix-citeas" role="listitem">
-Demiray, MD, MSc, Atalay. 2026. <span>“Survival Analysis.”</span> Yale
-Library StatLab. August 17, 2026.
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-demiray2026" class="csl-entry quarto-appendix-citeas" role="listitem">
+Demiray, Atalay. 2026. <span>“Survival Analysis.”</span> Yale Library
+StatLab. August 17, 2026.
 </div></div></section></div></main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">

@@ -91,7 +91,7 @@
     "short_bio": "Atalay is a PhD Candidate in Health Policy and Management. His research specializes in decision-analytic modeling, applied health economics, and women's health and tobacco regulation.",
     "bio": "I'm a PhD candidate in Health Policy and Management (Economics Track) at Yale, where I use decision-analytic modeling, microsimulation, and applied health economics to study women's health, tobacco regulation, and chronic diseases. I do most of my modeling in R, with a particular interest in reproducible workflows, simulation methods, and cost-effectiveness analysis. Before Yale, I trained in medicine at Koç University and in health economics at Erasmus University Rotterdam, so clinical and healthcare research questions sit squarely in my area of expertise. I most enjoy helping researchers with study design, regression and survival analysis of health data, decision and simulation modeling, and translating clinical/policy questions into analysis.",
     "status": "current",
-    "guides": ["survival-analysis", "variable-selection"],
+    "guides": ["survival-analysis", "teststatistics", "variable-selection"],
     "links": {
       "email": "atalay.demiray@yale.edu",
       "website": "https://atalaydemiray.com"
@@ -155,7 +155,7 @@
     "short_bio": "Jonathan is a PhD Student in Political Science at Yale. His research focuses on elite politics and speech, local governments, and municipal bond markets, using text-as-data approaches with LLMs and NLP.",
     "bio": "I am a PhD student in the Department of Political Science at Yale. My research focuses on elite politics and elite speech, local governments, and politics and financial markets. Methodologically, I develop computational social science tools, especially text-as-data approaches using Large Language Models (LLMs) and Natural Language Processing (NLP), to measure political elite behavior and political speech. A major part of my research agenda examines municipal bond markets in the United States and China. I also work on side projects on other local-government economic outcomes, including pollution and growth, and on other markets such as prediction markets.",
     "status": "current",
-    "guides": ["instrumental-variables", "rdd"],
+    "guides": ["instrumental-variables", "rdd", "synthetic-control"],
     "links": {
       "email": "jonathan.elkobi@yale.edu",
       "website": "https://jonathan-elkobi.github.io/homepage/"
@@ -166,5 +166,81 @@
     ],
     "coding_languages_and_tools": ["R", "Python", "Stata"],
     "ai_coding_agents": ["Claude Code", "GitHub Copilot", "OpenAI Codex", "Cursor", "Tabnine"]
+  },
+  {
+    "slug": "claudia-mastrogiacomo",
+    "name": "Claudia Mastrogiacomo",
+    "title": "PhD Candidate",
+    "role": "PhD Candidate · Biostatistics",
+    "department": "Biostatistics",
+    "email": "claudiamastrogiacomo@yale.edu",
+    "photo": "claudia_profile.jpeg",
+    "short_bio": "Claudia is a Data Scientist and PhD Candidate in Biostatistics. Their research specializes in Bayesian causal inference for randomized experiments with interference and non-adherence, with applications in public health and criminal justice policy.",
+    "bio": "I am a Data Scientist and PhD Candidate in Biostatistics. My research is in Bayesian causal inference, specifically in randomized experiments with interference and non-adherence. I am interested in applications in public health and criminal justice policy. I enjoy helping with choosing study designs and planning analyses to answer causal questions.",
+    "status": "former",
+    "guides": ["olsregression"],
+    "links": {
+      "email": "claudiamastrogiacomo@yale.edu"
+    },
+    "methodological_topics": [
+      "Linear Regression", "Logistic Regression", "Multiple Regression", "Ordinal Regression",
+      "Poisson Regression", "Negative Binomial", "Zero-inflated Models",
+      "Regularization (Ridge/Lasso)", "GLMs", "Survival Analysis", "Causal Inference",
+      "Experimental Design", "Randomized Controlled Trials", "Instrumental Variables",
+      "Propensity Score Matching", "Power Analysis", "Mixed Effects Models",
+      "Multilevel Modeling", "Repeated Measures", "Bayesian Statistics", "MCMC",
+      "Bayesian Hierarchical Models", "Simulation Experiments", "Data Cleaning / Wrangling",
+      "Hypothesis Testing", "Bootstrapping", "Data Visualization"
+    ],
+    "coding_languages_and_tools": ["R", "Python", "SPSS", "Stan", "BUGS / JAGS"],
+    "ai_coding_agents": []
+  },
+  {
+    "slug": "prabaha-gangopadhyay",
+    "name": "Prabaha Gangopadhyay",
+    "title": "PhD Candidate",
+    "role": "PhD Candidate · Psychology",
+    "department": "Psychology",
+    "email": "prabaha.gangopadhyay@yale.edu",
+    "webpage": "https://sites.google.com/view/prabaha-gangopadhyay",
+    "photo": "prabaha2.jpg",
+    "short_bio": "Prabaha is a PhD Candidate in Psychology with a focus in neuroscience. Their research specializes in neural signals in the prefrontal cortex and amygdala during social communication in primates.",
+    "bio": "I am a PhD candidate in the Department of Psychology at Yale, with a focus in neuroscience. My research asks how complex social behaviors are encoded in the brain: I record neural signals in the prefrontal cortex and amygdala while primates communicate and compete over resources, and ask what makes animals cooperate rather than compete. Before Yale I completed a four-year bachelor's degree and a one-year master's degree in biology at the Indian Institute of Science, Bangalore. Much of my day-to-day work is large-scale data management and cluster computing, and at the StatLab I most enjoyed helping with high-performance computing workflows, theoretical modeling and simulation, hypothesis testing, and machine learning.",
+    "status": "former",
+    "guides": ["teststatistics"],
+    "links": {
+      "email": "prabaha.gangopadhyay@yale.edu",
+      "website": "https://sites.google.com/view/prabaha-gangopadhyay"
+    },
+    "methodological_topics": [
+      "Data Management", "High-performance Computing", "Theoretical Modeling",
+      "Simulation Experiments", "Hypothesis Testing", "Machine Learning"
+    ],
+    "coding_languages_and_tools": ["R", "Python", "MATLAB"],
+    "ai_coding_agents": []
+  },
+  {
+    "slug": "jiye-kwon",
+    "name": "Jiye Kwon",
+    "title": "PhD",
+    "role": "PhD · Epidemiology of Microbial Diseases",
+    "department": "Epidemiology of Microbial Diseases",
+    "email": "jiye.kwon@yale.edu",
+    "webpage": "https://ysph.yale.edu/profile/jiye-kwon/",
+    "photo": "JiyeKwon_2024Aug_Profil2e.jpg",
+    "short_bio": "Jiye completed a PhD in Epidemiology of Microbial Diseases at Yale in spring 2026. Their research specializes in pathogen genomics and the statistical and mathematical modeling of infectious diseases.",
+    "bio": "I completed my PhD in the Department of Epidemiology of Microbial Diseases at Yale in spring 2026. My work sits at the intersection of pathogen genomics, bioinformatics, and mathematical modeling of infectious diseases — using sequence data alongside transmission models to inform intervention strategies for enteric and respiratory diseases, including vaccine evaluation for rotavirus, SARS-CoV-2, and RSV. Before my doctorate I earned an MPH in public health modeling at Yale and studied the respiratory and gastrointestinal microbiome with the Antibacterial Resistance Leadership Group. At the StatLab I wrote the guide on logit and probit models, and most enjoyed helping with regression and mixed-effects modeling, Bayesian and time-series approaches, and getting genomic and clinical data into shape for analysis.",
+    "status": "former",
+    "guides": ["logit-probit"],
+    "links": {
+      "email": "jiye.kwon@yale.edu",
+      "website": "https://ysph.yale.edu/profile/jiye-kwon/"
+    },
+    "methodological_topics": [
+      "Genomics", "Bayesian Statistics", "Panel Data", "Regression Analysis",
+      "Mixed Effects Models", "Data Visualization", "Clinical Research & Experiments"
+    ],
+    "coding_languages_and_tools": ["R", "Python", "INLA", "Shotgun Metagenomics", "16S", "Viral Genomics"],
+    "ai_coding_agents": []
   }
 ]

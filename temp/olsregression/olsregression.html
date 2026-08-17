@@ -365,9 +365,9 @@ Fitting the Causal Model
 <h1>The Data and the Research Question</h1>
 <p>Educators, students, and parents are often quite invested in students’ performance on standardized tests. These test scores often play a large role in a student’s ability to be accepted into selective high schools and colleges.</p>
 <p><strong>The California Test Score Dataset</strong> contains data on test performance, school-district characteristics, and student demographic backgrounds for primary school districts in California <span class="citation" data-cites="AER">(<a href="#ref-AER" role="doc-biblioref">Kleiber and Zeileis 2026</a>)</span>. The data cover all 420 California K–6 and K–8 districts with available data for the 1998–99 school year, so it is a census of the relevant districts for that year (not a sample drawn from a larger population). Each row is a single school district, and <code>math</code>, <code>read</code>, and <code>income</code> are district averages.</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Stata</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false" href="">AI Prompt</a></li></ul>
-<div class="tab-content">
+<div class="tab-content" data-group="language">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># package for cleaning and organizing data</span></span>
@@ -449,9 +449,9 @@ Be Careful with Ecological Inference
 <section id="a-baseline-the-equal-means-model" class="level1">
 <h1>A Baseline: The Equal-Means Model</h1>
 <p>A reasonable initial guess for a district’s math score is the average math score across all districts. Here are the variables in the dataset:</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href="">Stata</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-4" role="tab" aria-controls="tabset-2-4" aria-selected="false" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-5" role="tab" aria-controls="tabset-2-5" aria-selected="false" href="">AI Prompt</a></li></ul>
-<div class="tab-content">
+<div class="tab-content" data-group="language">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the first few rows of the dataset</span></span>
@@ -679,9 +679,9 @@ Be Careful with Ecological Inference
 </div>
 </div>
 <p>The average <code>math</code> score across all districts is:</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false" href="">Stata</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-4" role="tab" aria-controls="tabset-3-4" aria-selected="false" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-5" role="tab" aria-controls="tabset-3-5" aria-selected="false" href="">AI Prompt</a></li></ul>
-<div class="tab-content">
+<div class="tab-content" data-group="language">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># average math test score across all districts</span></span>
@@ -725,9 +725,9 @@ Be Careful with Ecological Inference
 </div>
 </div>
 <p>So a reasonable guess for the district we are visiting is 653.34. How good is that guess? Only about 3% of districts fall within one point of the mean, so there is plenty of room to improve on it:</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href="">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false" href="">Stata</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-4" role="tab" aria-controls="tabset-4-4" aria-selected="false" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-5" role="tab" aria-controls="tabset-4-5" aria-selected="false" href="">AI Prompt</a></li></ul>
-<div class="tab-content">
+<div class="tab-content" data-group="language">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot of distribution of district-average math scores across all districts with mean value marked</span></span>
@@ -802,9 +802,9 @@ mean. Use a bin width of [X] and label the axes clearly.</code></pre>
 </div>
 </div>
 </div>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false" href="">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false" href="">Stata</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-4" role="tab" aria-controls="tabset-5-4" aria-selected="false" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-5" role="tab" aria-controls="tabset-5-5" aria-selected="false" href="">AI Prompt</a></li></ul>
-<div class="tab-content">
+<div class="tab-content" data-group="language">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># percentage of observations within one point of the mean</span></span>
@@ -856,9 +856,9 @@ how good a naive "predict the mean" baseline would be.</code></pre>
 <section id="considering-other-variables" class="level2">
 <h2 class="anchored" data-anchor-id="considering-other-variables">Considering Other Variables</h2>
 <p>Reading score is a natural candidate: districts that are stronger in one subject are often stronger in both. Let’s check with a scatterplot:</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false" href="">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false" href="">Stata</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-4" role="tab" aria-controls="tabset-6-4" aria-selected="false" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-5" role="tab" aria-controls="tabset-6-5" aria-selected="false" href="">AI Prompt</a></li></ul>
-<div class="tab-content">
+<div class="tab-content" data-group="language">
 <div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot of district-average math vs read test scores</span></span>
@@ -921,9 +921,9 @@ give the plot an informative title.</code></pre>
 </div>
 </div>
 <p>Districts with higher reading scores do tend to have higher math scores. Marking the means of both variables makes the pattern more concrete — most districts fall in the lower-left or upper-right quadrant, above or below both means together:</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false" href="">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-3" role="tab" aria-controls="tabset-7-3" aria-selected="false" href="">Stata</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-4" role="tab" aria-controls="tabset-7-4" aria-selected="false" href="">Julia</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-5" role="tab" aria-controls="tabset-7-5" aria-selected="false" href="">AI Prompt</a></li></ul>
-<div class="tab-content">
+<div class="tab-content" data-group="language">
 <div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot of district-average math vs read test scores with global average math score</span></span>
