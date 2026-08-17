@@ -7,6 +7,8 @@ the Flask app.  The three things this module cares about are:
   1. main_content  – the cleaned <main> body as an HTML string
   2. metadata      – title, authors, date, abstract, keywords, quarto version
   3. assets        – every local and CDN asset referenced in <head>
+  4. links         – <a href> targets in the body, so callers can verify that
+                     download links (data, scripts) actually resolve on disk
 
 Quarto edge-cases handled
 --------------------------
@@ -85,6 +87,7 @@ class ExtractedGuide:
 
     # Defaulted fields must come last in a dataclass.
     toc_html: Optional[str] = None   # inner HTML of nav#TOC when toc: true
+    links: list[Asset] = field(default_factory=list)  # <a href> targets in <main>
 
 
 # ---------------------------------------------------------------------------
@@ -294,6 +297,27 @@ def _extract_images_from_main(main_html: str) -> list[Asset]:
     return images
 
 
+def _extract_links_from_main(main_html: str) -> list[Asset]:
+    """Collect <a href> targets from the extracted content.
+
+    Used by build.py to catch dead download links — e.g. a guide whose rendered
+    HTML predates a data file being moved into assets/. Pure in-page anchors
+    (#fig-1, #sec-intro) resolve inside the embedded content and are skipped;
+    _is_local() already excludes mailto: and absolute URLs.
+    """
+    soup = BeautifulSoup(main_html, "html.parser")
+    links = []
+    for anchor in soup.find_all("a"):
+        href = anchor.get("href", "")
+        if not href or href.startswith("#"):
+            continue
+        attrs = {"download": anchor["download"]} if anchor.has_attr("download") else {}
+        links.append(
+            Asset(kind="link", src=href, is_local=_is_local(href), attrs=attrs)
+        )
+    return links
+
+
 # ---------------------------------------------------------------------------
 # Asset path rewriting
 # ---------------------------------------------------------------------------
@@ -373,6 +397,7 @@ def extract(html_path: str | Path) -> ExtractedGuide:
 
     main_html = _extract_main(soup)
     images = _extract_images_from_main(main_html)
+    links = _extract_links_from_main(main_html)
 
     return ExtractedGuide(
         title=meta["title"] or "",
@@ -386,6 +411,7 @@ def extract(html_path: str | Path) -> ExtractedGuide:
         stylesheets=stylesheets,
         images=images,
         toc_html=toc_html,
+        links=links,
     )
 
 

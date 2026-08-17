@@ -52,15 +52,22 @@ def tree(tmp_path: Path) -> dict[str, Path]:
     source.mkdir()
     exclude = tmp_path / "guides.exclude"
     exclude.write_text("# none\n")
+    # Isolated from data/guide_topic_overrides.json: load_overrides validates
+    # override slugs against the manifest, so a real override for a real guide
+    # would fail every synthetic tree here.
+    overrides = tmp_path / "guide_topic_overrides.json"
+    overrides.write_text('{"guides": {}}\n')
     return {
         "source": source,
         "dest": tmp_path / "temp",
         "exclude": exclude,
+        "overrides": overrides,
         "manifest": tmp_path / "guides_manifest.json",
     }
 
 
 def run_build(tree: dict[str, Path], **kwargs) -> int:
+    kwargs.setdefault("topic_overrides_path", tree["overrides"])
     return build(
         source=tree["source"],
         dest=tree["dest"],
@@ -202,6 +209,7 @@ def test_cli_dry_run_exits_zero(tree, capsys):
         "--source", str(tree["source"]),
         "--dest", str(tree["dest"]),
         "--exclude-file", str(tree["exclude"]),
+        "--topic-overrides", str(tree["overrides"]),
         "--dry-run",
     ])
     assert rc == 0
@@ -240,3 +248,138 @@ def test_repo_exclusion_file_matches_main_catalog():
     cat = set(catalog(DEFAULT_UPSTREAM, DEFAULT_REF))
     excluded = load_exclusions(DEFAULT_EXCLUDE_FILE)
     assert sorted(excluded - cat) == []
+
+
+# ---------------------------------------------------------------------------
+# assets/ — the per-guide download set: inventoried into the manifest, and
+# dead links to it are reported rather than shipped as 404s.
+# ---------------------------------------------------------------------------
+
+DOWNLOAD_HTML = """<!DOCTYPE html>
+<html><head><title>{title}</title>
+<meta name="dcterms.date" content="2026-01-15">
+</head>
+<body><div id="quarto-content">
+<main class="content" id="quarto-document-content">
+<h1>{title}</h1>
+<p><a href="{href}" download="d.csv">the data</a></p>
+<p><a href="#sec-intro">jump</a>
+   <a href="https://example.org/x.csv">remote</a>
+   <a href="mailto:statlab@yale.edu">mail</a></p>
+</main></div></body></html>
+"""
+
+
+def make_download_guide(source: Path, slug: str, *, href: str, on_disk: str | None) -> Path:
+    guide_dir = source / slug
+    guide_dir.mkdir(parents=True)
+    (guide_dir / f"{slug}.html").write_text(
+        DOWNLOAD_HTML.format(title=slug.title(), href=href), encoding="utf-8"
+    )
+    if on_disk:
+        target = guide_dir / on_disk
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text("a,b\n1,2\n", encoding="utf-8")
+    return guide_dir
+
+
+def test_inventory_assets_lists_files_relative_to_the_guide(tmp_path):
+    guide = tmp_path / "anova"
+    (guide / "assets" / "data").mkdir(parents=True)
+    (guide / "assets" / "scripts").mkdir(parents=True)
+    (guide / "assets" / "data" / "b.csv").write_text("x")
+    (guide / "assets" / "data" / "a.csv").write_text("x")
+    (guide / "assets" / "scripts" / "sim.R").write_text("x")
+    (guide / "assets" / ".DS_Store").write_text("x")
+    (guide / "anova.html").write_text("<html></html>")   # outside assets/
+
+    assert build_mod.inventory_assets(guide) == [
+        "assets/data/a.csv",
+        "assets/data/b.csv",
+        "assets/scripts/sim.R",
+    ]
+
+
+def test_inventory_assets_empty_without_an_assets_dir(tmp_path):
+    guide = tmp_path / "anova"
+    guide.mkdir()
+    assert build_mod.inventory_assets(guide) == []
+
+
+def test_assets_are_recorded_in_the_manifest(tree):
+    make_download_guide(
+        tree["source"], "anova",
+        href="assets/data/d.csv", on_disk="assets/data/d.csv",
+    )
+
+    assert run_build(tree) == 0
+    manifest = json.loads(tree["manifest"].read_text())
+    assert manifest[0]["assets"] == ["assets/data/d.csv"]
+    # and the file really crossed into the publish dir
+    assert (tree["dest"] / "anova" / "assets" / "data" / "d.csv").is_file()
+
+
+def test_guide_without_assets_gets_an_empty_list(tree):
+    make_guide(tree["source"], "anova")
+    assert run_build(tree) == 0
+    assert json.loads(tree["manifest"].read_text())[0]["assets"] == []
+
+
+def test_dead_download_link_warns_but_still_publishes(tree, capsys):
+    """The live case: a guide rendered before its data moved into assets/."""
+    make_download_guide(
+        tree["source"], "anova",
+        href="anova_files/data/d.csv", on_disk="assets/data/d.csv",
+    )
+
+    assert run_build(tree) == 0
+    err = capsys.readouterr().err
+    assert "anova_files/data/d.csv" in err
+    assert "missing file" in err
+    assert (tree["dest"] / "anova" / "anova.html").is_file()   # published anyway
+
+
+def test_offsite_and_in_page_links_are_not_flagged(tree, capsys):
+    make_download_guide(
+        tree["source"], "anova",
+        href="assets/data/d.csv", on_disk="assets/data/d.csv",
+    )
+
+    assert run_build(tree) == 0
+    err = capsys.readouterr().err
+    assert "missing file" not in err
+    assert "example.org" not in err and "mailto" not in err
+
+
+def test_partition_splits_absent_files_from_unresolved_links():
+    files, unresolved = build_mod.partition_missing([
+        "assets/data/nunn.csv",
+        "@sec-methods",
+        "images/plot.png",
+        "TODO-link-ols-guide",
+        "LINK TO OTHER GUIDE",
+    ])
+    assert files == ["assets/data/nunn.csv", "images/plot.png"]
+    assert unresolved == ["@sec-methods", "TODO-link-ols-guide", "LINK TO OTHER GUIDE"]
+
+
+def test_unresolved_xref_reported_separately_from_missing_data(tree, capsys):
+    """A guide's half-written cross-references must not bury a missing dataset."""
+    make_download_guide(
+        tree["source"], "anova",
+        href="assets/data/gone.csv", on_disk=None,
+    )
+    guide_html = tree["source"] / "anova" / "anova.html"
+    guide_html.write_text(
+        guide_html.read_text().replace(
+            '<a href="#sec-intro">jump</a>', '<a href="@sec-methods">jump</a>'
+        ),
+        encoding="utf-8",
+    )
+
+    assert run_build(tree) == 0
+    err = capsys.readouterr().err
+    missing_block, unresolved_block = err.split("unresolved link(s)")
+    assert "assets/data/gone.csv" in missing_block
+    assert "@sec-methods" in unresolved_block
+    assert "@sec-methods" not in missing_block

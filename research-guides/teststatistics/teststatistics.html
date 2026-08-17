@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.30">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Prabaha Gangopadhyay">
+<meta name="author" content="Atalay Demiray, MD, MSc">
+<meta name="dcterms.date" content="2026-08-17">
+<meta name="keywords" content="<p>hypothesis testing, test statistic, z-statistic, t-statistic, F-statistic, chi-square statistic, sampling distribution, degrees of freedom, significance level, one-tailed and two-tailed tests, permutation test, parametric and non-parametric tests</p>">
+
+<title>Test Statistics</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="teststatistics_files/libs/clipboard/clipboard.min.js"></script>
+<script src="teststatistics_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="teststatistics_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="teststatistics_files/libs/quarto-html/popper.min.js"></script>
+<script src="teststatistics_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="teststatistics_files/libs/quarto-html/anchor.min.js"></script>
+<link href="teststatistics_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="teststatistics_files/libs/quarto-html/quarto-syntax-highlighting-de070a7b0ab54f8780927367ac907214.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="teststatistics_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="teststatistics_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="teststatistics_files/libs/bootstrap/bootstrap-81267100e462c21b3d6c0d5bf76a3417.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
+  <li><a href="#sec-framework" id="toc-sec-framework" class="nav-link" data-scroll-target="#sec-framework"><span class="header-section-number">2</span> Hypothesis Testing in Brief</a>
+  <ul class="collapse">
+  <li><a href="#the-null-and-the-alternative" id="toc-the-null-and-the-alternative" class="nav-link" data-scroll-target="#the-null-and-the-alternative"><span class="header-section-number">2.1</span> The Null and the Alternative</a></li>
+  <li><a href="#the-reference-distribution" id="toc-the-reference-distribution" class="nav-link" data-scroll-target="#the-reference-distribution"><span class="header-section-number">2.2</span> The Reference Distribution</a></li>
+  </ul></li>
+  <li><a href="#sec-family" id="toc-sec-family" class="nav-link" data-scroll-target="#sec-family"><span class="header-section-number">3</span> A Family of Test Statistics</a></li>
+  <li><a href="#sec-zt" id="toc-sec-zt" class="nav-link" data-scroll-target="#sec-zt"><span class="header-section-number">4</span> Building the z and t Statistics</a>
+  <ul class="collapse">
+  <li><a href="#from-a-sample-mean-to-a-z-statistic" id="toc-from-a-sample-mean-to-a-z-statistic" class="nav-link" data-scroll-target="#from-a-sample-mean-to-a-z-statistic"><span class="header-section-number">4.1</span> From a Sample Mean to a z Statistic</a></li>
+  <li><a href="#when-the-variance-is-unknown-the-t-statistic" id="toc-when-the-variance-is-unknown-the-t-statistic" class="nav-link" data-scroll-target="#when-the-variance-is-unknown-the-t-statistic"><span class="header-section-number">4.2</span> When the Variance Is Unknown: the t Statistic</a>
+  <ul class="collapse">
+  <li><a href="#a-worked-one-sample-example" id="toc-a-worked-one-sample-example" class="nav-link" data-scroll-target="#a-worked-one-sample-example"><span class="header-section-number">4.2.1</span> A Worked One-Sample Example</a></li>
+  </ul></li>
+  <li><a href="#two-samples-and-paired-samples" id="toc-two-samples-and-paired-samples" class="nav-link" data-scroll-target="#two-samples-and-paired-samples"><span class="header-section-number">4.3</span> Two Samples and Paired Samples</a></li>
+  </ul></li>
+  <li><a href="#sec-chif" id="toc-sec-chif" class="nav-link" data-scroll-target="#sec-chif"><span class="header-section-number">5</span> The Chi-Square and F Statistics</a>
+  <ul class="collapse">
+  <li><a href="#the-chi-square-statistic-observed-versus-expected-counts" id="toc-the-chi-square-statistic-observed-versus-expected-counts" class="nav-link" data-scroll-target="#the-chi-square-statistic-observed-versus-expected-counts"><span class="header-section-number">5.1</span> The Chi-Square Statistic: Observed versus Expected Counts</a></li>
+  <li><a href="#the-f-statistic-a-ratio-of-variances" id="toc-the-f-statistic-a-ratio-of-variances" class="nav-link" data-scroll-target="#the-f-statistic-a-ratio-of-variances"><span class="header-section-number">5.2</span> The F Statistic: a Ratio of Variances</a></li>
+  </ul></li>
+  <li><a href="#sec-alpha" id="toc-sec-alpha" class="nav-link" data-scroll-target="#sec-alpha"><span class="header-section-number">6</span> Significance, Degrees of Freedom, and Choosing α</a>
+  <ul class="collapse">
+  <li><a href="#degrees-of-freedom" id="toc-degrees-of-freedom" class="nav-link" data-scroll-target="#degrees-of-freedom"><span class="header-section-number">6.1</span> Degrees of Freedom</a></li>
+  <li><a href="#critical-values-versus-p-values" id="toc-critical-values-versus-p-values" class="nav-link" data-scroll-target="#critical-values-versus-p-values"><span class="header-section-number">6.2</span> Critical Values versus p-values</a></li>
+  <li><a href="#one--versus-two-tailed-tests" id="toc-one--versus-two-tailed-tests" class="nav-link" data-scroll-target="#one--versus-two-tailed-tests"><span class="header-section-number">6.3</span> One- versus Two-Tailed Tests</a></li>
+  <li><a href="#choosing-the-significance-level-α" id="toc-choosing-the-significance-level-α" class="nav-link" data-scroll-target="#choosing-the-significance-level-α"><span class="header-section-number">6.4</span> Choosing the Significance Level α</a></li>
+  </ul></li>
+  <li><a href="#sec-impl" id="toc-sec-impl" class="nav-link" data-scroll-target="#sec-impl"><span class="header-section-number">7</span> Implementation</a>
+  <ul class="collapse">
+  <li><a href="#one-sample-t-test" id="toc-one-sample-t-test" class="nav-link" data-scroll-target="#one-sample-t-test"><span class="header-section-number">7.1</span> One-Sample t-Test</a></li>
+  <li><a href="#two-sample-independent-t-test" id="toc-two-sample-independent-t-test" class="nav-link" data-scroll-target="#two-sample-independent-t-test"><span class="header-section-number">7.2</span> Two-Sample (Independent) t-Test</a></li>
+  <li><a href="#paired-t-test" id="toc-paired-t-test" class="nav-link" data-scroll-target="#paired-t-test"><span class="header-section-number">7.3</span> Paired t-Test</a></li>
+  <li><a href="#chi-square-test-of-independence" id="toc-chi-square-test-of-independence" class="nav-link" data-scroll-target="#chi-square-test-of-independence"><span class="header-section-number">7.4</span> Chi-Square Test of Independence</a></li>
+  <li><a href="#f-test-and-one-way-anova" id="toc-f-test-and-one-way-anova" class="nav-link" data-scroll-target="#f-test-and-one-way-anova"><span class="header-section-number">7.5</span> F-Test and One-Way ANOVA</a></li>
+  <li><a href="#a-family-identity-t2-f" id="toc-a-family-identity-t2-f" class="nav-link" data-scroll-target="#a-family-identity-t2-f"><span class="header-section-number">7.6</span> A Family Identity: <span class="math inline">\(t^2 = F\)</span></a></li>
+  <li><a href="#the-regression-bridge" id="toc-the-regression-bridge" class="nav-link" data-scroll-target="#the-regression-bridge"><span class="header-section-number">7.7</span> The Regression Bridge</a></li>
+  </ul></li>
+  <li><a href="#sec-interp" id="toc-sec-interp" class="nav-link" data-scroll-target="#sec-interp"><span class="header-section-number">8</span> Interpretation</a></li>
+  <li><a href="#sec-faq" id="toc-sec-faq" class="nav-link" data-scroll-target="#sec-faq"><span class="header-section-number">9</span> FAQs</a>
+  <ul class="collapse">
+  <li><a href="#when-should-i-use-a-t-test-instead-of-a-z-test" id="toc-when-should-i-use-a-t-test-instead-of-a-z-test" class="nav-link" data-scroll-target="#when-should-i-use-a-t-test-instead-of-a-z-test"><span class="header-section-number">9.0.1</span> <em>When should I use a t-test instead of a z-test?</em></a></li>
+  <li><a href="#what-is-the-difference-between-an-f-test-and-a-t-test" id="toc-what-is-the-difference-between-an-f-test-and-a-t-test" class="nav-link" data-scroll-target="#what-is-the-difference-between-an-f-test-and-a-t-test"><span class="header-section-number">9.0.2</span> <em>What is the difference between an F-test and a t-test?</em></a></li>
+  <li><a href="#why-do-we-use-chi-square-tests-for-categorical-data" id="toc-why-do-we-use-chi-square-tests-for-categorical-data" class="nav-link" data-scroll-target="#why-do-we-use-chi-square-tests-for-categorical-data"><span class="header-section-number">9.0.3</span> <em>Why do we use chi-square tests for categorical data?</em></a></li>
+  <li><a href="#one-tailed-or-two-tailed-how-do-i-choose" id="toc-one-tailed-or-two-tailed-how-do-i-choose" class="nav-link" data-scroll-target="#one-tailed-or-two-tailed-how-do-i-choose"><span class="header-section-number">9.0.4</span> <em>One-tailed or two-tailed: how do I choose?</em></a></li>
+  <li><a href="#what-if-my-data-are-far-from-normal-the-permutation-test" id="toc-what-if-my-data-are-far-from-normal-the-permutation-test" class="nav-link" data-scroll-target="#what-if-my-data-are-far-from-normal-the-permutation-test"><span class="header-section-number">9.0.5</span> <em>What if my data are far from normal? The permutation test</em></a></li>
+  <li><a href="#when-should-i-use-a-parametric-versus-a-non-parametric-test" id="toc-when-should-i-use-a-parametric-versus-a-non-parametric-test" class="nav-link" data-scroll-target="#when-should-i-use-a-parametric-versus-a-non-parametric-test"><span class="header-section-number">9.0.6</span> <em>When should I use a parametric versus a non-parametric test?</em></a></li>
+  </ul></li>
+  <li><a href="#sec-refs" id="toc-sec-refs" class="nav-link" data-scroll-target="#sec-refs"><span class="header-section-number">10</span> References and Further Reading</a>
+  <ul class="collapse">
+  <li><a href="#recommended-resources-by-topic" id="toc-recommended-resources-by-topic" class="nav-link" data-scroll-target="#recommended-resources-by-topic"><span class="header-section-number">10.1</span> Recommended Resources by Topic</a>
+  <ul class="collapse">
+  <li><a href="#foundations-of-hypothesis-testing-and-test-statistics" id="toc-foundations-of-hypothesis-testing-and-test-statistics" class="nav-link" data-scroll-target="#foundations-of-hypothesis-testing-and-test-statistics"><span class="header-section-number">10.1.1</span> Foundations of Hypothesis Testing and Test Statistics</a></li>
+  <li><a href="#categorical-data" id="toc-categorical-data" class="nav-link" data-scroll-target="#categorical-data"><span class="header-section-number">10.1.2</span> Categorical Data</a></li>
+  <li><a href="#permutation-and-non-parametric-inference" id="toc-permutation-and-non-parametric-inference" class="nav-link" data-scroll-target="#permutation-and-non-parametric-inference"><span class="header-section-number">10.1.3</span> Permutation and Non-Parametric Inference</a></li>
+  <li><a href="#on-the-significance-threshold" id="toc-on-the-significance-threshold" class="nav-link" data-scroll-target="#on-the-significance-threshold"><span class="header-section-number">10.1.4</span> On the Significance Threshold</a></li>
+  </ul></li>
+  <li><a href="#full-reference-list" id="toc-full-reference-list" class="nav-link" data-scroll-target="#full-reference-list"><span class="header-section-number">10.2</span> Full Reference List</a></li>
+  </ul></li>
+  <li><a href="#sec-appendix" id="toc-sec-appendix" class="nav-link" data-scroll-target="#sec-appendix"><span class="header-section-number">11</span> Appendix: Quick Reference</a>
+  <ul class="collapse">
+  <li><a href="#choosing-a-test-statistic" id="toc-choosing-a-test-statistic" class="nav-link" data-scroll-target="#choosing-a-test-statistic"><span class="header-section-number">11.1</span> Choosing a Test Statistic</a></li>
+  <li><a href="#essential-r-functions" id="toc-essential-r-functions" class="nav-link" data-scroll-target="#essential-r-functions"><span class="header-section-number">11.2</span> Essential R Functions</a></li>
+  <li><a href="#the-family-at-a-glance" id="toc-the-family-at-a-glance" class="nav-link" data-scroll-target="#the-family-at-a-glance"><span class="header-section-number">11.3</span> The Family at a Glance</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Test Statistics</h1>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Authors</div>
+  <div class="quarto-title-meta-heading">Affiliations</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author"><a href="https://sites.google.com/view/prabaha-gangopadhyay">Prabaha Gangopadhyay</a> </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Department of Psychology, Yale University
+          </p>
+      </div>
+    <div class="quarto-title-meta-contents">
+    <p class="author"><a href="https://ysph.yale.edu/profile/atalay-demiray/">Atalay Demiray, MD, MSc</a> </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Yale University
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta">
+
+      
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 17, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+<div>
+  <div class="abstract">
+    <div class="block-title">Abstract</div>
+    <p>This guide explains what a test statistic is, where it comes from, and how to read one. We frame test statistics within hypothesis testing, show that almost every common statistic is the same idea: a standardized distance between what we observed and what a null hypothesis predicts, and then build the z, t, chi-square, and F statistics from familiar quantities such as means, variances, and standard errors. Along the way we cover one-, two-, and paired-sample tests, degrees of freedom, the significance level, one- versus two-tailed tests, and what to do when a test’s assumptions fail, shown with a permutation test and an honest account of what it does and does not fix. Every method comes with executable R code, and the core t-tests carry parallel Python and Stata snippets.</p>
+  </div>
+</div>
+
+<div>
+  <div class="keywords">
+    <div class="block-title">Keywords</div>
+    <p></p><p>hypothesis testing, test statistic, z-statistic, t-statistic, F-statistic, chi-square statistic, sampling distribution, degrees of freedom, significance level, one-tailed and two-tailed tests, permutation test, parametric and non-parametric tests</p><p></p>
+  </div>
+</div>
+
+</header>
+
+
+<section id="introduction" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
+<p>Nearly every quantitative study ends with the same question: <em>is the pattern I see in my data real, or could it plausibly be an accident of which sample I happened to collect?</em> A <strong>test statistic</strong> is the number that answers it. It compresses an entire dataset into a single value that measures how far the data depart from a specific claim (the <strong>null hypothesis</strong>) and it does so on a scale whose behavior under that claim is known in advance. That known behavior is what lets us translate the statistic into a <em>p</em>-value and reach a decision.</p>
+<p>This guide is about the test statistics themselves: what they are, where they come from, and how to read them. The unifying idea is simpler than the zoo of named tests suggests. Almost every common test statistic is a <strong>standardized distance</strong>: a signal-to-noise ratio of the form</p>
+<p><span class="math display">\[\text{test statistic} = \frac{\text{estimate} - \text{value under the null}}{\text{standard error of the estimate}}.\]</span></p>
+<p>The numerator is the <em>signal</em>: how far our estimate sits from what the null predicts. The denominator is the <em>noise</em>: how much the estimate would wobble from sample to sample by chance alone. A large statistic means the signal dwarfs the noise, which is evidence against the null. The z and t statistics follow this template exactly; the chi-square and F statistics extend the same signal-to-noise idea to squared deviations and to ratios of variances. Once you see the shared idea, the four statistics stop looking like four unrelated formulas and start looking like four members of one family.</p>
+<p>Test statistics are not a medical or a social-science tool; they are the common currency of empirical work across disciplines. The same machinery decides whether:</p>
+<ul>
+<li>a new <strong>manufacturing</strong> process fills bottles closer to their target weight,</li>
+<li>a <strong>marketing</strong> A/B test’s conversion-rate difference is more than noise,</li>
+<li><strong>exam scores</strong> differ between two teaching methods in education research,</li>
+<li><strong>voting preference</strong> is independent of region in political science,</li>
+<li>crop <strong>yields</strong> differ across fertilizers in an agricultural trial, or</li>
+<li><strong>reaction times</strong> shift after an intervention in a psychology experiment.</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+How This Guide Fits With the Others
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This guide explains how the statistics are <em>built</em> and how their reference distributions arise. It is deliberately focused, so it hands off to its neighbors at the boundaries:</p>
+<ul>
+<li>For what a <em>p</em>-value actually means (and the many ways it is misread) see the StatLab guide <em>Interpreting Statistical Output</em> (sections “P-values” and “The Frequentist Mental Model”).</li>
+<li>For choosing and running an applied group comparison (ANOVA, Kruskal-Wallis, Mann-Whitney U) with assumption checks and code, see the StatLab <em>Groupwise Comparison</em> guide.</li>
+<li>For how the significance level <span class="math inline">\(\alpha\)</span> and statistical power determine the sample size you need, see the StatLab <em>Statistical Power</em> guide.</li>
+</ul>
+</div>
+</div>
+<p><strong>What You Will Learn</strong></p>
+<ol type="1">
+<li><strong>Hypothesis testing in brief</strong> (<a href="#sec-framework" class="quarto-xref">Section&nbsp;2</a>): the null and alternative, and why a test statistic is standardized evidence against the null.</li>
+<li><strong>A family of test statistics</strong> (<a href="#sec-family" class="quarto-xref">Section&nbsp;3</a>): how z, t, chi-square, and F differ, and the crucial point that they test <em>different</em> null hypotheses.</li>
+<li><strong>Building z and t</strong> (<a href="#sec-zt" class="quarto-xref">Section&nbsp;4</a>): constructing these statistics from <span class="math inline">\(\bar{x}\)</span>, <span class="math inline">\(\mu_0\)</span>, <span class="math inline">\(\sigma\)</span>, and <span class="math inline">\(s\)</span>, with the one-, two-, and paired-sample cases.</li>
+<li><strong>The chi-square and F statistics</strong> (<a href="#sec-chif" class="quarto-xref">Section&nbsp;5</a>): counts versus expectations, and ratios of variances.</li>
+<li><strong>Significance, degrees of freedom, and</strong> <span class="math inline">\(\alpha\)</span> (<a href="#sec-alpha" class="quarto-xref">Section&nbsp;6</a>): how to read critical values and choose a threshold honestly.</li>
+<li><strong>Implementation</strong> (<a href="#sec-impl" class="quarto-xref">Section&nbsp;7</a>): executable R for every test, with Python and Stata parallels for the t-tests, and the regression bridge connecting tests to regression output.</li>
+<li><strong>Interpretation</strong> (<a href="#sec-interp" class="quarto-xref">Section&nbsp;8</a>): reading a result without overreaching.</li>
+<li><strong>FAQs</strong> (<a href="#sec-faq" class="quarto-xref">Section&nbsp;9</a>): including what a permutation test can and cannot rescue when normality fails.</li>
+</ol>
+</section>
+<section id="sec-framework" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Hypothesis Testing in Brief</h1>
+<p>A test statistic only has meaning inside the logic of hypothesis testing, so we start there. The biggest conceptual hurdle is that the reasoning is <em>indirect</em>: we never directly prove the claim we care about. Instead, we set up a deliberately boring claim, ask how surprising our data would be if that claim were true, and reject it only when the data would be too surprising to dismiss.</p>
+<section id="the-null-and-the-alternative" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="the-null-and-the-alternative"><span class="header-section-number">2.1</span> The Null and the Alternative</h2>
+<p>Every test begins with two competing hypotheses.</p>
+<ul>
+<li>The <strong>null hypothesis</strong> <span class="math inline">\(H_0\)</span> is the statement of “nothing going on”: no difference, no association, no effect. It is specific enough to make a numerical prediction; for example, <span class="math inline">\(H_0: \mu = 250\)</span> milliliters, or <span class="math inline">\(H_0:\)</span> voting preference is independent of region.</li>
+<li>The <strong>alternative hypothesis</strong> <span class="math inline">\(H_1\)</span> (or <span class="math inline">\(H_a\)</span>) is what we entertain if the data make <span class="math inline">\(H_0\)</span> untenable: <span class="math inline">\(\mu \neq 250\)</span>, or preference and region are associated.</li>
+</ul>
+<p>We then compute a test statistic and ask: <em>if</em> <span class="math inline">\(H_0\)</span> were exactly true, how often would chance alone produce a statistic at least this extreme? That probability is the <strong>p-value</strong>. A small <em>p</em>-value means the data are hard to reconcile with <span class="math inline">\(H_0\)</span>, so we <strong>reject</strong> <span class="math inline">\(H_0\)</span>; a large one means the data are consistent with <span class="math inline">\(H_0\)</span>, so we <strong>fail to reject</strong> it. We never “accept” <span class="math inline">\(H_0\)</span>: absence of evidence is not evidence of absence.</p>
+<blockquote class="blockquote">
+<p><strong>In plain language:</strong> a test statistic is the <em>strength of the case against the null</em>, and the <em>p</em>-value is <em>how easily chance could have manufactured a case at least that strong</em>. The reference distribution, the behavior of the statistic when <span class="math inline">\(H_0\)</span> is true, is the courtroom in which that case is judged.</p>
+</blockquote>
+</section>
+<section id="the-reference-distribution" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="the-reference-distribution"><span class="header-section-number">2.2</span> The Reference Distribution</h2>
+<p>A test statistic is useful precisely because we know its <strong>sampling distribution under the null</strong>: the distribution of values it would take across many hypothetical repetitions of the study if <span class="math inline">\(H_0\)</span> were true. This <em>reference distribution</em> (standard normal, Student’s <span class="math inline">\(t\)</span>, chi-square, or <span class="math inline">\(F\)</span>, depending on the test) is what converts a raw number into a probability. A statistic of <span class="math inline">\(z = 2.5\)</span> is meaningful only because we know that, under the null, the standard normal distribution puts little probability beyond <span class="math inline">\(\pm 2.5\)</span>.</p>
+<p>This guide’s job is to explain <em>why</em> each statistic follows the reference distribution it does. The companion question—how to read the resulting <em>p</em>-value, confidence interval, and effect size without overreaching—is treated as a reading skill in <em>Interpreting Statistical Output</em> (section “The Frequentist Mental Model”), which we will not duplicate here.</p>
+</section>
+</section>
+<section id="sec-family" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> A Family of Test Statistics</h1>
+<p>Before constructing any single statistic, it helps to see the family together, and to confront a point that belongs up front, not buried in an appendix: <strong>these statistics test substantively different null hypotheses.</strong> Reaching for the wrong one is not a rounding error; it answers a different question.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Statistic</th>
+<th>General form</th>
+<th>What it tests (its <span class="math inline">\(H_0\)</span>)</th>
+<th>Typical data</th>
+<th>Reference distribution</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>z</strong></td>
+<td><span class="math inline">\(\dfrac{\bar{x}-\mu_0}{\sigma/\sqrt{n}}\)</span></td>
+<td>A mean (or proportion) equals a stated value, <em>variance known or fixed by <span class="math inline">\(H_0\)</span></em></td>
+<td>Continuous or counts, large <span class="math inline">\(n\)</span></td>
+<td>Standard normal <span class="math inline">\(N(0,1)\)</span></td>
+</tr>
+<tr class="even">
+<td><strong>t</strong></td>
+<td><span class="math inline">\(\dfrac{\bar{x}-\mu_0}{s/\sqrt{n}}\)</span></td>
+<td>A mean (or difference of means) equals a stated value, <em>variance estimated</em></td>
+<td>Continuous, any <span class="math inline">\(n\)</span> (normality matters when <span class="math inline">\(n\)</span> is small)</td>
+<td>Student’s <span class="math inline">\(t\)</span> with <span class="math inline">\(\nu\)</span> df</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\chi^2\)</span></td>
+<td><span class="math inline">\(\displaystyle\sum \frac{(O-E)^2}{E}\)</span></td>
+<td>Categorical variables are <strong>independent</strong>, or counts match expected frequencies</td>
+<td>Counts in categories</td>
+<td>Chi-square with <span class="math inline">\(\nu\)</span> df</td>
+</tr>
+<tr class="even">
+<td><strong>F</strong></td>
+<td><span class="math inline">\(\dfrac{s_1^2}{s_2^2}\)</span> or <span class="math inline">\(\dfrac{\text{MS}_\text{between}}{\text{MS}_\text{within}}\)</span></td>
+<td>Two <strong>variances</strong> are equal, or several <strong>means</strong> are all equal (ANOVA)</td>
+<td>Continuous, <span class="math inline">\(\geq 2\)</span> groups</td>
+<td><span class="math inline">\(F\)</span> with <span class="math inline">\((\nu_1,\nu_2)\)</span> df</td>
+</tr>
+</tbody>
+</table>
+<p>Notice how different the nulls are. The <strong>t</strong> statistic asks about a <em>difference in means</em>. The <strong>chi-square</strong> statistic, in its most common use, asks about <em>independence</em>: whether knowing one categorical variable tells you anything about another. The <strong>F</strong> statistic asks about <em>ratios of variability</em>, which is why it governs both the equality-of-variances test and the analysis of variance. A <em>t</em>-test and a chi-square test applied to the same study are not interchangeable; they interrogate different features of the data and suit different data types.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+They Are Relatives, Not Strangers
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The four statistics are mathematically linked, which is reassuring rather than coincidental:</p>
+<ul>
+<li>As its degrees of freedom grow, the <strong>t</strong> distribution converges to the <strong>standard normal</strong>: with large samples, <span class="math inline">\(t \approx z\)</span>. The <span class="math inline">\(t\)</span> is simply the price we pay for estimating the standard deviation instead of knowing it.</li>
+<li>For a comparison of exactly <strong>two</strong> group means, the squared <em>pooled</em> (equal-variance) two-sample <span class="math inline">\(t\)</span> equals the ANOVA <span class="math inline">\(F\)</span>: <span class="math inline">\(t^2 = F\)</span>, with identical <em>p</em>-values (we verify this in <a href="#sec-impl" class="quarto-xref">Section&nbsp;7</a>). The identity is specific to the pooled statistic; squaring Welch’s <span class="math inline">\(t\)</span>, the everyday default, does not reproduce <span class="math inline">\(F\)</span>.</li>
+<li>The <strong>chi-square</strong> distribution is the distribution of a sum of squared independent standard normals, and an <strong>F</strong> statistic is a ratio of two (scaled) chi-squares. The whole family descends from the normal distribution.</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Where You Will Actually Meet Them: the Regression Table
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Many readers first encounter these statistics not in a named test but in the output of a regression, and the two views are the same thing. (If regression itself is new to you, skim this box now and return to it after the <em>Ordinary Least Square Regression</em> guide.) A one-sample <span class="math inline">\(t\)</span> is the intercept <span class="math inline">\(t\)</span> of <code>lm(x ~ 1)</code> (with the null value subtracted from <code>x</code> first). A two-sample pooled <span class="math inline">\(t\)</span> is the <span class="math inline">\(t\)</span> on a 0/1 group dummy in <code>lm(y ~ group)</code>, which is exactly how a wage gap or a treatment-versus-control effect appears in an economics paper: as the coefficient on a dummy. And a one-way ANOVA’s <span class="math inline">\(F\)</span> is the regression’s overall (joint-significance) <span class="math inline">\(F\)</span>. We verify all three identities numerically in <a href="#sec-impl" class="quarto-xref">Section&nbsp;7</a>. For the regression side of this bridge, see the StatLab guides <em>Ordinary Least Square Regression</em> and <em>Robust Standard Errors</em>.</p>
+</div>
+</div>
+</section>
+<section id="sec-zt" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Building the z and t Statistics</h1>
+<p>We now construct the most important member of the family from scratch, making every constitutive piece visible. We use the one-sample mean because every symbol in it is familiar.</p>
+<section id="from-a-sample-mean-to-a-z-statistic" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="from-a-sample-mean-to-a-z-statistic"><span class="header-section-number">4.1</span> From a Sample Mean to a z Statistic</h2>
+<p>Suppose a bottling line is meant to fill each bottle to <span class="math inline">\(\mu_0 = 250\)</span> milliliters. We draw a sample of <span class="math inline">\(n\)</span> bottles, measure them, and compute the sample mean <span class="math inline">\(\bar{x}\)</span>. Even if the machine is perfectly calibrated, <span class="math inline">\(\bar{x}\)</span> will not land exactly on 250: sampling alone makes it wander. The <strong>Central Limit Theorem</strong> tells us how much. If individual fills have standard deviation <span class="math inline">\(\sigma\)</span>, then across repeated samples the mean <span class="math inline">\(\bar{x}\)</span> is approximately normal, centered at the true mean, with a standard deviation of its own—the <strong>standard error</strong>—equal to <span class="math inline">\(\sigma/\sqrt{n}\)</span>.</p>
+<p>Standardizing <span class="math inline">\(\bar{x}\)</span> by subtracting its null-hypothesized center and dividing by its standard error gives the <strong>one-sample z statistic</strong>:</p>
+<p><span id="eq-z"><span class="math display">\[z = \frac{\bar{x} - \mu_0}{\sigma/\sqrt{n}}. \tag{1}\]</span></span></p>
+<p>Every symbol is something you already know: <span class="math inline">\(\bar{x}\)</span> is the sample mean, <span class="math inline">\(\mu_0\)</span> is the value the null asserts, <span class="math inline">\(\sigma\)</span> is the population standard deviation, and <span class="math inline">\(n\)</span> is the sample size. The numerator measures how far the sample mean strayed from the null; the denominator says how far it could be <em>expected</em> to stray by chance. Under <span class="math inline">\(H_0\)</span>, this ratio approximately follows the standard normal distribution (exactly so if the individual values are themselves normal), so a value beyond about <span class="math inline">\(\pm 1.96\)</span> falls in the most extreme 5% and counts as evidence against <span class="math inline">\(H_0\)</span>.</p>
+<blockquote class="blockquote">
+<p><strong>In plain language:</strong> <span class="math inline">\(z\)</span> converts “how many milliliters off target are we?” into “how many standard errors off target are we?”: a scale on which the word “surprising” has a precise, universal meaning.</p>
+</blockquote>
+</section>
+<section id="when-the-variance-is-unknown-the-t-statistic" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="when-the-variance-is-unknown-the-t-statistic"><span class="header-section-number">4.2</span> When the Variance Is Unknown: the t Statistic</h2>
+<p>Equation <a href="#eq-z" class="quarto-xref">Equation&nbsp;1</a> has a practical flaw: it requires <span class="math inline">\(\sigma\)</span>, the <em>population</em> standard deviation, which we almost never know. The natural fix is to estimate it from the sample, replacing <span class="math inline">\(\sigma\)</span> with the sample standard deviation <span class="math inline">\(s\)</span>. That single substitution turns the z statistic into the <strong>one-sample t statistic</strong>:</p>
+<p><span id="eq-t"><span class="math display">\[t = \frac{\bar{x} - \mu_0}{s/\sqrt{n}}. \tag{2}\]</span></span></p>
+<p>The formula looks almost identical, but the consequence is real. Because <span class="math inline">\(s\)</span> is itself an estimate that varies from sample to sample, the ratio now has <em>two</em> sources of randomness—in the numerator and the denominator—rather than one. This extra uncertainty makes the statistic more prone to large values than a standard normal, so it follows a heavier-tailed reference distribution: <strong>Student’s</strong> <span class="math inline">\(t\)</span>. The <span class="math inline">\(t\)</span> distribution is indexed by its <strong>degrees of freedom</strong>, here <span class="math inline">\(\nu = n - 1\)</span>, and as <span class="math inline">\(\nu\)</span> grows, <span class="math inline">\(s\)</span> estimates <span class="math inline">\(\sigma\)</span> ever more reliably and the <span class="math inline">\(t\)</span> distribution tightens back toward the standard normal. <a href="#fig-tails" class="quarto-xref">Figure&nbsp;1</a> shows exactly what “heavier tails” means.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-tails" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tails-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="teststatistics_files/figure-html/fig-tails-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tails-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Student’s t against the standard normal. With few degrees of freedom the t places visibly more probability in the tails, so a larger statistic is needed for the same level of surprise; by 30 df the two curves are nearly indistinguishable.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="a-worked-one-sample-example" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="a-worked-one-sample-example"><span class="header-section-number">4.2.1</span> A Worked One-Sample Example</h3>
+<p>Consider a quality-control check on that bottling line. We sample <span class="math inline">\(n = 20\)</span> bottles intended to hold 250 ml and test <span class="math inline">\(H_0: \mu = 250\)</span> against <span class="math inline">\(H_1: \mu \neq 250\)</span>.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Measured fill volumes (ml) for 20 sampled bottles</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>fills <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">247</span>, <span class="dv">251</span>, <span class="dv">249</span>, <span class="dv">245</span>, <span class="dv">250</span>, <span class="dv">248</span>, <span class="dv">252</span>, <span class="dv">246</span>, <span class="dv">249</span>, <span class="dv">247</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>           <span class="dv">250</span>, <span class="dv">248</span>, <span class="dv">244</span>, <span class="dv">251</span>, <span class="dv">249</span>, <span class="dv">247</span>, <span class="dv">250</span>, <span class="dv">246</span>, <span class="dv">248</span>, <span class="dv">249</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>xbar <span class="ot">&lt;-</span> <span class="fu">mean</span>(fills)        <span class="co"># sample mean</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>s    <span class="ot">&lt;-</span> <span class="fu">sd</span>(fills)          <span class="co"># sample standard deviation</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>n    <span class="ot">&lt;-</span> <span class="fu">length</span>(fills)      <span class="co"># sample size</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>mu0  <span class="ot">&lt;-</span> <span class="dv">250</span>                <span class="co"># value under the null</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>t_stat <span class="ot">&lt;-</span> (xbar <span class="sc">-</span> mu0) <span class="sc">/</span> (s <span class="sc">/</span> <span class="fu">sqrt</span>(n))   <span class="co"># the t statistic, by hand</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">mean =</span> xbar, <span class="at">sd =</span> <span class="fu">round</span>(s, <span class="dv">3</span>), <span class="at">n =</span> n, <span class="at">t =</span> <span class="fu">round</span>(t_stat, <span class="dv">3</span>), <span class="at">df =</span> n <span class="sc">-</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   mean      sd       n       t      df 
+248.300   2.105  20.000  -3.611  19.000 </code></pre>
+</div>
+</div>
+<p>The sample mean is 248.3 ml (about 1.7 ml below target) and the standard error is <span class="math inline">\(s/\sqrt{n} =\)</span> 0.471 ml. Dividing the shortfall by that standard error yields <span class="math inline">\(t =\)</span> -3.611 on <span class="math inline">\(n - 1 = 19\)</span> degrees of freedom. Reassuringly, R’s built-in <code>t.test()</code> reproduces the by-hand number exactly:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ttest_one <span class="ot">&lt;-</span> <span class="fu">t.test</span>(fills, <span class="at">mu =</span> <span class="dv">250</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ttest_one</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    One Sample t-test
+
+data:  fills
+t = -3.6115, df = 19, p-value = 0.001859
+alternative hypothesis: true mean is not equal to 250
+95 percent confidence interval:
+ 247.3148 249.2852
+sample estimates:
+mean of x 
+    248.3 </code></pre>
+</div>
+</div>
+<p>The statistic of -3.611 corresponds to <span class="math inline">\(p =\)</span> 0.00186, well below the conventional 0.05 threshold, so we reject <span class="math inline">\(H_0\)</span>: the evidence indicates the line is under-filling. The test also returns a 95% confidence interval (247.3 to 249.3 ml) that excludes 250; the confidence interval and the test always tell the same story, a point developed in <em>Interpreting Statistical Output</em>.</p>
+</section>
+</section>
+<section id="two-samples-and-paired-samples" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="two-samples-and-paired-samples"><span class="header-section-number">4.3</span> Two Samples and Paired Samples</h2>
+<p>We must be explicit about the three sampling structures, because the <em>same</em> substantive question (“do these groups differ?”) demands different statistics depending on how the data were collected.</p>
+<ul>
+<li><strong>One-sample</strong> test (above): compare one group’s mean to a fixed reference value <span class="math inline">\(\mu_0\)</span>.</li>
+<li><strong>Two-sample (independent)</strong> test: compare the means of two <em>separate</em> groups: automatic versus manual cars, treatment versus control, plan A versus plan B subscribers. The statistic generalizes to <span class="math inline">\(t = (\bar{x}_1 - \bar{x}_2)/\text{SE}(\bar{x}_1 - \bar{x}_2)\)</span>, where the standard error now combines the variability of both groups. R defaults to <strong>Welch’s</strong> version, which does not assume the two groups share a variance and is the safer everyday choice.</li>
+<li><strong>Paired</strong> test: compare two measurements taken on the <em>same</em> units: before and after an intervention, left versus right, or two treatments given to the same subjects. The right move is to reduce each pair to its <em>difference</em> and run a one-sample test on those differences against <span class="math inline">\(\mu_0 = 0\)</span>, on <span class="math inline">\(\nu = (\text{number of pairs}) - 1\)</span> degrees of freedom. Pairing removes between-subject variation and is usually far more powerful than treating the two columns as independent.</li>
+</ul>
+<p>One assumption underlies all three structures and is worth naming because it is the most frequently violated in practice: the observations must be <strong>independent</strong> of one another. Repeated measurements on the same person, students clustered in classrooms, or several observations per firm all break it, and no amount of sample size repairs the damage; clustered and repeated-measures data call for paired or mixed-model methods rather than a plain two-sample test. The StatLab <em>Groupwise Comparison</em> guide covers those designs.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+A Common R Trap: Paired Tests and the Formula Interface
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>It is tempting to write a paired test as <code>t.test(outcome ~ group, paired = TRUE)</code>, but R rejects this: the formula interface does not accept <code>paired = TRUE</code> (it errors with <em>“cannot use ‘paired’ in formula method”</em>). Supply the two measurement vectors directly instead, <code>t.test(before, after, paired = TRUE)</code>, so that R can line up each pair. We use this correct form in <a href="#sec-impl" class="quarto-xref">Section&nbsp;7</a>.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-chif" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> The Chi-Square and F Statistics</h1>
+<p>The z and t statistics standardize a <em>mean</em>. Two other workhorses standardize different quantities (counts and variances) and so answer different questions.</p>
+<section id="the-chi-square-statistic-observed-versus-expected-counts" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="the-chi-square-statistic-observed-versus-expected-counts"><span class="header-section-number">5.1</span> The Chi-Square Statistic: Observed versus Expected Counts</h2>
+<p>When the data are <strong>counts in categories</strong> rather than measurements, “distance from the null” is measured between the frequencies we <em>observed</em> and the frequencies we would <em>expect</em> if the null were true. <strong>Pearson’s chi-square statistic</strong> accumulates that distance across every cell of a table:</p>
+<p><span id="eq-chi"><span class="math display">\[\chi^2 = \sum \frac{(O - E)^2}{E}, \tag{3}\]</span></span></p>
+<p>where <span class="math inline">\(O\)</span> is an observed count and <span class="math inline">\(E\)</span> is the count expected under the null. Each term is a squared discrepancy, rescaled by how large a discrepancy we should expect in that cell; squaring keeps surpluses and shortfalls from cancelling. Its most common use is the <strong>test of independence</strong>: in a two-way table, the null states that the row variable and the column variable are unrelated, and <span class="math inline">\(E\)</span> is computed from the row and column totals as if that were so. When the expected counts are large, each <span class="math inline">\((O-E)/\sqrt{E}\)</span> behaves approximately like a standard normal; and because the counts must reproduce the fixed row and column totals, only <span class="math inline">\((\text{rows}-1)(\text{columns}-1)\)</span> of these deviations are free to vary. The sum is therefore <em>approximately</em> chi-square with <span class="math inline">\(\nu = (\text{rows}-1)(\text{columns}-1)\)</span> degrees of freedom, an approximation that improves with sample size; the practical rule of thumb this implies appears just below.</p>
+<blockquote class="blockquote">
+<p><strong>In plain language:</strong> the chi-square statistic asks, “are the cells of my table close to what independence would predict?” A large value means at least one cell is far from its expectation, so the variables are associated.</p>
+</blockquote>
+<p>Because the reference distribution is only an approximation, small tables need care. The usual rule of thumb asks that all expected counts be at least 5 (or that at least 80% of cells meet it, with none below 1). R’s <code>chisq.test()</code> applies Yates’ continuity correction automatically, but only to 2$$2 tables, and warns when expected counts are small. When a table is genuinely sparse, the remedy is <strong>Fisher’s exact test</strong> (<code>fisher.test()</code>), which computes the <em>p</em>-value exactly instead of leaning on the approximation.</p>
+</section>
+<section id="the-f-statistic-a-ratio-of-variances" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="the-f-statistic-a-ratio-of-variances"><span class="header-section-number">5.2</span> The F Statistic: a Ratio of Variances</h2>
+<p>The final workhorse compares <strong>variability</strong> rather than location. The <strong>F statistic</strong> is a ratio of two variance estimates:</p>
+<p><span id="eq-f"><span class="math display">\[F = \frac{s_1^2}{s_2^2} \qquad\text{or, in ANOVA,}\qquad F = \frac{\text{MS}_\text{between}}{\text{MS}_\text{within}}. \tag{4}\]</span></span></p>
+<p>In its simplest form it tests whether two populations share a variance (<span class="math inline">\(H_0: \sigma_1^2 = \sigma_2^2\)</span>), so the null predicts <span class="math inline">\(F \approx 1\)</span>. Its more famous role is in the <strong>analysis of variance (ANOVA)</strong>, where the numerator measures how much group <em>means</em> spread apart (“between-group” variance) and the denominator measures the leftover noise <em>within</em> groups. If several group means are truly equal, between-group spread should be no larger than within-group noise and <span class="math inline">\(F \approx 1\)</span>; if the means differ, the numerator inflates and <span class="math inline">\(F\)</span> grows. Its reference distribution, the <span class="math inline">\(F\)</span> family, carries <em>two</em> degrees-of-freedom parameters, one for each variance estimate.</p>
+<p>The F statistic is where this guide hands off to the <em>Groupwise Comparison</em> guide: we construct the statistic and explain its distribution here, but for the full applied ANOVA workflow (assumption checks, post-hoc Tukey or Dunn comparisons, and effect sizes) see that guide.</p>
+</section>
+</section>
+<section id="sec-alpha" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Significance, Degrees of Freedom, and Choosing α</h1>
+<p>A test statistic becomes a decision only after we compare it to its reference distribution. Three ideas govern that final step.</p>
+<section id="degrees-of-freedom" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="degrees-of-freedom"><span class="header-section-number">6.1</span> Degrees of Freedom</h2>
+<p><strong>Degrees of freedom</strong> (df) count the number of independent pieces of information left to estimate variability <em>after</em> we have spent some of the data estimating other quantities. In the one-sample <span class="math inline">\(t\)</span> test we estimate the mean before estimating the spread, which uses up one piece of information and leaves <span class="math inline">\(\nu = n-1\)</span>. The same bookkeeping explains <span class="math inline">\((\text{rows}-1)(\text{columns}-1)\)</span> for a contingency table and the pair of df parameters <span class="math inline">\((\nu_1, \nu_2)\)</span> carried by the <span class="math inline">\(F\)</span>. Degrees of freedom matter because they set the <em>shape</em> of the reference distribution: with few of them, the <span class="math inline">\(t\)</span> and chi-square distributions have heavier tails, so a larger statistic is needed to reach significance.</p>
+</section>
+<section id="critical-values-versus-p-values" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="critical-values-versus-p-values"><span class="header-section-number">6.2</span> Critical Values versus p-values</h2>
+<p>There are two equivalent ways to render a verdict. The <strong>critical-value</strong> approach fixes a threshold on the statistic’s own scale—for a two-sided <span class="math inline">\(z\)</span> test at the 5% level, the critical values are <span class="math inline">\(\pm 1.96\)</span>—and rejects <span class="math inline">\(H_0\)</span> when the statistic falls beyond it. The <strong>p-value</strong> approach instead converts the statistic into a probability and rejects when <span class="math inline">\(p &lt; \alpha\)</span>. They always agree, because the critical value is simply the statistic value whose tail probability equals <span class="math inline">\(\alpha\)</span>. Modern software reports the <em>p</em>-value, but the critical-value picture is what makes “one-tailed versus two-tailed” intuitive.</p>
+</section>
+<section id="one--versus-two-tailed-tests" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="one--versus-two-tailed-tests"><span class="header-section-number">6.3</span> One- versus Two-Tailed Tests</h2>
+<p>The <strong>alternative</strong> decides how the rejection region is spread across the reference distribution.</p>
+<ul>
+<li>A <strong>two-tailed</strong> test (<span class="math inline">\(H_1: \mu \neq \mu_0\)</span>) splits the rejection region between <em>both</em> tails (2.5% in each at <span class="math inline">\(\alpha = 0.05\)</span>) because a surprising departure in either direction counts. This is the default and the honest choice when you are not certain of the direction in advance.</li>
+<li>A <strong>one-tailed</strong> test (<span class="math inline">\(H_1: \mu &gt; \mu_0\)</span> or <span class="math inline">\(\mu &lt; \mu_0\)</span>) places the entire 5% in a single tail, making it easier to reach significance <em>in that direction</em> at the cost of no power to detect an effect the other way. A one-tailed test is defensible only when an effect in the opposite direction would be of no interest <em>and</em> the direction was specified before seeing the data, ideally in a pre-registration or pre-analysis plan; in confirmatory settings such as trials, two-sided tests are the expected norm.</li>
+</ul>
+<p><a href="#fig-tails2" class="quarto-xref">Figure&nbsp;2</a> puts the whole decision on one picture: the reference distribution, the critical values on the statistic’s own scale, the rejection region they bound, and an observed statistic with its <em>p</em>-value as the tail area beyond it.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-tails2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tails2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="teststatistics_files/figure-html/fig-tails2-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tails2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: The same standard normal reference distribution under a two-tailed test (left) and an upper one-tailed test (right) at <span class="math inline">\(\alpha = 0.05\)</span>. Light shading marks the rejection region beyond the critical values; on the left, the darker shading beyond an observed <span class="math inline">\(z = 2.2\)</span> is the two-sided <span class="math inline">\(p\)</span>-value (<span class="math inline">\(p = 0.028\)</span>), split across the tails.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="choosing-the-significance-level-α" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="choosing-the-significance-level-α"><span class="header-section-number">6.4</span> Choosing the Significance Level α</h2>
+<p>The <strong>significance level</strong> <span class="math inline">\(\alpha\)</span> is the probability of a false alarm (rejecting a true null) that we are willing to tolerate, and it is the threshold the test uses. The familiar <span class="math inline">\(\alpha = 0.05\)</span> is a <em>convention</em>, not a law of nature, and treating it as a bright line dividing truth from falsehood is a well-documented mistake.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+α = 0.05 Is a Choice, Not a Discovery
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The threshold should follow from the <em>costs of the two kinds of error in your setting</em>, not from habit. Where a false positive is expensive (approving a drug, deploying a costly policy) a stricter <span class="math inline">\(\alpha\)</span> (0.01 or smaller) is warranted; in exploratory work a looser one may be reasonable, provided it is declared in advance. Two cautions:</p>
+<ul>
+<li>Comparing the <em>power</em> of different test statistics is itself subtle at small significance levels, as <span class="citation" data-cites="morris2011power">Morris and Elston (<a href="#ref-morris2011power" role="doc-biblioref">2011</a>)</span> show in <em>The American Statistician</em>: the most powerful test at <span class="math inline">\(\alpha = 0.05\)</span> need not be the most powerful at <span class="math inline">\(\alpha = 0.001\)</span>.</li>
+<li>“Marginally significant” and “trending toward significance” describe results on the wrong side of a threshold you chose; the phrases should be retired. The broader critique of <span class="math inline">\(\alpha\)</span>-worship, and the ASA’s guidance, are laid out in <span class="citation" data-cites="wasserstein2016asa">Wasserstein and Lazar (<a href="#ref-wasserstein2016asa" role="doc-biblioref">2016</a>)</span> and in <em>Interpreting Statistical Output</em>.</li>
+</ul>
+<p>How <span class="math inline">\(\alpha\)</span> trades off against power and sample size—and how to choose all three at the design stage—is the subject of the StatLab <em>Statistical Power</em> guide.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-impl" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Implementation</h1>
+<p>This section runs each statistic on concrete data, real or simulated: show, don’t tell. The R code is executed live; parallel Python (<code>scipy.stats</code>) and Stata snippets are shown so you can reproduce the analysis in your software of choice. The R output is the authoritative version here.</p>
+<section id="one-sample-t-test" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="one-sample-t-test"><span class="header-section-number">7.1</span> One-Sample t-Test</h2>
+<p>We reuse the bottling example: is the mean fill different from 250 ml?</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Stata</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fills <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">247</span>, <span class="dv">251</span>, <span class="dv">249</span>, <span class="dv">245</span>, <span class="dv">250</span>, <span class="dv">248</span>, <span class="dv">252</span>, <span class="dv">246</span>, <span class="dv">249</span>, <span class="dv">247</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>           <span class="dv">250</span>, <span class="dv">248</span>, <span class="dv">244</span>, <span class="dv">251</span>, <span class="dv">249</span>, <span class="dv">247</span>, <span class="dv">250</span>, <span class="dv">246</span>, <span class="dv">248</span>, <span class="dv">249</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(fills, <span class="at">mu =</span> <span class="dv">250</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    One Sample t-test
+
+data:  fills
+t = -3.6115, df = 19, p-value = 0.001859
+alternative hypothesis: true mean is not equal to 250
+95 percent confidence interval:
+ 247.3148 249.2852
+sample estimates:
+mean of x 
+    248.3 </code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>fills <span class="op">=</span> np.array([<span class="dv">247</span>, <span class="dv">251</span>, <span class="dv">249</span>, <span class="dv">245</span>, <span class="dv">250</span>, <span class="dv">248</span>, <span class="dv">252</span>, <span class="dv">246</span>, <span class="dv">249</span>, <span class="dv">247</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">250</span>, <span class="dv">248</span>, <span class="dv">244</span>, <span class="dv">251</span>, <span class="dv">249</span>, <span class="dv">247</span>, <span class="dv">250</span>, <span class="dv">246</span>, <span class="dv">248</span>, <span class="dv">249</span>])</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>t_stat, p_val <span class="op">=</span> stats.ttest_1samp(fills, popmean<span class="op">=</span><span class="dv">250</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"t = </span><span class="sc">{</span>t_stat<span class="sc">:.3f}</span><span class="ss">,  p = </span><span class="sc">{</span>p_val<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div class="sourceCode" id="cb8"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">clear</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>input <span class="fu">fill</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>247</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>251</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>249</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>245</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>250</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>248</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>252</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>246</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>249</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>247</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>250</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>248</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>244</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>251</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>249</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>247</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>250</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>246</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>248</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>249</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="kw">ttest</span> <span class="fu">fill</span> == 250</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="two-sample-independent-t-test" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="two-sample-independent-t-test"><span class="header-section-number">7.2</span> Two-Sample (Independent) t-Test</h2>
+<p>Do cars with automatic and manual transmissions differ in fuel economy? We use the built-in <code>mtcars</code> data (<code>am</code>: 0 = automatic, 1 = manual).</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href="">Stata</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>two_sample <span class="ot">&lt;-</span> <span class="fu">t.test</span>(mpg <span class="sc">~</span> am, <span class="at">data =</span> mtcars)   <span class="co"># Welch's test by default</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>two_sample</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  mpg by am
+t = -3.7671, df = 18.332, p-value = 0.001374
+alternative hypothesis: true difference in means between group 0 and group 1 is not equal to 0
+95 percent confidence interval:
+ -11.280194  -3.209684
+sample estimates:
+mean in group 0 mean in group 1 
+       17.14737        24.39231 </code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>mtcars <span class="op">=</span> sm.datasets.get_rdataset(<span class="st">"mtcars"</span>).data</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>auto   <span class="op">=</span> mtcars.loc[mtcars.am <span class="op">==</span> <span class="dv">0</span>, <span class="st">"mpg"</span>]</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>manual <span class="op">=</span> mtcars.loc[mtcars.am <span class="op">==</span> <span class="dv">1</span>, <span class="st">"mpg"</span>]</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>t_stat, p_val <span class="op">=</span> stats.ttest_ind(auto, manual, equal_var<span class="op">=</span><span class="va">False</span>)  <span class="co"># Welch</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"t = </span><span class="sc">{</span>t_stat<span class="sc">:.3f}</span><span class="ss">,  p = </span><span class="sc">{</span>p_val<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div class="sourceCode" id="cb12"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sysuse</span> auto, <span class="kw">clear</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">ttest</span> mpg, <span class="kw">by</span>(foreign)   <span class="co">// illustrative two-group mean comparison</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<p>Manual cars average 24.4 mpg against 17.1 for automatics, a gap of about 7.2 mpg, with <span class="math inline">\(t =\)</span> -3.77 and <span class="math inline">\(p =\)</span> 0.0014: strong evidence the means differ.</p>
+</section>
+<section id="paired-t-test" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="paired-t-test"><span class="header-section-number">7.3</span> Paired t-Test</h2>
+<p>The <code>sleep</code> data record the extra hours of sleep for the <em>same</em> ten subjects under two soporific drugs: a paired design. Following the trap flagged in <a href="#sec-zt" class="quarto-xref">Section&nbsp;4</a>, we pass the two vectors directly.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(sleep, <span class="fu">t.test</span>(extra[group <span class="sc">==</span> <span class="dv">1</span>], extra[group <span class="sc">==</span> <span class="dv">2</span>], <span class="at">paired =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Paired t-test
+
+data:  extra[group == 1] and extra[group == 2]
+t = -4.0621, df = 9, p-value = 0.002833
+alternative hypothesis: true mean difference is not equal to 0
+95 percent confidence interval:
+ -2.4598858 -0.7001142
+sample estimates:
+mean difference 
+          -1.58 </code></pre>
+</div>
+</div>
+<p>The mean within-subject difference is -1.58 hours; because the same people received both drugs, pairing strips away person-to-person sleep differences and sharpens the comparison.</p>
+</section>
+<section id="chi-square-test-of-independence" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="chi-square-test-of-independence"><span class="header-section-number">7.4</span> Chi-Square Test of Independence</h2>
+<p>Is voting preference independent of region? We cross-tabulate a (hypothetical) survey of two parties across three regions.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>votes <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">40</span>, <span class="dv">30</span>, <span class="dv">30</span>,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">20</span>, <span class="dv">35</span>, <span class="dv">45</span>),</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="at">Party  =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>),</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                                <span class="at">Region =</span> <span class="fu">c</span>(<span class="st">"North"</span>, <span class="st">"Center"</span>, <span class="st">"South"</span>)))</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>votes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Region
+Party North Center South
+    A    40     30    30
+    B    20     35    45</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(votes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's Chi-squared test
+
+data:  votes
+X-squared = 10.051, df = 2, p-value = 0.006567</code></pre>
+</div>
+</div>
+<p>With <span class="math inline">\(\chi^2 =\)</span> 10.05 on 2 df and <span class="math inline">\(p =\)</span> 0.0066, we reject independence: party preference and region are associated.</p>
+</section>
+<section id="f-test-and-one-way-anova" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="f-test-and-one-way-anova"><span class="header-section-number">7.5</span> F-Test and One-Way ANOVA</h2>
+<p>The F statistic appears in two guises. First, a direct <strong>test of equal variances</strong> between two groups:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">var.test</span>(mpg <span class="sc">~</span> am, <span class="at">data =</span> mtcars)   <span class="co"># H0: the two variances are equal</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    F test to compare two variances
+
+data:  mpg by am
+F = 0.38656, num df = 18, denom df = 12, p-value = 0.06691
+alternative hypothesis: true ratio of variances is not equal to 1
+95 percent confidence interval:
+ 0.1243721 1.0703429
+sample estimates:
+ratio of variances 
+         0.3865615 </code></pre>
+</div>
+</div>
+<p>One caveat belongs beside this test: the variance-ratio <span class="math inline">\(F\)</span> test is highly sensitive to non-normality, so a significant result may reflect heavy tails rather than genuinely unequal variances. If you need to test variances, the more robust choice is Levene’s or the Brown-Forsythe test (<code>car::leveneTest()</code>). And if the variance question only arose as a screen before a <span class="math inline">\(t\)</span>-test, the better practice is to skip the pre-test entirely and use Welch’s <span class="math inline">\(t\)</span>, this guide’s default, which never assumes equal variances in the first place.</p>
+<p>Second, <strong>ANOVA</strong>, where F compares several group means at once. The <code>chickwts</code> data record the weights of chicks raised on six feed types—an agricultural example.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>anova_fit <span class="ot">&lt;-</span> <span class="fu">aov</span>(weight <span class="sc">~</span> feed, <span class="at">data =</span> chickwts)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(anova_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+feed         5 231129   46226   15.37 5.94e-10 ***
+Residuals   65 195556    3009                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>The large <span class="math inline">\(F\)</span> (15.4, <span class="math inline">\(p =\)</span> 5.9^{-10}) says the feeds do not produce equal mean weights. To see <em>which</em> feeds differ, and to check the ANOVA assumptions, continue with the StatLab <em>Groupwise Comparison</em> guide.</p>
+</section>
+<section id="a-family-identity-t2-f" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="a-family-identity-t2-f"><span class="header-section-number">7.6</span> A Family Identity: <span class="math inline">\(t^2 = F\)</span></h2>
+<p>The claim from <a href="#sec-family" class="quarto-xref">Section&nbsp;3</a>, that a two-group ANOVA’s <span class="math inline">\(F\)</span> equals the squared pooled (equal-variance) two-sample <span class="math inline">\(t\)</span>, is easy to confirm:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>t_eq <span class="ot">&lt;-</span> <span class="fu">t.test</span>(mpg <span class="sc">~</span> am, <span class="at">data =</span> mtcars, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>statistic</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>f_eq <span class="ot">&lt;-</span> <span class="fu">summary</span>(<span class="fu">aov</span>(mpg <span class="sc">~</span> <span class="fu">factor</span>(am), <span class="at">data =</span> mtcars))[[<span class="dv">1</span>]][[<span class="st">"F value"</span>]][<span class="dv">1</span>]</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">t_squared =</span> <span class="fu">round</span>(t_eq<span class="sc">^</span><span class="dv">2</span>, <span class="dv">3</span>), <span class="at">F =</span> <span class="fu">round</span>(f_eq, <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>t_squared.t           F 
+      16.86       16.86 </code></pre>
+</div>
+</div>
+<p>The two numbers agree, confirming that the <span class="math inline">\(t\)</span> and <span class="math inline">\(F\)</span> tests are two views of the same comparison when there are exactly two groups.</p>
+</section>
+<section id="the-regression-bridge" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="the-regression-bridge"><span class="header-section-number">7.7</span> The Regression Bridge</h2>
+<p>The callout in <a href="#sec-family" class="quarto-xref">Section&nbsp;3</a> promised that each of these statistics is also something you can read off a regression table. All three identities are one line each to confirm:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># One-sample t on the bottling data = intercept t of an intercept-only regression</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># (subtract the null value first, so the intercept tests 0)</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">t_test =</span> <span class="fu">t.test</span>(fills, <span class="at">mu =</span> <span class="dv">250</span>)<span class="sc">$</span>statistic,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm     =</span> <span class="fu">summary</span>(<span class="fu">lm</span>(<span class="fu">I</span>(fills <span class="sc">-</span> <span class="dv">250</span>) <span class="sc">~</span> <span class="dv">1</span>))<span class="sc">$</span>coefficients[<span class="dv">1</span>, <span class="dv">3</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> t_test.t        lm 
+-3.611476 -3.611476 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pooled two-sample t = the t on the 0/1 transmission dummy (signs may flip</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># with group coding; the magnitude and p-value are identical)</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">t_test =</span> <span class="fu">t.test</span>(mpg <span class="sc">~</span> am, <span class="at">data =</span> mtcars, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>statistic,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm     =</span> <span class="fu">summary</span>(<span class="fu">lm</span>(mpg <span class="sc">~</span> am, <span class="at">data =</span> mtcars))<span class="sc">$</span>coefficients[<span class="dv">2</span>, <span class="dv">3</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> t_test.t        lm 
+-4.106127  4.106127 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># One-way ANOVA F = the regression's overall (joint-significance) F</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">aov =</span> <span class="fu">summary</span>(<span class="fu">aov</span>(weight <span class="sc">~</span> feed, <span class="at">data =</span> chickwts))[[<span class="dv">1</span>]][[<span class="st">"F value"</span>]][<span class="dv">1</span>],</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm  =</span> <span class="fu">summary</span>(<span class="fu">lm</span>(weight <span class="sc">~</span> feed, <span class="at">data =</span> chickwts))<span class="sc">$</span>fstatistic[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>     aov lm.value 
+ 15.3648  15.3648 </code></pre>
+</div>
+</div>
+<p>The two-sample line is the treatment-versus-control regression promised in <a href="#sec-family" class="quarto-xref">Section&nbsp;3</a>, with the two-sample <span class="math inline">\(t\)</span> appearing as the <span class="math inline">\(t\)</span> on the treatment dummy. The bridge extends one step further: Welch’s <span class="math inline">\(t\)</span> equals the heteroskedasticity-robust (HC2) <span class="math inline">\(t\)</span> of that same dummy regression, here both 3.7671, which makes Welch’s test a first, free introduction to the robust standard errors covered in the StatLab <em>Robust Standard Errors</em> guide.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> am, <span class="at">data =</span> mtcars)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>se_hc2 <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(sandwich<span class="sc">::</span><span class="fu">vcovHC</span>(m, <span class="at">type =</span> <span class="st">"HC2"</span>)))[<span class="st">"am"</span>]</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">welch_t =</span> <span class="fu">abs</span>(<span class="fu">t.test</span>(mpg <span class="sc">~</span> am, <span class="at">data =</span> mtcars)<span class="sc">$</span>statistic),</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">hc2_t   =</span> <span class="fu">abs</span>(<span class="fu">coef</span>(m)[<span class="st">"am"</span>] <span class="sc">/</span> se_hc2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>welch_t.t  hc2_t.am 
+ 3.767123  3.767123 </code></pre>
+</div>
+</div>
+<p>To see the machinery in its native economic habitat, here is the same comparison with wages. Suppose 150 workers completed a job-training program and 150 comparable workers did not, and we ask whether hourly wages differ. The data are simulated, with the right skew real wages show:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Hourly wages: 150 workers per arm, log-normal like real wage distributions</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>wage    <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rlnorm</span>(<span class="dv">150</span>, <span class="fu">log</span>(<span class="fl">22.0</span>), <span class="fl">0.4</span>),   <span class="co"># control</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>             <span class="fu">rlnorm</span>(<span class="dv">150</span>, <span class="fu">log</span>(<span class="fl">24.5</span>), <span class="fl">0.4</span>))   <span class="co"># completed the program</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>program <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">each =</span> <span class="dv">150</span>)         <span class="co"># the treatment dummy</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">t_test =</span> <span class="fu">abs</span>(<span class="fu">t.test</span>(wage <span class="sc">~</span> program, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>statistic),</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">lm     =</span> <span class="fu">abs</span>(<span class="fu">summary</span>(<span class="fu">lm</span>(wage <span class="sc">~</span> program))<span class="sc">$</span>coefficients[<span class="st">"program"</span>, <span class="dv">3</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>t_test.t       lm 
+2.864031 2.864031 </code></pre>
+</div>
+</div>
+<p>The two numbers are again identical, but the regression’s coefficient carries something the bare <span class="math inline">\(t\)</span> does not: the estimated program effect in interpretable units, $3.40 per hour (trained workers average $27.1 against $23.7). That is why economists report regression tables rather than <span class="math inline">\(t\)</span>-tests: the inference is the same, and the estimate arrives in dollars.</p>
+</section>
+</section>
+<section id="sec-interp" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> Interpretation</h1>
+<p>Reading a test result well means attending to four things, in this order:</p>
+<ol type="1">
+<li><strong>The statistic and its degrees of freedom</strong> locate the result on the correct reference distribution; report them (e.g., <span class="math inline">\(t(18.3) = -3.77\)</span> or <span class="math inline">\(\chi^2(2) = 10.05\)</span>).</li>
+<li><strong>The direction (sign)</strong> tells you which way the effect points; a negative one-sample <span class="math inline">\(t\)</span> means the sample mean fell <em>below</em> the null value.</li>
+<li><strong>The p-value</strong> says how compatible the data are with the null, given the reference distribution. It is <em>not</em> the probability that the null is true, and a smaller <em>p</em> does <em>not</em> mean a larger or more important effect.</li>
+<li><strong>The confidence interval and effect size</strong> carry the magnitude that the <em>p</em>-value omits. <strong>Significant is not important.</strong> Our bottling example makes the distinction concrete: the under-filling is statistically unambiguous (<span class="math inline">\(p &lt; 0.01\)</span>), but what the machine is actually doing is delivering about 1.7 ml short on a 250 ml target, less than one percent. Whether that is worth stopping a production line over is an engineering and business judgment the <em>p</em>-value cannot make. A statistically significant result on a trivial effect, and a non-significant result from an underpowered study, are both common and both easy to misread.</li>
+</ol>
+<p>That fourth point is where this guide stops and <em>Interpreting Statistical Output</em> takes over: for what the <em>p</em>-value does and does not mean, the catalogue of misinterpretations, confidence-interval logic, and effect sizes, see its sections “P-values,” “Confidence Intervals,” and “Effect Sizes.” A test statistic obtained after data-dependent analysis choices is also not trustworthy at face value; for p-hacking and multiple comparisons, see that guide’s “Sources of Distortion.”</p>
+</section>
+<section id="sec-faq" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> FAQs</h1>
+<section id="when-should-i-use-a-t-test-instead-of-a-z-test" class="level3" data-number="9.0.1">
+<h3 data-number="9.0.1" class="anchored" data-anchor-id="when-should-i-use-a-t-test-instead-of-a-z-test"><span class="header-section-number">9.0.1</span> <em>When should I use a t-test instead of a z-test?</em></h3>
+<p>Use a <strong>t-test</strong> whenever the population standard deviation <span class="math inline">\(\sigma\)</span> is unknown and must be estimated from the sample, which is almost always. The <strong>z-test</strong> assumes <span class="math inline">\(\sigma\)</span> is known; it is appropriate mainly for proportions, where the variance is not externally known but <em>fixed by the null</em> at <span class="math inline">\(p_0(1-p_0)/n\)</span>, making the statistic a large-sample normal approximation rather than exactly <span class="math inline">\(N(0,1)\)</span>, or for very large samples, in which case <span class="math inline">\(t \approx z\)</span> anyway. In R, <code>prop.test(x, n, p = p0, correct = FALSE)</code> runs the chi-square equivalent of the proportion <span class="math inline">\(z\)</span>-test (its X-squared equals <span class="math inline">\(z^2\)</span>; the default <code>correct = TRUE</code> adds a continuity correction, so results will not match a hand-computed <span class="math inline">\(z\)</span> exactly), and <code>binom.test(x, n, p0)</code> gives the exact small-sample version. When in doubt, the <span class="math inline">\(t\)</span>-test is the safe default.</p>
+</section>
+<section id="what-is-the-difference-between-an-f-test-and-a-t-test" class="level3" data-number="9.0.2">
+<h3 data-number="9.0.2" class="anchored" data-anchor-id="what-is-the-difference-between-an-f-test-and-a-t-test"><span class="header-section-number">9.0.2</span> <em>What is the difference between an F-test and a t-test?</em></h3>
+<p>A <strong>t-test</strong> compares two means; an <strong>F-test</strong> compares <em>variances</em>, or (through ANOVA) <em>three or more</em> means at once. They are relatives, not rivals: for exactly two groups the <em>pooled</em> (equal-variance) <span class="math inline">\(t\)</span> satisfies <span class="math inline">\(F = t^2\)</span> with matching <em>p</em>-values (see <a href="#sec-impl" class="quarto-xref">Section&nbsp;7</a>); Welch’s <span class="math inline">\(t\)</span> does not square to <span class="math inline">\(F\)</span>. Reach for <span class="math inline">\(F\)</span>/ANOVA when you have several groups, so you avoid running many pairwise <span class="math inline">\(t\)</span>-tests and inflating your false-positive rate.</p>
+</section>
+<section id="why-do-we-use-chi-square-tests-for-categorical-data" class="level3" data-number="9.0.3">
+<h3 data-number="9.0.3" class="anchored" data-anchor-id="why-do-we-use-chi-square-tests-for-categorical-data"><span class="header-section-number">9.0.3</span> <em>Why do we use chi-square tests for categorical data?</em></h3>
+<p>Because categorical outcomes are <strong>counts</strong>, not measurements, “distance from the null” is naturally measured between observed and expected frequencies, which is exactly what <a href="#eq-chi" class="quarto-xref">Equation&nbsp;3</a> accumulates. A single binary variable is the boundary case: its proportion is a mean, and the proportion <span class="math inline">\(z\)</span>-test of the first FAQ applies. With more categories, or two variables in a table, there is no single mean to standardize, and the chi-square statistic is the tool built for that job.</p>
+</section>
+<section id="one-tailed-or-two-tailed-how-do-i-choose" class="level3" data-number="9.0.4">
+<h3 data-number="9.0.4" class="anchored" data-anchor-id="one-tailed-or-two-tailed-how-do-i-choose"><span class="header-section-number">9.0.4</span> <em>One-tailed or two-tailed: how do I choose?</em></h3>
+<p>Default to <strong>two-tailed</strong>. Use a one-tailed test only when an effect in the opposite direction would be scientifically irrelevant <em>and</em> you committed to the direction before seeing the data; a pre-registration is what makes that commitment verifiable, and confirmatory work such as a clinical trial is expected to stay two-sided. Switching to one-tailed after a two-tailed result disappoints is a form of p-hacking.</p>
+</section>
+<section id="what-if-my-data-are-far-from-normal-the-permutation-test" class="level3" data-number="9.0.5">
+<h3 data-number="9.0.5" class="anchored" data-anchor-id="what-if-my-data-are-far-from-normal-the-permutation-test"><span class="header-section-number">9.0.5</span> <em>What if my data are far from normal? The permutation test</em></h3>
+<p>This is the right worry, and it has a clean answer, though a narrower one than is often advertised. The <span class="math inline">\(t\)</span>-test’s reference distribution is derived from a normality assumption; with small samples, heavy skew, or obvious outliers you may not trust it. A <strong>permutation test</strong> sidesteps the distributional formula by building the reference distribution <em>from your own data</em>.</p>
+<p>The logic is elegant, and it is worth stating precisely because the fine print matters. If the null is true <em>and the two groups are exchangeable</em>, meaning that under <span class="math inline">\(H_0\)</span> the observations come from one common distribution so the group labels carry no information at all, then we may <em>shuffle</em> the labels thousands of times, recompute the difference in means each time, and see where our <em>observed</em> difference falls in that shuffled distribution. If differences like ours are rare under reshuffling, the observed one is surprising (a small <em>p</em>-value), and normality was never invoked <span class="citation" data-cites="yao2020permutation ernst2004permutation">(<a href="#ref-yao2020permutation" role="doc-biblioref">Yao 2020</a>; <a href="#ref-ernst2004permutation" role="doc-biblioref">Ernst 2004</a>)</span>.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Observed difference in mean mpg between manual and automatic cars</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>obs <span class="ot">&lt;-</span> <span class="fu">with</span>(mtcars, <span class="fu">mean</span>(mpg[am <span class="sc">==</span> <span class="dv">1</span>]) <span class="sc">-</span> <span class="fu">mean</span>(mpg[am <span class="sc">==</span> <span class="dv">0</span>]))</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Build the null distribution by shuffling the transmission labels 9,999 times</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="dv">9999</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>perm_diffs <span class="ot">&lt;-</span> <span class="fu">replicate</span>(B, {</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  shuffled <span class="ot">&lt;-</span> <span class="fu">sample</span>(mtcars<span class="sc">$</span>am)</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(mtcars<span class="sc">$</span>mpg[shuffled <span class="sc">==</span> <span class="dv">1</span>]) <span class="sc">-</span> <span class="fu">mean</span>(mtcars<span class="sc">$</span>mpg[shuffled <span class="sc">==</span> <span class="dv">0</span>])</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Two-sided permutation p-value. Adding 1 to numerator and denominator counts the</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a><span class="co"># observed arrangement itself, which keeps the p-value valid and never exactly zero.</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>perm_p <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">sum</span>(<span class="fu">abs</span>(perm_diffs) <span class="sc">&gt;=</span> <span class="fu">abs</span>(obs))) <span class="sc">/</span> (B <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">observed_diff =</span> <span class="fu">round</span>(obs, <span class="dv">2</span>), <span class="at">permutation_p =</span> <span class="fu">round</span>(perm_p, <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>observed_diff permutation_p 
+       7.2400        0.0004 </code></pre>
+</div>
+</div>
+<p>Two things about this output deserve attention.</p>
+<p>First, look at <em>which</em> <span class="math inline">\(t\)</span>-test the permutation <em>p</em>-value (4^{-4}) agrees with. It sits beside the <em>pooled</em> equal-variance <span class="math inline">\(t\)</span>-test’s <span class="math inline">\(p =\)</span> 2.9^{-4}, not the Welch <span class="math inline">\(t\)</span>’s <span class="math inline">\(p =\)</span> 0.0014 reported in <a href="#sec-impl" class="quarto-xref">Section&nbsp;7</a>. That is no accident: shuffling raw labels treats the two groups as fully exchangeable, which presumes they share one distribution under the null, equal variances included. A permutation test on the raw mean difference is the pooled <span class="math inline">\(t\)</span>’s nonparametric cousin, and it inherits the pooled <span class="math inline">\(t\)</span>’s behavior.</p>
+<p>Second, and consequently, this permutation test is a remedy for <strong>non-normality</strong>, not for <strong>unequal variances</strong>. When the groups’ variances and sizes differ, exchangeability fails even if the means are equal (the Behrens-Fisher problem), and a raw-difference permutation test then rejects true nulls far more often than its nominal rate. Rather than assert that, we can measure it. The simulation below draws both groups from normal distributions with the <em>same mean</em>, so every rejection is a false positive, but gives the small group a standard deviation three times the large group’s:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Equal means, unequal variances and sizes: the Behrens-Fisher regime.</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Group 1: n = 10, sd = 3; group 2: n = 40, sd = 1. Every rejection is a false positive.</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>n_rep <span class="ot">&lt;-</span> <span class="dv">2000</span>; B <span class="ot">&lt;-</span> <span class="dv">499</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>reject <span class="ot">&lt;-</span> <span class="fu">replicate</span>(n_rep, {</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">3</span>)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">40</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  obs <span class="ot">&lt;-</span> <span class="fu">mean</span>(x) <span class="sc">-</span> <span class="fu">mean</span>(y)</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>  z <span class="ot">&lt;-</span> <span class="fu">c</span>(x, y); g <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">40</span>))</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  perms <span class="ot">&lt;-</span> <span class="fu">replicate</span>(B, { s <span class="ot">&lt;-</span> <span class="fu">sample</span>(g); <span class="fu">mean</span>(z[s <span class="sc">==</span> <span class="dv">1</span>]) <span class="sc">-</span> <span class="fu">mean</span>(z[s <span class="sc">==</span> <span class="dv">2</span>]) })</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">perm  =</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">sum</span>(<span class="fu">abs</span>(perms) <span class="sc">&gt;=</span> <span class="fu">abs</span>(obs))) <span class="sc">/</span> (B <span class="sc">+</span> <span class="dv">1</span>) <span class="sc">&lt;</span> <span class="fl">0.05</span>,</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">welch =</span> <span class="fu">t.test</span>(x, y)<span class="sc">$</span>p.value <span class="sc">&lt;</span> <span class="fl">0.05</span>)</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>typeI <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(reject)</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(typeI, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> perm welch 
+0.251 0.054 </code></pre>
+</div>
+</div>
+<p>At a nominal 5% level, the raw-difference permutation test rejected the true null in 25% of 2,000 simulated studies, while Welch’s <span class="math inline">\(t\)</span> held close to its advertised rate at 5%. If unequal variances are the concern, use Welch’s <span class="math inline">\(t\)</span>, the default in <a href="#sec-impl" class="quarto-xref">Section&nbsp;7</a>, or permute a <em>studentized</em> Welch-type statistic rather than the raw difference.</p>
+</section>
+<section id="when-should-i-use-a-parametric-versus-a-non-parametric-test" class="level3" data-number="9.0.6">
+<h3 data-number="9.0.6" class="anchored" data-anchor-id="when-should-i-use-a-parametric-versus-a-non-parametric-test"><span class="header-section-number">9.0.6</span> <em>When should I use a parametric versus a non-parametric test?</em></h3>
+<p><strong>Parametric</strong> tests (z, t, F) assume a specific distributional form and, when that assumption holds, are the most powerful choice. <strong>Non-parametric</strong> tests make weaker assumptions and earn their keep when those forms are doubtful:</p>
+<ul>
+<li><strong>Permutation/randomization tests</strong> (above) assume only exchangeability under the null and are exact in principle <span class="citation" data-cites="good2005permutation">(<a href="#ref-good2005permutation" role="doc-biblioref">Good 2005</a>)</span>.</li>
+<li><strong>Rank-based tests</strong> (the Mann-Whitney U (Wilcoxon rank-sum) for two groups and Kruskal-Wallis for several) replace the data with their ranks, trading a little power for robustness to outliers and skew.</li>
+</ul>
+<p>As a rule of thumb: prefer the parametric test when its assumptions are credible and the sample is not tiny; switch to a permutation or rank-based test when the data are heavily skewed, contain outliers, or are too small to trust the Central Limit Theorem. For the applied rank-based workflows (Mann-Whitney U, Kruskal-Wallis) with code and assumption checks, see the StatLab <em>Groupwise Comparison</em> guide.</p>
+</section>
+</section>
+<section id="sec-refs" class="level1" data-number="10">
+<h1 data-number="10"><span class="header-section-number">10</span> References and Further Reading</h1>
+<section id="recommended-resources-by-topic" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="recommended-resources-by-topic"><span class="header-section-number">10.1</span> Recommended Resources by Topic</h2>
+<section id="foundations-of-hypothesis-testing-and-test-statistics" class="level3" data-number="10.1.1">
+<h3 data-number="10.1.1" class="anchored" data-anchor-id="foundations-of-hypothesis-testing-and-test-statistics"><span class="header-section-number">10.1.1</span> Foundations of Hypothesis Testing and Test Statistics</h3>
+<ul>
+<li><span class="citation" data-cites="rice2007mathstat">Rice (<a href="#ref-rice2007mathstat" role="doc-biblioref">2007</a>)</span>, <em>Mathematical Statistics and Data Analysis</em>, a lucid, example-driven derivation of sampling distributions, the <span class="math inline">\(t\)</span>, chi-square, and <span class="math inline">\(F\)</span>, and their relationships. <strong>Best starting point for the theory behind the formulas.</strong></li>
+<li><span class="citation" data-cites="casella2002inference">Casella and Berger (<a href="#ref-casella2002inference" role="doc-biblioref">2002</a>)</span>, <em>Statistical Inference</em>, the standard graduate reference for the construction and optimality of test statistics. <strong>Best for a rigorous, complete treatment.</strong></li>
+<li><span class="citation" data-cites="wasserman2004all">Wasserman (<a href="#ref-wasserman2004all" role="doc-biblioref">2004</a>)</span>, <em>All of Statistics</em>, a fast, modern tour that connects testing to estimation and the bootstrap. <strong>Best concise overview.</strong></li>
+<li><span class="citation" data-cites="moore2017ips">Moore, McCabe, and Craig (<a href="#ref-moore2017ips" role="doc-biblioref">2017</a>)</span>, <em>Introduction to the Practice of Statistics</em>, an applied, accessible account of one-, two-, and paired-sample <span class="math inline">\(t\)</span> procedures and ANOVA. <strong>Best for applied intuition and worked examples.</strong></li>
+</ul>
+</section>
+<section id="categorical-data" class="level3" data-number="10.1.2">
+<h3 data-number="10.1.2" class="anchored" data-anchor-id="categorical-data"><span class="header-section-number">10.1.2</span> Categorical Data</h3>
+<ul>
+<li><span class="citation" data-cites="agresti2013categorical">Agresti (<a href="#ref-agresti2013categorical" role="doc-biblioref">2013</a>)</span>, <em>Categorical Data Analysis</em>, the authoritative reference for the chi-square statistic, tests of independence, and beyond. <strong>Best for count and contingency-table methods.</strong></li>
+</ul>
+</section>
+<section id="permutation-and-non-parametric-inference" class="level3" data-number="10.1.3">
+<h3 data-number="10.1.3" class="anchored" data-anchor-id="permutation-and-non-parametric-inference"><span class="header-section-number">10.1.3</span> Permutation and Non-Parametric Inference</h3>
+<ul>
+<li><span class="citation" data-cites="ernst2004permutation">Ernst (<a href="#ref-ernst2004permutation" role="doc-biblioref">2004</a>)</span>, “Permutation Methods: A Basis for Exact Inference”, a clear, short journal introduction to why permutation tests work. <strong>Best concise primer.</strong></li>
+<li><span class="citation" data-cites="good2005permutation">Good (<a href="#ref-good2005permutation" role="doc-biblioref">2005</a>)</span>, <em>Permutation, Parametric, and Bootstrap Tests of Hypotheses</em>, a comprehensive practical treatment. <strong>Best reference for applied permutation testing.</strong></li>
+<li><span class="citation" data-cites="yao2020permutation">Yao (<a href="#ref-yao2020permutation" role="doc-biblioref">2020</a>)</span>, “Understanding Permutation Testing”, an accessible, intuition-first online tutorial. <strong>Best quick, free introduction.</strong></li>
+</ul>
+</section>
+<section id="on-the-significance-threshold" class="level3" data-number="10.1.4">
+<h3 data-number="10.1.4" class="anchored" data-anchor-id="on-the-significance-threshold"><span class="header-section-number">10.1.4</span> On the Significance Threshold</h3>
+<ul>
+<li><span class="citation" data-cites="wasserstein2016asa">Wasserstein and Lazar (<a href="#ref-wasserstein2016asa" role="doc-biblioref">2016</a>)</span>, “The ASA Statement on p-Values”, the American Statistical Association’s official guidance on what <em>p</em>-values can and cannot do. <strong>Essential reading on interpretation and the limits of</strong> <span class="math inline">\(\alpha\)</span>.</li>
+<li><span class="citation" data-cites="morris2011power">Morris and Elston (<a href="#ref-morris2011power" role="doc-biblioref">2011</a>)</span>, “A Note on Comparing the Power of Test Statistics at Low Significance Levels”, a caution that the relative power of tests can change with <span class="math inline">\(\alpha\)</span>. <strong>Best on the subtleties of choosing a threshold.</strong></li>
+</ul>
+</section>
+</section>
+<section id="full-reference-list" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="full-reference-list"><span class="header-section-number">10.2</span> Full Reference List</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-agresti2013categorical" class="csl-entry" role="listitem">
+Agresti, Alan. 2013. <em>Categorical Data Analysis</em>. 3rd ed. Wiley Series in Probability and Statistics. Hoboken, NJ: John Wiley &amp; Sons.
+</div>
+<div id="ref-casella2002inference" class="csl-entry" role="listitem">
+Casella, George, and Roger L. Berger. 2002. <em>Statistical Inference</em>. 2nd ed. Pacific Grove, CA: Duxbury Press.
+</div>
+<div id="ref-ernst2004permutation" class="csl-entry" role="listitem">
+Ernst, Michael D. 2004. <span>“Permutation Methods: A Basis for Exact Inference.”</span> <em>Statistical Science</em> 19 (4): 676–85. <a href="https://doi.org/10.1214/088342304000000396">https://doi.org/10.1214/088342304000000396</a>.
+</div>
+<div id="ref-good2005permutation" class="csl-entry" role="listitem">
+Good, Phillip I. 2005. <em>Permutation, Parametric, and Bootstrap Tests of Hypotheses</em>. 3rd ed. Springer Series in Statistics. New York: Springer. <a href="https://doi.org/10.1007/b138696">https://doi.org/10.1007/b138696</a>.
+</div>
+<div id="ref-moore2017ips" class="csl-entry" role="listitem">
+Moore, David S., George P. McCabe, and Bruce A. Craig. 2017. <em>Introduction to the Practice of Statistics</em>. 9th ed. New York: W. H. Freeman.
+</div>
+<div id="ref-morris2011power" class="csl-entry" role="listitem">
+Morris, Nathan, and Robert Elston. 2011. <span>“A Note on Comparing the Power of Test Statistics at Low Significance Levels.”</span> <em>The American Statistician</em> 65 (3): 164–66. <a href="https://doi.org/10.1198/tast.2011.10117">https://doi.org/10.1198/tast.2011.10117</a>.
+</div>
+<div id="ref-rice2007mathstat" class="csl-entry" role="listitem">
+Rice, John A. 2007. <em>Mathematical Statistics and Data Analysis</em>. 3rd ed. Belmont, CA: Thomson Brooks/Cole.
+</div>
+<div id="ref-wasserman2004all" class="csl-entry" role="listitem">
+Wasserman, Larry. 2004. <em>All of Statistics: A Concise Course in Statistical Inference</em>. Springer Texts in Statistics. New York: Springer. <a href="https://doi.org/10.1007/978-0-387-21736-9">https://doi.org/10.1007/978-0-387-21736-9</a>.
+</div>
+<div id="ref-wasserstein2016asa" class="csl-entry" role="listitem">
+Wasserstein, Ronald L., and Nicole A. Lazar. 2016. <span>“The <span>ASA</span> Statement on p-Values: Context, Process, and Purpose.”</span> <em>The American Statistician</em> 70 (2): 129–33. <a href="https://doi.org/10.1080/00031305.2016.1154108">https://doi.org/10.1080/00031305.2016.1154108</a>.
+</div>
+<div id="ref-yao2020permutation" class="csl-entry" role="listitem">
+Yao, Douglas. 2020. <span>“Understanding Permutation Testing.”</span> September 25, 2020. <a href="https://douglasyao.github.io/blogs/2020/09/25/intuition-behind-permutation-testing.html">https://douglasyao.github.io/blogs/2020/09/25/intuition-behind-permutation-testing.html</a>.
+</div>
+</div>
+</section>
+</section>
+<section id="sec-appendix" class="level1" data-number="11">
+<h1 data-number="11"><span class="header-section-number">11</span> Appendix: Quick Reference</h1>
+<section id="choosing-a-test-statistic" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="choosing-a-test-statistic"><span class="header-section-number">11.1</span> Choosing a Test Statistic</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>If your question is…</th>
+<th>and your data are…</th>
+<th>use the…</th>
+<th>in R</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Does one mean equal a target?</td>
+<td>one continuous sample</td>
+<td>one-sample <span class="math inline">\(t\)</span></td>
+<td><code>t.test(x, mu = m0)</code></td>
+</tr>
+<tr class="even">
+<td>Do two independent groups’ means differ?</td>
+<td>continuous, two groups</td>
+<td>two-sample (Welch) <span class="math inline">\(t\)</span></td>
+<td><code>t.test(y ~ g)</code></td>
+</tr>
+<tr class="odd">
+<td>Do paired measurements differ?</td>
+<td>continuous, matched pairs</td>
+<td>paired <span class="math inline">\(t\)</span></td>
+<td><code>t.test(a, b, paired = TRUE)</code></td>
+</tr>
+<tr class="even">
+<td>Are two categorical variables associated?</td>
+<td>counts in a table</td>
+<td><span class="math inline">\(\chi^2\)</span> of independence</td>
+<td><code>chisq.test(table)</code></td>
+</tr>
+<tr class="odd">
+<td>The same, but expected counts are small?</td>
+<td>sparse table</td>
+<td>Fisher’s exact test</td>
+<td><code>fisher.test(table)</code></td>
+</tr>
+<tr class="even">
+<td>Does a proportion equal a stated value?</td>
+<td>successes out of <span class="math inline">\(n\)</span></td>
+<td>large-sample proportion test (or exact binomial)</td>
+<td><code>prop.test(x, n, p = p0)</code>; <code>binom.test(x, n, p0)</code></td>
+</tr>
+<tr class="odd">
+<td>Are two variances equal?</td>
+<td>continuous, two groups</td>
+<td><span class="math inline">\(F\)</span></td>
+<td><code>var.test(y ~ g)</code></td>
+</tr>
+<tr class="even">
+<td>Do three or more means differ?</td>
+<td>continuous, <span class="math inline">\(\geq 3\)</span> groups</td>
+<td><span class="math inline">\(F\)</span> (ANOVA)</td>
+<td><code>aov(y ~ g)</code></td>
+</tr>
+<tr class="odd">
+<td>Any of the above, assumptions doubtful?</td>
+<td>small / skewed / outliers</td>
+<td>permutation or rank test</td>
+<td><code>wilcox.test()</code>; permutation</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="essential-r-functions" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="essential-r-functions"><span class="header-section-number">11.2</span> Essential R Functions</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(x, <span class="at">mu =</span> <span class="dv">0</span>)                       <span class="co"># one-sample t</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(y <span class="sc">~</span> group)                       <span class="co"># two-sample (Welch) t</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(before, after, <span class="at">paired =</span> <span class="cn">TRUE</span>)    <span class="co"># paired t (use vectors, not a formula)</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(table_of_counts)             <span class="co"># chi-square test of independence</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">fisher.test</span>(table_of_counts)            <span class="co"># Fisher's exact test (sparse tables)</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="fu">prop.test</span>(x, n, <span class="at">p =</span> p0)                 <span class="co"># one/two-sample proportion test</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="fu">binom.test</span>(x, n, p0)                    <span class="co"># exact binomial test</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="fu">var.test</span>(y <span class="sc">~</span> group)                     <span class="co"># F test for equal variances</span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">aov</span>(y <span class="sc">~</span> group))                 <span class="co"># one-way ANOVA (F test)</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(y <span class="sc">~</span> group)                  <span class="co"># Mann-Whitney U (non-parametric)</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal.test</span>(y <span class="sc">~</span> group)                 <span class="co"># Kruskal-Wallis (non-parametric ANOVA)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="the-family-at-a-glance" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="the-family-at-a-glance"><span class="header-section-number">11.3</span> The Family at a Glance</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Distribution</th>
+<th>Arises as</th>
+<th>Degrees of freedom</th>
+<th>Governs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Standard normal <span class="math inline">\(N(0,1)\)</span></td>
+<td>standardized mean, variance known</td>
+<td>—</td>
+<td><span class="math inline">\(z\)</span> tests</td>
+</tr>
+<tr class="even">
+<td>Student’s <span class="math inline">\(t\)</span></td>
+<td>standardized mean, variance estimated</td>
+<td><span class="math inline">\(n-1\)</span> (one-sample)</td>
+<td><span class="math inline">\(t\)</span> tests</td>
+</tr>
+<tr class="odd">
+<td>Chi-square <span class="math inline">\(\chi^2\)</span></td>
+<td>sum of squared standard normals</td>
+<td><span class="math inline">\((r-1)(c-1)\)</span> for a two-way table; <span class="math inline">\(n-1\)</span> for a sample variance</td>
+<td>tables of counts; the building block of <span class="math inline">\(F\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(F\)</span></td>
+<td>ratio of two scaled chi-squares</td>
+<td><span class="math inline">\((\nu_1, \nu_2)\)</span></td>
+<td>variance ratios, ANOVA</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{gangopadhyay2026,
+  author = {Gangopadhyay, Prabaha and Demiray, MD, MSc, Atalay},
+  publisher = {Yale Library StatLab},
+  title = {Test {Statistics}},
+  date = {2026-08-17},
+  langid = {en},
+  abstract = {This guide explains what a test statistic is, where it
+    comes from, and how to read one. We frame test statistics within
+    hypothesis testing, show that almost every common statistic is the
+    same idea: a standardized distance between what we observed and what
+    a null hypothesis predicts, and then build the z, t, chi-square, and
+    F statistics from familiar quantities such as means, variances, and
+    standard errors. Along the way we cover one-, two-, and
+    paired-sample tests, degrees of freedom, the significance level,
+    one- versus two-tailed tests, and what to do when a test’s
+    assumptions fail, shown with a permutation test and an honest
+    account of what it does and does not fix. Every method comes with
+    executable R code, and the core t-tests carry parallel Python and
+    Stata snippets.}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-gangopadhyay2026" class="csl-entry quarto-appendix-citeas" role="listitem">
+Gangopadhyay, Prabaha, and Atalay Demiray, MD, MSc. 2026. <span>“Test
+Statistics.”</span> Yale Library StatLab. August 17, 2026.
+</div></div></section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

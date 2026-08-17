@@ -116,5 +116,11 @@ def test_current_guides_have_expected_topics():
         "rdd": ["causal-inference"],
         "standard-errors": ["inference-model-building"],
         "survival-analysis": ["time-to-event-models"],
+        # Panel-data keywords also put it under mixed/longitudinal models.
+        "synthetic-control": ["mixed-longitudinal-models", "causal-inference"],
+        # Pinned in data/guide_topic_overrides.json: nothing in this guide's
+        # slug, title, or keywords matches a topic, so without the override its
+        # browse topic would depend entirely on abstract prose.
+        "teststatistics": ["inference-model-building"],
         "variable-selection": ["causal-inference", "inference-model-building"],
     }

@@ -77,6 +77,18 @@ def env(tmp_path: Path, monkeypatch):
     }
 
 
+def write_assets(repo: Path, slug: str) -> None:
+    """Give a guide an assets/ tree whose names collide with the copy filters."""
+    assets = repo / pg.UPSTREAM_SUBDIR / slug / "assets"
+    (assets / "src").mkdir(parents=True)
+    (assets / "scripts").mkdir(parents=True)
+    (assets / "data").mkdir(parents=True)
+    (assets / "src" / "generate_data.R").write_text("# R", encoding="utf-8")
+    (assets / "scripts" / "refresh.sh").write_text("#!/bin/sh\n", encoding="utf-8")
+    (assets / "data" / "nunn.csv").write_text("a,b\n1,2\n", encoding="utf-8")
+    (assets / "notes.qmd").write_text("---\ntitle: x\n---\n", encoding="utf-8")
+
+
 def make_orphan(dest: Path, slug: str) -> Path:
     d = dest / slug
     d.mkdir(parents=True)
@@ -202,3 +214,57 @@ def test_missing_ref_errors(env, capsys):
     assert pg.port(env["upstream"], ref="nonexistent") == 1
     assert "not found" in capsys.readouterr().err
     assert not env["build_calls"]
+
+
+# ---------------------------------------------------------------------------
+# assets/ is the publish contract: everything committed there ships verbatim,
+# even names the source/cache filters drop everywhere else.
+# ---------------------------------------------------------------------------
+
+def test_assets_tree_survives_the_copy_filters(env):
+    commit_guides(env["upstream"], "anova")
+    write_assets(env["upstream"], "anova")
+    git(env["upstream"], "add", "-A")
+    git(env["upstream"], "commit", "-q", "-m", "add assets")
+
+    assert pg.port(env["upstream"]) == 0
+
+    assets = env["dest"] / "anova" / "assets"
+    assert (assets / "src" / "generate_data.R").is_file()   # 'src' is filtered elsewhere
+    assert (assets / "scripts" / "refresh.sh").is_file()    # '*.sh' is filtered elsewhere
+    assert (assets / "data" / "nunn.csv").is_file()
+    assert (assets / "notes.qmd").is_file()                 # '*.qmd' is filtered elsewhere
+
+
+def test_filters_still_apply_outside_assets(env):
+    commit_guides(env["upstream"], "anova")
+    guide = env["upstream"] / pg.UPSTREAM_SUBDIR / "anova"
+    (guide / "src").mkdir()
+    (guide / "src" / "helper.R").write_text("# R", encoding="utf-8")
+    (guide / "notes-to-self.md").write_text("private", encoding="utf-8")
+    write_assets(env["upstream"], "anova")
+    git(env["upstream"], "add", "-A")
+    git(env["upstream"], "commit", "-q", "-m", "add sources")
+
+    assert pg.port(env["upstream"]) == 0
+
+    ported = env["dest"] / "anova"
+    assert not (ported / "src").exists()
+    assert not (ported / "notes-to-self.md").exists()
+    assert not (ported / "anova.qmd").exists()
+    assert (ported / "assets" / "src" / "generate_data.R").is_file()
+
+
+def test_underscore_prefixed_dirs_are_not_guides(env):
+    """_translation-project and friends are upstream infrastructure, not guides."""
+    commit_guides(env["upstream"], "anova")
+    infra = env["upstream"] / pg.UPSTREAM_SUBDIR / "_translation-project"
+    infra.mkdir(parents=True)
+    (infra / "CONVENTIONS.md").write_text("# conventions", encoding="utf-8")
+    git(env["upstream"], "add", "-A")
+    git(env["upstream"], "commit", "-q", "-m", "add infra dir")
+
+    assert pg.catalog(env["upstream"], "main") == ["anova"]
+    # It has no rendered HTML, so selecting it would fail the whole port.
+    assert pg.port(env["upstream"]) == 0
+    assert not (env["dest"] / "_translation-project").exists()

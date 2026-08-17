@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Ted Ellsworth">
-<meta name="dcterms.date" content="2026-06-29">
+<meta name="dcterms.date" content="2026-08-17">
 <meta name="keywords" content="<p>standard errors, heteroskedasticity, robust inference, cluster-robust, Newey-West, HAC, Conley, bootstrap, wild cluster bootstrap, sandwich estimator</p>">
 
-<title>Standard Errors in Applied Research</title>
+<title>Choosing the Right Standard Errors</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -206,7 +206,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Standard Errors in Applied Research</h1>
+<h1 class="title">Choosing the Right Standard Errors</h1>
 </div>
 
 
@@ -230,7 +230,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 29, 2026</p>
+      <p class="date">August 17, 2026</p>
     </div>
   </div>
   
@@ -499,11 +499,14 @@ Decision Walkthrough: Nunn and Wantchekon
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>nunn       <span class="ot">&lt;-</span> haven<span class="sc">::</span><span class="fu">read_dta</span>(<span class="st">"data/Nunn_Wantchekon_AER_2011.dta"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>regression <span class="ot">&lt;-</span> <span class="fu">lm</span>(trust_neighbors <span class="sc">~</span> ln_exports, <span class="at">data =</span> nunn)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(regression, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -515,6 +518,8 @@ Decision Walkthrough: Nunn and Wantchekon
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell" data-python.reticulate="true">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
@@ -538,11 +543,14 @@ Decision Walkthrough: Nunn and Wantchekon
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>, <span class="dv">0</span>].<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Residuals vs Fitted"</span>, xlabel<span class="op">=</span><span class="st">"Fitted Values"</span>, ylabel<span class="op">=</span><span class="st">"Residuals"</span>)</span>
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>stats.probplot(residuals, dist<span class="op">=</span><span class="st">"norm"</span>, plot<span class="op">=</span>axes[<span class="dv">0</span>, <span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>((array([-3.98542269, -3.76960615, -3.65152731, ...,  3.65152731,
         3.76960615,  3.98542269], shape=(20580,)), array([-1.74997556, -1.74997556, -1.74997556, ...,  1.27013099,
         1.27013099,  1.27013099], shape=(20580,))), (np.float64(0.9424317803632147), np.float64(5.932626781982231e-16), np.float64(0.9331372837619768)))</code></pre>
 </div>
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>, <span class="dv">1</span>].set_title(<span class="st">"Normal Q-Q"</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>, <span class="dv">0</span>].hist(residuals, bins<span class="op">=</span><span class="dv">20</span>, alpha<span class="op">=</span><span class="fl">0.7</span>, color<span class="op">=</span><span class="st">"steelblue"</span>, edgecolor<span class="op">=</span><span class="st">"white"</span>)</span>
@@ -557,6 +565,7 @@ Decision Walkthrough: Nunn and Wantchekon
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">"images/diagnostic_plots.png"</span>, dpi<span class="op">=</span><span class="dv">120</span>)</span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -568,6 +577,8 @@ Decision Walkthrough: Nunn and Wantchekon
 </div>
 <div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">"data/Nunn_Wantchekon_AER_2011.dta"</span>, <span class="kw">clear</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">regress</span> trust_neighbors ln_exports</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -583,10 +594,11 @@ Decision Walkthrough: Nunn and Wantchekon
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="kw">scatter</span> std_residuals <span class="kw">leverage</span>, <span class="bn">title</span>(<span class="st">"Residuals vs. Leverage"</span>) <span class="bn">name</span>(p4, <span class="kw">replace</span>)</span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="kw">graph</span> <span class="bn">combine</span> p1 p2 p3 p4, <span class="bn">rows</span>(2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>      Source |       SS           df       MS      Number of obs   =    20,580
 -------------+----------------------------------   F(1, 20578)     =      0.97
-       Model |  .989159646         1  .989159646   Prob &gt; F        =    0.3247
+       Model |  .989159647         1  .989159647   Prob &gt; F        =    0.3247
     Residual |  20984.2025    20,578  1.01973965   R-squared       =    0.0000
 -------------+----------------------------------   Adj R-squared   =   -0.0000
        Total |  20985.1916    20,579  1.01973816   Root MSE        =    1.0098
@@ -767,6 +779,8 @@ Please:
 </tbody>
 </table>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>nunn       <span class="ot">&lt;-</span> haven<span class="sc">::</span><span class="fu">read_dta</span>(<span class="st">"data/Nunn_Wantchekon_AER_2011.dta"</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>regression <span class="ot">&lt;-</span> <span class="fu">lm</span>(trust_neighbors <span class="sc">~</span> ln_exports, <span class="at">data =</span> nunn)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -774,6 +788,7 @@ Please:
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  regression, <span class="at">vcov =</span> sandwich<span class="sc">::</span><span class="fu">vcovHC</span>(regression, <span class="at">type =</span> <span class="st">"HC2"</span>)</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>regression_robust</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 t test of coefficients:
@@ -825,20 +840,23 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </tbody>
 </table>
 <div class="cell" data-python.reticulate="true">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>nunn <span class="op">=</span> pd.read_stata(<span class="st">"data/Nunn_Wantchekon_AER_2011.dta"</span>)</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>reg <span class="op">=</span> sm.OLS.from_formula(<span class="st">"trust_neighbors ~ ln_exports"</span>, data<span class="op">=</span>nunn).fit(cov_type<span class="op">=</span><span class="st">"HC2"</span>)</span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(reg.summary())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                            OLS Regression Results                            
 ==============================================================================
 Dep. Variable:        trust_neighbors   R-squared:                       0.000
 Model:                            OLS   Adj. R-squared:                 -0.000
 Method:                 Least Squares   F-statistic:                    0.9088
-Date:                Mon, 29 Jun 2026   Prob (F-statistic):              0.340
-Time:                        14:13:54   Log-Likelihood:                -29402.
+Date:                Mon, 17 Aug 2026   Prob (F-statistic):              0.340
+Time:                        10:33:04   Log-Likelihood:                -29402.
 No. Observations:               20580   AIC:                         5.881e+04
 Df Residuals:                   20578   BIC:                         5.882e+04
 Df Model:                           1                                         
@@ -904,8 +922,11 @@ Notes:
 </tbody>
 </table>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">"data/Nunn_Wantchekon_AER_2011.dta"</span>, <span class="kw">clear</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">regress</span> trust_neighbors ln_exports, <span class="kw">vce</span>(hc2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear regression                               Number of obs     =     20,580
                                                 F(1, 20578)       =       0.91
@@ -1042,6 +1063,8 @@ A counterfactual: what if the variation had been at the country level?
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>nunn       <span class="ot">&lt;-</span> haven<span class="sc">::</span><span class="fu">read_dta</span>(<span class="st">"data/Nunn_Wantchekon_AER_2011.dta"</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>regression <span class="ot">&lt;-</span> <span class="fu">lm</span>(trust_neighbors <span class="sc">~</span> ln_exports, <span class="at">data =</span> nunn)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1049,6 +1072,7 @@ A counterfactual: what if the variation had been at the country level?
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  regression, <span class="at">vcov =</span> sandwich<span class="sc">::</span><span class="fu">vcovCL</span>(regression, <span class="at">cluster =</span> <span class="sc">~</span>murdock_name)</span>
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>regression_clustered</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 t test of coefficients:
@@ -1063,6 +1087,8 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell" data-python.reticulate="true">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1079,14 +1105,15 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co"># the wild cluster bootstrap (see the Bootstrap section). pyfixest offers</span></span>
 <span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co"># CRV3 and the wild bootstrap natively.</span></span>
 <span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(reg.summary())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                            OLS Regression Results                            
 ==============================================================================
 Dep. Variable:        trust_neighbors   R-squared:                       0.000
 Model:                            OLS   Adj. R-squared:                 -0.000
 Method:                 Least Squares   F-statistic:                   0.01086
-Date:                Mon, 29 Jun 2026   Prob (F-statistic):              0.917
-Time:                        14:13:55   Log-Likelihood:                -29402.
+Date:                Mon, 17 Aug 2026   Prob (F-statistic):              0.917
+Time:                        10:33:05   Log-Likelihood:                -29402.
 No. Observations:               20580   AIC:                         5.881e+04
 Df Residuals:                   20578   BIC:                         5.882e+04
 Df Model:                           1                                         
@@ -1110,8 +1137,11 @@ Notes:
 </div>
 <div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">"data/Nunn_Wantchekon_AER_2011.dta"</span>, <span class="kw">clear</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">regress</span> trust_neighbors ln_exports, <span class="kw">cluster</span>(murdock_name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear regression                               Number of obs     =     20,580
                                                 F(1, 184)         =       0.01
@@ -1170,6 +1200,8 @@ Number of clusters:   G = [?]
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>nunn <span class="ot">&lt;-</span> haven<span class="sc">::</span><span class="fu">read_dta</span>(<span class="st">"data/Nunn_Wantchekon_AER_2011.dta"</span>)</span>
@@ -1183,13 +1215,14 @@ Number of clusters:   G = [?]
 <span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">vcov =</span> <span class="fu">conley</span>(<span class="dv">500</span>, <span class="at">distance =</span> <span class="st">"spherical"</span>) <span class="sc">~</span> centroid_lat <span class="sc">+</span> centroid_long</span>
 <span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_conley)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>OLS estimation, Dep. Var.: trust_neighbors
 Observations: 20,580
 Standard-errors: Conley (500km) 
             Estimate Std. Error   t value  Pr(&gt;|t|)    
-(Intercept) 1.729869   0.091662 18.872256 &lt; 2.2e-16 ***
-ln_exports  0.002978   0.040881  0.072839   0.94193    
+(Intercept) 1.729869   0.091664 18.871797 &lt; 2.2e-16 ***
+ln_exports  0.002978   0.040882  0.072837   0.94194    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 RMSE: 1.00977   Adj. R2: -1.457e-6</code></pre>
@@ -1198,6 +1231,8 @@ RMSE: 1.00977   Adj. R2: -1.457e-6</code></pre>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell" data-python.reticulate="true">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: There is no mature drop-in Conley (1999) estimator in Python. The code</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># below computes the Kelejian-Prucha spatial HAC (spreg, robust="hac") -- related</span></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># but NOT identical to Conley. For genuine Conley SEs, use fixest::feols(vcov =</span></span>
@@ -1205,13 +1240,19 @@ RMSE: 1.00977   Adj. R2: -1.457e-6</code></pre>
 <span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> spreg <span class="im">import</span> OLS</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>ModuleNotFoundError: No module named 'spreg'</code></pre>
 </div>
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> libpysal.weights <span class="im">import</span> Kernel</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>ModuleNotFoundError: No module named 'libpysal'</code></pre>
 </div>
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>nunn <span class="op">=</span> pd.read_stata(<span class="st">"data/Nunn_Wantchekon_AER_2011.dta"</span>)</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop rows missing coordinates or model variables BEFORE building the</span></span>
@@ -1226,9 +1267,12 @@ RMSE: 1.00977   Adj. R2: -1.457e-6</code></pre>
 <span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="co"># approximate. Use projected coordinates (meters) for a precise 500 km cutoff.</span></span>
 <span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>gwk <span class="op">=</span> Kernel(coords, fixed<span class="op">=</span><span class="va">True</span>, bandwidth<span class="op">=</span><span class="fl">4.5</span>, function<span class="op">=</span><span class="st">"triangular"</span>,</span>
 <span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>             diagonal<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>NameError: name 'Kernel' is not defined</code></pre>
 </div>
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> nunn[[<span class="st">"trust_neighbors"</span>]].values</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> nunn[[<span class="st">"ln_exports"</span>]].values</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1240,10 +1284,14 @@ RMSE: 1.00977   Adj. R2: -1.457e-6</code></pre>
 <span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co"># with vcov = conley() in R (see R tab).</span></span>
 <span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> OLS(y, X, gwk<span class="op">=</span>gwk, robust<span class="op">=</span><span class="st">"hac"</span>, name_y<span class="op">=</span><span class="st">"trust_neighbors"</span>,</span>
 <span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>            name_x<span class="op">=</span>[<span class="st">"ln_exports"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>NameError: name 'OLS' is not defined</code></pre>
 </div>
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(model.summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>NameError: name 'model' is not defined</code></pre>
 </div>
@@ -1251,11 +1299,14 @@ RMSE: 1.00977   Adj. R2: -1.457e-6</code></pre>
 </div>
 <div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>* Requires: <span class="kw">ssc</span> install acreg</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">"data/Nunn_Wantchekon_AER_2011.dta"</span>, <span class="kw">clear</span></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>acreg trust_neighbors ln_exports, <span class="co">///</span></span>
 <span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  lat(centroid_lat) lon(centroid_long) dist(500) spherical</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </div>
 <div id="tabset-4-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-4-tab">
@@ -1318,6 +1369,8 @@ Simulated time-series data for this example
 <div class="callout-body-container callout-body">
 <p>The series below ships with the guide as <code>data/hac_demo_timeseries.csv</code>; this chunk documents how it was generated (it is not re-run at render). Adjust <code>T_obs</code>, <code>phi</code>, and <code>beta</code> and re-run it locally to explore how serial correlation widens HAC standard errors relative to OLS.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>T_obs <span class="ot">&lt;-</span> <span class="dv">200</span>      <span class="co"># time periods</span></span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>phi   <span class="ot">&lt;-</span> <span class="fl">0.7</span>      <span class="co"># AR(1) coefficient of the errors (serial correlation)</span></span>
@@ -1327,6 +1380,7 @@ Simulated time-series data for this example
 <span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">+</span> beta <span class="sc">*</span> x <span class="sc">+</span> e</span>
 <span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>hac_demo <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">t =</span> <span class="fu">seq_len</span>(T_obs), <span class="at">y =</span> y, <span class="at">x =</span> x)</span>
 <span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(hac_demo, <span class="st">"data/hac_demo_timeseries.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </div>
 </div>
@@ -1336,6 +1390,8 @@ Simulated time-series data for this example
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sandwich)</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmtest)</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1344,6 +1400,7 @@ Simulated time-series data for this example
 <span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="co"># OLS standard errors (baseline)</span></span>
 <span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="fu">coeftest</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 t test of coefficients:
@@ -1354,11 +1411,14 @@ x           0.471439   0.097217  4.8494 2.501e-06 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Newey-West with automatic lag selection</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="co"># NeweyWest() prewhitens by default (prewhite = TRUE); the explicit-lag call</span></span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="co"># below turns it off, so the two lines differ in prewhitening as well as in lag</span></span>
 <span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># selection. Set prewhite = FALSE here too to isolate the effect of the lag.</span></span>
 <span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="fu">coeftest</span>(model, <span class="at">vcov =</span> <span class="fu">NeweyWest</span>(model))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 t test of coefficients:
@@ -1369,8 +1429,11 @@ x           0.471439   0.091833  5.1336 6.768e-07 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Newey-West with explicit lag</span></span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">coeftest</span>(model, <span class="at">vcov =</span> <span class="fu">NeweyWest</span>(model, <span class="at">lag =</span> <span class="dv">4</span>, <span class="at">prewhite =</span> <span class="cn">FALSE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 t test of coefficients:
@@ -1385,6 +1448,8 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell" data-python.reticulate="true">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1397,14 +1462,15 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>    cov_kwds<span class="op">=</span>{<span class="st">"maxlags"</span>: <span class="dv">4</span>, <span class="st">"use_correction"</span>: <span class="va">True</span>}</span>
 <span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(reg.summary())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                            OLS Regression Results                            
 ==============================================================================
 Dep. Variable:                      y   R-squared:                       0.106
 Model:                            OLS   Adj. R-squared:                  0.102
 Method:                 Least Squares   F-statistic:                     26.71
-Date:                Mon, 29 Jun 2026   Prob (F-statistic):           5.74e-07
-Time:                        14:13:56   Log-Likelihood:                -334.25
+Date:                Mon, 17 Aug 2026   Prob (F-statistic):           5.74e-07
+Time:                        10:33:06   Log-Likelihood:                -334.25
 No. Observations:                 200   AIC:                             672.5
 Df Residuals:                     198   BIC:                             679.1
 Df Model:                           1                                         
@@ -1428,10 +1494,13 @@ Notes:
 </div>
 <div id="tabset-5-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb49"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>import delimited <span class="st">"data/hac_demo_timeseries.csv"</span>, <span class="kw">clear</span></span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="kw">tsset</span> t</span>
 <span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="kw">newey</span> <span class="fu">y</span> x, lag(4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </div>
 <div id="tabset-5-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-4-tab">
@@ -1537,6 +1606,8 @@ Why 999 and 1,999, not 1,000 and 2,000?
 <div class="tab-content">
 <div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot)</span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fwildclusterboot)</span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1560,6 +1631,7 @@ Why 999 and 1,999, not 1,000 and 2,000?
 <span id="cb53-21"><a href="#cb53-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb53-22"><a href="#cb53-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Studentized (percentile-t) CIs; preferred, with O(n^{-1}) coverage error</span></span>
 <span id="cb53-23"><a href="#cb53-23" aria-hidden="true" tabindex="-1"></a><span class="fu">boot.ci</span>(boot_out, <span class="at">type =</span> <span class="st">"stud"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
 Based on 1999 bootstrap replicates
@@ -1572,8 +1644,11 @@ Level    Studentized
 95%   (-0.0033,  0.0093 )  
 Calculations and Intervals on Original Scale</code></pre>
 </div>
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simple percentile CIs shown for comparison</span></span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="fu">boot.ci</span>(boot_out, <span class="at">type =</span> <span class="st">"perc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
 Based on 1999 bootstrap replicates
@@ -1586,15 +1661,20 @@ Level     Percentile
 95%   (-0.0034,  0.0093 )  
 Calculations and Intervals on Original Scale</code></pre>
 </div>
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Wild cluster bootstrap (few clusters)</span></span>
 <span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="co"># fwildclusterboot &gt;= 0.13: seed is set globally, not passed to boottest()</span></span>
 <span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>regression <span class="ot">&lt;-</span> <span class="fu">lm</span>(trust_neighbors <span class="sc">~</span> ln_exports, <span class="at">data =</span> nunn)</span>
 <span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="fu">boottest</span>(regression, <span class="at">param =</span> <span class="st">"ln_exports"</span>, <span class="at">B =</span> <span class="dv">1999</span>, <span class="at">clustid =</span> <span class="st">"isocode"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </div>
 <div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <div class="cell" data-python.reticulate="true">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
@@ -1613,14 +1693,18 @@ Calculations and Intervals on Original Scale</code></pre>
 <span id="cb58-16"><a href="#cb58-16" aria-hidden="true" tabindex="-1"></a>    boot_coefs[b] <span class="op">=</span> sm.OLS(y[idx], X[idx]).fit().params[<span class="dv">1</span>]  <span class="co"># index 1 = ln_exports</span></span>
 <span id="cb58-17"><a href="#cb58-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb58-18"><a href="#cb58-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Bootstrap SE:  </span><span class="sc">{</span>boot_coefs<span class="sc">.</span>std()<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Bootstrap SE:  0.0030</code></pre>
 </div>
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simple percentile CI: easier to implement but O(n^{-1/2}) coverage error.</span></span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="co"># For studentized (percentile-t) CIs with O(n^{-1}) accuracy, refit the model</span></span>
 <span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="co"># on each resample, record its SE, and standardize before taking quantiles.</span></span>
 <span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"95% CI: [</span><span class="sc">{</span>np<span class="sc">.</span>percentile(boot_coefs, <span class="fl">2.5</span>)<span class="sc">:.4f}</span><span class="ss">, "</span></span>
 <span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>np<span class="sc">.</span>percentile(boot_coefs, <span class="fl">97.5</span>)<span class="sc">:.4f}</span><span class="ss">]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>95% CI: [-0.0033, 0.0088]</code></pre>
 </div>
@@ -1628,6 +1712,8 @@ Calculations and Intervals on Original Scale</code></pre>
 </div>
 <div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb62"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="st">"data/Nunn_Wantchekon_AER_2011.dta"</span>, <span class="kw">clear</span></span>
 <span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>* Pairs <span class="kw">bootstrap</span></span>
@@ -1637,6 +1723,7 @@ Calculations and Intervals on Original Scale</code></pre>
 <span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>* Wild <span class="kw">cluster</span> <span class="kw">bootstrap</span> (Roodman et al.)</span>
 <span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>* <span class="kw">ssc</span> install boottest</span>
 <span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>boottest ln_exports, <span class="kw">cluster</span>(isocode) reps(1999) <span class="dv">seed</span>(42)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </div>
 <div id="tabset-6-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-4-tab">
@@ -1758,6 +1845,8 @@ How this table was generated
 <p>The table above is rendered from <code>scripts/se_monte_carlo_results.csv</code> at build time, so the displayed numbers cannot drift from the code that produced them. The full script (<code>scripts/se_monte_carlo.R</code>) sweeps <span class="math inline">\(G \in \{6, 12, 30, 50\}\)</span> and <span class="math inline">\(\rho \in \{0, 0.3\}\)</span> with a fixed seed; its core is the one seeded replication function below and a loop that repeats it <span class="math inline">\(M\)</span> times per cell. Lower <code>M</code> and <code>B</code> at the top of the script for a fast preview.</p>
 <p>As a sanity check on the simulation itself, the <span class="math inline">\(\rho = 0\)</span> rows (no within-cluster correlation) bring every method back to roughly 5% at moderate-to-large <span class="math inline">\(G\)</span>, confirming that the harness is calibrated and that the over-rejection above is real, not an artifact. The only leftover over-rejection at <span class="math inline">\(\rho = 0\)</span> is the cluster estimators’ familiar small-sample noise at <span class="math inline">\(G = 6\)</span>.</p>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(clubSandwich); <span class="fu">library</span>(fwildclusterboot); <span class="fu">library</span>(sandwich); <span class="fu">library</span>(lmtest)</span>
 <span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a><span class="co"># One replication of a cluster-randomized design under a TRUE null (beta = 0),</span></span>
@@ -1782,6 +1871,7 @@ How this table was generated
 <span id="cb65-22"><a href="#cb65-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb65-23"><a href="#cb65-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Each cell: rejection rate over M draws; Monte Carlo SE = sqrt(p(1 - p) / M).</span></span>
 <span id="cb65-24"><a href="#cb65-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Full sweep, seeds, and CSV output live in scripts/se_monte_carlo.R.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </div>
 </div>
@@ -2368,7 +2458,26 @@ Wooldridge, Jeffrey M. 2023. <span>“What Is a Standard Error? (And How Should 
 <li id="fn3"><p>Nunn and Wantchekon’s negative, significant effect of slave exports on trust emerges in their <em>full</em> specification, with the controls and fixed effects this stripped-down model omits, and the raw bivariate slope can even carry the opposite sign. We use the bivariate model here only to isolate standard-error mechanics, not to recover the paper’s estimate.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn4"><p>Formally, <span class="math inline">\(K_{BM} = (\sum_j \lambda_j)^2 / \sum_j \lambda_j^2\)</span>, where the <span class="math inline">\(\lambda_j\)</span> are the eigenvalues of the matrix that governs the sampling distribution of the contrast’s CR2 variance estimator <span class="citation" data-cites="bellMcCaffrey2002">(<a href="#ref-bellMcCaffrey2002" role="doc-biblioref">Bell and McCaffrey 2002</a>)</span>. It is a Satterthwaite-style effective degrees of freedom, not a count of treated observations. When it falls well below <span class="math inline">\(G - 1\)</span> (a rough flag is below <span class="math inline">\(G/3\)</span>), your design carries less information than the cluster count suggests, and standard CRVE will reject too often.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
-</section></div></main>
+</section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{ellsworth2026,
+  author = {Ellsworth, Ted},
+  publisher = {Yale Library StatLab},
+  title = {Choosing the {Right} {Standard} {Errors}},
+  date = {2026-08-17},
+  langid = {en},
+  abstract = {Standard errors are the foundation of statistical
+    inference, yet choosing the wrong one undermines every confidence
+    interval and hypothesis test that follows. This guide walks applied
+    researchers through the full decision chain: diagnosing
+    heteroskedasticity, choosing between HC variants, clustering,
+    spatial and HAC corrections, and bootstrap methods. Each section
+    pairs concise statistical motivation with executable code in R,
+    Python, Stata, and Julia, using Nunn and Wantchekon (2011) as a
+    running example.}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-ellsworth2026" class="csl-entry quarto-appendix-citeas" role="listitem">
+Ellsworth, Ted. 2026. <span>“Choosing the Right Standard Errors.”</span>
+Yale Library StatLab. August 17, 2026.
+</div></div></section></div></main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {

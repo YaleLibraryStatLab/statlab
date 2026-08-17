@@ -78,6 +78,32 @@
 
     .guide-article { max-width: 960px; margin-inline: auto; }
 
+    /* ---- Data & materials ----
+       Every file under the guide's assets/ folder, so a reader can still find
+       the data when the prose forgets to link it. */
+    .guide-downloads {
+      margin-top: 3rem;
+      padding: 1.5rem 1.75rem;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .guide-downloads h2 { margin-top: 0; font-size: 1.25rem; }
+    .guide-downloads h3 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin: 1.25rem 0 0.5rem;
+    }
+    .guide-downloads__intro {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin-bottom: 0;
+    }
+    .guide-downloads__list { list-style: none; padding-left: 0; margin: 0; }
+    .guide-downloads__list li { margin: 0.3rem 0; }
+
     /* ---- Layout with table of contents ----
        Single column by default; the TOC becomes a sticky right rail on
        wide viewports. The article widens so the content column keeps
@@ -523,10 +549,38 @@
       {% endif %}
     </header>
 
+    {#- Rendered inside .guide-content in both layouts so it keeps the body
+        measure instead of spanning the TOC grid. data-pagefind-ignore keeps
+        bare filenames out of search results. -#}
+    {% macro downloads_block() %}
+      {% if downloads %}
+      <section class="guide-downloads" aria-labelledby="guide-downloads-heading" data-pagefind-ignore>
+        <h2 id="guide-downloads-heading">Data &amp; materials</h2>
+        <p class="guide-downloads__intro">
+          Files used in this guide. Everything here is downloadable directly.
+        </p>
+        {% for group in downloads %}
+          {#- Every heading in .guide-content must carry a unique id (see
+              extractor._ensure_heading_ids) so Pagefind can deep-link. -#}
+          <h3 id="guide-downloads-{{ group.label | lower | replace(' ', '-') }}">{{ group.label }}</h3>
+          <ul class="guide-downloads__list" role="list">
+            {% for file in group.files %}
+              <li>
+                <a href="{{ url_for('guide_asset', slug=slug, filename=file.path) }}"
+                   download="{{ file.name }}"><code>{{ file.name }}</code></a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endfor %}
+      </section>
+      {% endif %}
+    {% endmacro %}
+
     {% if guide.toc_html %}
     <div class="guide-layout">
       <div class="guide-content">
         {{ guide.main_html | safe }}
+        {{ downloads_block() }}
       </div>
       <aside class="guide-toc" aria-label="Table of contents">
         <nav>{{ guide.toc_html | safe }}</nav>
@@ -535,6 +589,7 @@
     {% else %}
     <div class="guide-content">
       {{ guide.main_html | safe }}
+      {{ downloads_block() }}
     </div>
     {% endif %}
 

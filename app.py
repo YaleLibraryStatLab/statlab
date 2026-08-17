@@ -8,6 +8,7 @@ from pathlib import Path
 
 from flask import Flask, abort, redirect, render_template, send_from_directory, url_for
 
+from tools.build import inventory_assets
 from tools.extractor import extract
 from tools.guide_topics import TOPICS, TOPIC_LABELS
 
@@ -127,6 +128,39 @@ def list_available_guides():
         }
         for g in manifest
     ]
+
+
+# assets/images/ holds inline figures already rendered in the body, so it is
+# not offered as a download. Anything else under assets/ is reader-facing.
+_ASSET_GROUPS_SKIPPED = {"images"}
+_ASSET_GROUP_LABELS = {"data": "Data", "scripts": "Scripts", "src": "Scripts"}
+
+
+def guide_downloads(slug):
+    """Downloadable files for a guide, grouped by their assets/ subdirectory.
+
+    Reads what the build recorded in the manifest so the page and the frozen
+    site agree; falls back to a live scan when the manifest is missing, which
+    matches the fallback in list_available_guides().
+    """
+    manifest = load_guides_manifest()
+    if manifest is None:
+        paths = inventory_assets(TEMP_GUIDES_DIR / slug)
+    else:
+        entry = next((g for g in manifest if g["slug"] == slug), None)
+        paths = entry.get("assets", []) if entry else []
+
+    groups = {}
+    for path in paths:
+        parts = path.split("/")
+        # parts[0] is always the assets dir; a bare assets/<file> has no group.
+        group = parts[1] if len(parts) > 2 else ""
+        if group in _ASSET_GROUPS_SKIPPED:
+            continue
+        label = _ASSET_GROUP_LABELS.get(group, group.replace("-", " ").title() or "Files")
+        groups.setdefault(label, []).append({"path": path, "name": parts[-1]})
+
+    return [{"label": label, "files": files} for label, files in sorted(groups.items())]
 
 
 @app.context_processor
@@ -288,6 +322,7 @@ def guide_index(slug):
         "guide.html",
         guide=guide,
         slug=slug,
+        downloads=guide_downloads(slug),
         consultant_map=_consultant_map(consultants),
     )
 

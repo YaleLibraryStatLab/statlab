@@ -3,9 +3,12 @@
 # Selection is automatic: tools/port_guides.py mirrors every guide directory
 # on the upstream repo's MAIN branch (read via git, regardless of which branch
 # is checked out over there) into research-guides/, and tools/build.py then
-# publishes research-guides/ -> temp/. This file is the only hand-maintained
-# piece: it lists guides that are on main but must NOT publish. Every entry
-# must be a real directory on main, or port_guides.py fails loudly.
+# publishes research-guides/ -> temp/. Directories whose names start with "."
+# or "_" are upstream infrastructure (e.g. _translation-project), not guides,
+# and are skipped without needing an entry here. This file is the only
+# hand-maintained piece: it lists real guides that are on main but must NOT
+# publish. Every entry must be a real directory on main, or port_guides.py
+# fails loudly.
 #
 # Normally the only entry is the authoring template. To hold a finished guide
 # back temporarily, add its slug here; remove it to publish.

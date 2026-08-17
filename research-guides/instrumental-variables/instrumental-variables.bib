@@ -1,0 +1,412 @@
+% Bibliography for the StatLab Instrumental Variables guide.
+%
+% Every entry was cross-checked by two independent verification passes against
+% Crossref/OpenAlex, publisher pages, CRAN/PyPI/Zenodo and library catalogues.
+% Corrections were applied only where both passes agreed. Remaining caveats are
+% noted inline on the entries they affect.
+
+% ---------------------------------------------------------------- core IV ----
+
+@article{angrist1996identification,
+  author  = {Angrist, Joshua D. and Imbens, Guido W. and Rubin, Donald B.},
+  title   = {Identification of Causal Effects Using Instrumental Variables},
+  journal = {Journal of the American Statistical Association},
+  year    = {1996},
+  volume  = {91},
+  number  = {434},
+  pages   = {444--455},
+  doi     = {10.1080/01621459.1996.10476902}
+}
+% VERIFIED (two independent source checks)
+
+@article{angrist1990lifetime,
+  author  = {Angrist, Joshua D.},
+  title   = {Lifetime Earnings and the {V}ietnam Era Draft Lottery: Evidence
+             from Social Security Administrative Records},
+  journal = {American Economic Review},
+  year    = {1990},
+  volume  = {80},
+  number  = {3},
+  pages   = {313--336}
+}
+% VERIFIED (two independent source checks)
+
+@article{angrist2001estimation,
+  author  = {Angrist, Joshua D.},
+  title   = {Estimation of Limited Dependent Variable Models with Dummy
+             Endogenous Regressors: Simple Strategies for Empirical Practice},
+  journal = {Journal of Business \& Economic Statistics},
+  year    = {2001},
+  volume  = {19},
+  number  = {1},
+  pages   = {2--28},
+  doi     = {10.1198/07350010152472571}
+}
+% VERIFIED (two independent source checks)
+
+@incollection{card1995using,
+  author    = {Card, David},
+  title     = {Using Geographic Variation in College Proximity to Estimate the
+               Return to Schooling},
+  booktitle = {Aspects of Labour Market Behaviour: Essays in Honour of John
+               Vanderkamp},
+  editor    = {Christofides, Louis N. and Grant, E. Kenneth and Swidinsky, Robert},
+  publisher = {University of Toronto Press},
+  address   = {Toronto},
+  year      = {1995},
+  pages     = {201--222}
+}
+% Book, editors, publisher and year verified (UW-Madison catalogue). The page
+% range is universally cited but neither verifier reached a chapter-level
+% table of contents, so 201--222 remains unconfirmed at source.
+
+@article{hansen1982large,
+  author  = {Hansen, Lars Peter},
+  title   = {Large Sample Properties of Generalized Method of Moments Estimators},
+  journal = {Econometrica},
+  year    = {1982},
+  volume  = {50},
+  number  = {4},
+  pages   = {1029--1054},
+  doi     = {10.2307/1912775}
+}
+% VERIFIED (RePEc: v50y1982i4p1029-54). Note JSTOR's Crossref deposit carries
+% a start page only, so the end page comes from RePEc rather than Crossref.
+
+% ------------------------------------------------------- weak instruments ----
+
+@article{staiger1997instrumental,
+  author  = {Staiger, Douglas and Stock, James H.},
+  title   = {Instrumental Variables Regression with Weak Instruments},
+  journal = {Econometrica},
+  year    = {1997},
+  volume  = {65},
+  number  = {3},
+  pages   = {557--586},
+  doi     = {10.2307/2171753}
+}
+% VERIFIED (RePEc: v65y1997i3p557-586). Same Crossref start-page-only caveat
+% as hansen1982large.
+
+@incollection{stock2005testing,
+  author    = {Stock, James H. and Yogo, Motohiro},
+  title     = {Testing for Weak Instruments in Linear {IV} Regression},
+  booktitle = {Identification and Inference for Econometric Models: Essays in
+               Honor of Thomas Rothenberg},
+  editor    = {Andrews, Donald W. K. and Stock, James H.},
+  publisher = {Cambridge University Press},
+  address   = {Cambridge},
+  year      = {2005},
+  pages     = {80--108},
+  doi       = {10.1017/CBO9780511614491.006}
+}
+% VERIFIED: pages confirmed from the publisher frontmatter (ch. 5 starts p. 80,
+% ch. 6 starts p. 109).
+
+@article{montielolea2013robust,
+  author  = {Montiel Olea, Jos{\'e} Luis and Pflueger, Carolin},
+  title   = {A Robust Test for Weak Instruments},
+  journal = {Journal of Business \& Economic Statistics},
+  year    = {2013},
+  volume  = {31},
+  number  = {3},
+  pages   = {358--369},
+  doi     = {10.1080/00401706.2013.806694}
+}
+% VERIFIED. The 10.1080/00401706 prefix is Technometrics' ISSN and looks like a
+% copy-paste error, but Taylor & Francis genuinely registered the JBES article
+% under it.
+
+@article{andrews2019weak,
+  author  = {Andrews, Isaiah and Stock, James H. and Sun, Liyang},
+  title   = {Weak Instruments in Instrumental Variables Regression: Theory and
+             Practice},
+  journal = {Annual Review of Economics},
+  year    = {2019},
+  volume  = {11},
+  pages   = {727--753},
+  doi     = {10.1146/annurev-economics-080218-025643}
+}
+% VERIFIED (PDF + two independent source checks)
+
+@article{lee2022valid,
+  author  = {Lee, David S. and McCrary, Justin and Moreira, Marcelo J. and
+             Porter, Jack},
+  title   = {Valid t-Ratio Inference for {IV}},
+  journal = {American Economic Review},
+  year    = {2022},
+  volume  = {112},
+  number  = {10},
+  pages   = {3260--3290},
+  doi     = {10.1257/aer.20211063}
+}
+% VERIFIED (PDF + two independent source checks)
+
+@article{keane2023instrument,
+  author  = {Keane, Michael and Neal, Timothy},
+  title   = {Instrument Strength in {IV} Estimation and Inference: A Guide to
+             Theory and Practice},
+  journal = {Journal of Econometrics},
+  year    = {2023},
+  volume  = {235},
+  number  = {2},
+  pages   = {1625--1653},
+  doi     = {10.1016/j.jeconom.2022.12.009}
+}
+% VERIFIED (PDF + two independent source checks)
+
+@article{angrist2024one,
+  author  = {Angrist, Joshua and Koles{\'a}r, Michal},
+  title   = {One Instrument to Rule Them All: The Bias and Coverage of Just-{ID}
+             {IV}},
+  journal = {Journal of Econometrics},
+  year    = {2024},
+  volume  = {240},
+  number  = {2},
+  pages   = {105398},
+  doi     = {10.1016/j.jeconom.2022.12.012}
+}
+% VERIFIED (PDF + two independent source checks)
+
+@article{mikusheva2022inference,
+  author  = {Mikusheva, Anna and Sun, Liyang},
+  title   = {Inference with Many Weak Instruments},
+  journal = {The Review of Economic Studies},
+  year    = {2022},
+  volume  = {89},
+  number  = {5},
+  pages   = {2663--2686},
+  doi     = {10.1093/restud/rdab097}
+}
+% VERIFIED (PDF + two independent source checks)
+
+% -------------------------------------------------- validity and testing ----
+
+@article{kitagawa2015test,
+  author  = {Kitagawa, Toru},
+  title   = {A Test for Instrument Validity},
+  journal = {Econometrica},
+  year    = {2015},
+  volume  = {83},
+  number  = {5},
+  pages   = {2043--2063},
+  doi     = {10.3982/ECTA11974}
+}
+% VERIFIED (PDF + two independent source checks)
+
+@article{huber2015testing,
+  author  = {Huber, Martin and Mellace, Giovanni},
+  title   = {Testing Instrument Validity for {LATE} Identification Based on
+             Inequality Moment Constraints},
+  journal = {The Review of Economics and Statistics},
+  year    = {2015},
+  volume  = {97},
+  number  = {2},
+  pages   = {398--411},
+  doi     = {10.1162/REST_a_00450}
+}
+% VERIFIED (PDF + two independent source checks)
+
+@article{andresen2021instrument,
+  author  = {Andresen, Martin E. and Huber, Martin},
+  title   = {Instrument-Based Estimation with Binarised Treatments: Issues and
+             Tests for the Exclusion Restriction},
+  journal = {The Econometrics Journal},
+  year    = {2021},
+  volume  = {24},
+  number  = {3},
+  pages   = {536--558},
+  doi     = {10.1093/ectj/utab002}
+}
+% VERIFIED from PDF
+
+@article{conley2012plausibly,
+  author  = {Conley, Timothy G. and Hansen, Christian B. and Rossi, Peter E.},
+  title   = {Plausibly Exogenous},
+  journal = {The Review of Economics and Statistics},
+  year    = {2012},
+  volume  = {94},
+  number  = {1},
+  pages   = {260--272},
+  doi     = {10.1162/REST_a_00139}
+}
+% VERIFIED (two independent source checks)
+
+@article{mellon2025rain,
+  author  = {Mellon, Jonathan},
+  title   = {Rain, Rain, Go Away: 194 Potential Exclusion-Restriction Violations
+             for Studies Using Weather as an Instrumental Variable},
+  journal = {American Journal of Political Science},
+  year    = {2025},
+  volume  = {69},
+  number  = {3},
+  pages   = {881--898},
+  doi     = {10.1111/ajps.12894}
+}
+% VERIFIED: "194" is the count in the version of record (earlier drafts used
+% 137 and 195). Online 2024-08-05, print issue July 2025.
+
+% ------------------------------------------- heterogeneity and monotonicity ----
+
+@article{mogstad2021causal,
+  author  = {Mogstad, Magne and Torgovitsky, Alexander and Walters, Christopher R.},
+  title   = {The Causal Interpretation of Two-Stage Least Squares with Multiple
+             Instrumental Variables},
+  journal = {American Economic Review},
+  year    = {2021},
+  volume  = {111},
+  number  = {11},
+  pages   = {3663--3698},
+  doi     = {10.1257/aer.20190221}
+}
+% VERIFIED (title/authors from NBER WP 25691); CHECK: volume/number/pages
+
+@article{mogstad2018identification,
+  author  = {Mogstad, Magne and Torgovitsky, Alexander},
+  title   = {Identification and Extrapolation of Causal Effects with
+             Instrumental Variables},
+  journal = {Annual Review of Economics},
+  year    = {2018},
+  volume  = {10},
+  pages   = {577--613},
+  doi     = {10.1146/annurev-economics-101617-041813}
+}
+% VERIFIED from PDF (Annu. Rev. Econ. 2018.10:577-613)
+
+@article{vanthoff2025limited,
+  author  = {{van 't Hoff}, Nadja and Lewbel, Arthur and Mellace, Giovanni},
+  title   = {Limited Monotonicity and the Combined Compliers {LATE}},
+  journal = {The Review of Economics and Statistics},
+  year    = {2025},
+  pages   = {1--33},
+  note    = {Advance access},
+  doi     = {10.1162/rest.a.1634}
+}
+% VERIFIED: published online 2025-10-27; no volume/issue assigned yet
+
+@article{sloczynski2025when,
+  author  = {S{\l}oczy{\'n}ski, Tymon},
+  title   = {When Should We (Not) Interpret Linear {IV} Estimands as {LATE}?},
+  journal = {The Review of Economic Studies},
+  year    = {2026},
+  note    = {Accepted; arXiv:2011.06695}
+}
+% VERIFIED: accepted at REStud, no volume/issue/pages assigned yet.
+% Key still reads 2025 for stability; the year field is the correct one.
+
+@article{angrist1999jackknife,
+  author  = {Angrist, Joshua D. and Imbens, Guido W. and Krueger, Alan B.},
+  title   = {Jackknife Instrumental Variables Estimation},
+  journal = {Journal of Applied Econometrics},
+  year    = {1999},
+  volume  = {14},
+  number  = {1},
+  pages   = {57--67},
+  doi     = {10.1002/(SICI)1099-1255(199901/02)14:1<57::AID-JAE501>3.0.CO;2-G}
+}
+% VERIFIED (two independent source checks)
+
+@article{kling2006incarceration,
+  author  = {Kling, Jeffrey R.},
+  title   = {Incarceration Length, Employment, and Earnings},
+  journal = {American Economic Review},
+  year    = {2006},
+  volume  = {96},
+  number  = {3},
+  pages   = {863--876},
+  doi     = {10.1257/aer.96.3.863}
+}
+% VERIFIED (title/author from NBER WP 12003); CHECK: volume/number/pages
+
+% ------------------------------------------------ practice and diagnostics ----
+
+@article{young2022consistency,
+  author  = {Young, Alwyn},
+  title   = {Consistency without Inference: Instrumental Variables in Practical
+             Application},
+  journal = {European Economic Review},
+  year    = {2022},
+  volume  = {147},
+  pages   = {104112},
+  doi     = {10.1016/j.euroecorev.2022.104112}
+}
+% VERIFIED from PDF
+
+@article{marbach2020profiling,
+  author  = {Marbach, Moritz and Hangartner, Dominik},
+  title   = {Profiling Compliers and Noncompliers for Instrumental-Variable
+             Analysis},
+  journal = {Political Analysis},
+  year    = {2020},
+  volume  = {28},
+  number  = {3},
+  pages   = {435--444},
+  doi     = {10.1017/pan.2019.48}
+}
+% VERIFIED from PDF
+
+@article{lal2024much,
+  author  = {Lal, Apoorva and Lockhart, Mackenzie and Xu, Yiqing and
+             Zu, Ziwen},
+  title   = {How Much Should We Trust Instrumental Variable Estimates in
+             Political Science? Practical Advice Based on 67 Replicated Studies},
+  journal = {Political Analysis},
+  year    = {2024},
+  volume  = {32},
+  number  = {4},
+  pages   = {521--540},
+  doi     = {10.1017/pan.2024.2}
+}
+% VERIFIED: Political Analysis 32:521-540. The version of record prints
+% "Mackenzie Lockhart"; SSRN uses "Mackenzie William Lockhart".
+
+@article{choi2019two,
+  author  = {Choi, Jaerim and Shen, Shu},
+  title   = {Two-Sample Instrumental-Variables Regression with Potentially Weak
+             Instruments},
+  journal = {The Stata Journal},
+  year    = {2019},
+  volume  = {19},
+  number  = {3},
+  pages   = {581--597},
+  doi     = {10.1177/1536867X19874235}
+}
+% VERIFIED from PDF
+
+@article{borusyak2025practical,
+  author  = {Borusyak, Kirill and Hull, Peter and Jaravel, Xavier},
+  title   = {A Practical Guide to Shift-Share Instruments},
+  journal = {Journal of Economic Perspectives},
+  year    = {2025},
+  volume  = {39},
+  number  = {1},
+  pages   = {181--204},
+  doi     = {10.1257/jep.20231370}
+}
+% VERIFIED: JEP 39(1):181-204 confirmed; DOI corrected (the volume.issue.page
+% form 10.1257/jep.39.1.181 does not resolve)
+
+% ------------------------------------------------------------- software ----
+
+@Manual{ivreg2026,
+  title  = {ivreg: Instrumental-Variables Regression by '2SLS', '2SM', or
+            '2SMM', with Diagnostics},
+  author = {Fox, John and Kleiber, Christian and Zeileis, Achim},
+  year   = {2026},
+  note   = {R package version 0.6-8},
+  url    = {https://CRAN.R-project.org/package=ivreg}
+}
+% VERIFIED: CRAN 0.6-8 (2026-07-10); aut/cre roles are Fox, Kleiber, Zeileis
+
+@Manual{sheppard_linearmodels,
+  title  = {{linearmodels}: Linear Panel, Instrumental Variable, Asset
+            Pricing, and System Regression Models for {P}ython},
+  author = {Sheppard, Kevin},
+  year   = {2025},
+  note   = {Python package version 7.0},
+  doi    = {10.5281/zenodo.2591973},
+  url    = {https://bashtage.github.io/linearmodels/}
+}
+% VERIFIED: title from the package's own summary; v7.0 released 2025-10-21.
+% DOI here is the Zenodo *concept* DOI (always resolves to the latest release);
+% the v7.0-specific DOI is 10.5281/zenodo.17407190.

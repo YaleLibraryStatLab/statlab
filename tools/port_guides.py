@@ -54,13 +54,38 @@ DEFAULT_REF = "main"
 DEST_GUIDES = ROOT / "research-guides"
 
 # Rendered output only — never sources, render caches, or per-guide scratch.
-_COPY_IGNORE = shutil.ignore_patterns(
+_IGNORE_PATTERNS = shutil.ignore_patterns(
     "*.qmd", "*.Rmd", "*.rmarkdown", "*.sh",
     "_freeze", ".quarto", ".git*",
     "renv", "renv.lock", ".Rproj.user",
     "archive", "src", "notes-to-self*",
     ".DS_Store", "verify_*",
 )
+
+# Everything a guide publishes for readers to download lives here.
+ASSETS_DIRNAME = build_mod.ASSETS_DIRNAME
+
+
+def _copy_ignore(guide_root: Path):
+    """Filter sources/caches everywhere EXCEPT under the guide's assets/ tree.
+
+    assets/ is the author's publish contract: whatever is committed there ships
+    verbatim, so a reader-facing script is never mistaken for a build source.
+    Without this, ignore_patterns matches basenames at every depth and quietly
+    eats things like assets/src/generate_data.R or assets/scripts/*.sh.
+    """
+    assets_root = guide_root / ASSETS_DIRNAME
+
+    def ignore(directory, names):
+        here = Path(directory)
+        if here == assets_root or assets_root in here.parents:
+            return set()
+        ignored = set(_IGNORE_PATTERNS(directory, names))
+        # Defensive: no current pattern matches "assets", but a future one must
+        # not be able to decapitate the whole tree.
+        return ignored - {ASSETS_DIRNAME} if here == guide_root else ignored
+
+    return ignore
 
 
 def _git(repo: Path, *args: str) -> subprocess.CompletedProcess:
@@ -79,13 +104,19 @@ def ref_exists(repo: Path, ref: str) -> bool:
 
 
 def catalog(repo: Path, ref: str) -> list[str]:
-    """Guide directory names committed under research-guides/ on `ref`."""
+    """Guide directory names committed under research-guides/ on `ref`.
+
+    "." and "_" prefixes mark upstream infrastructure directories (e.g.
+    _translation-project), not publishable guides — they have no rendered HTML
+    and would otherwise fail the port. guides.exclude is for the other case:
+    a real guide deliberately held back.
+    """
     proc = _git(repo, "ls-tree", "-d", "--name-only", f"{ref}:{UPSTREAM_SUBDIR}")
     if proc.returncode != 0:
         raise RuntimeError(proc.stderr.strip() or f"cannot read {ref}:{UPSTREAM_SUBDIR}")
     return sorted(
         name for name in proc.stdout.splitlines()
-        if name and not name.startswith(".") and name not in build_mod.LEGACY_DIRS
+        if name and not name.startswith((".", "_")) and name not in build_mod.LEGACY_DIRS
     )
 
 
@@ -101,7 +132,8 @@ def extract_guide(repo: Path, ref: str, slug: str, dest_dir: Path) -> None:
         subprocess.run(["tar", "-x", "-C", td], input=archive.stdout, check=True)
         if dest_dir.exists():
             shutil.rmtree(dest_dir)
-        shutil.copytree(td, dest_dir, ignore=_COPY_IGNORE)
+        # The ignore root is the extraction dir — that is what copytree walks.
+        shutil.copytree(td, dest_dir, ignore=_copy_ignore(Path(td)))
 
 
 def normalize_main_html(dest_dir: Path, slug: str) -> tuple[bool, str]:

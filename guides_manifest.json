@@ -2,7 +2,7 @@
   {
     "slug": "glmms",
     "title": "Generalized Mixed-Effects Models",
-    "date": "2026-06-01",
+    "date": "2026-08-17",
     "authors": [
       "Cole Brookson"
     ],
@@ -22,6 +22,14 @@
       "glmmTMB",
       "TMB"
     ],
+    "assets": [
+      "assets/data/insects.csv",
+      "assets/data/insects.hash",
+      "assets/data/plants.csv",
+      "assets/data/plants.hash",
+      "assets/scripts/simulate_insects.R",
+      "assets/scripts/simulate_plants.R"
+    ],
     "topics": [
       "linear-generalized-models",
       "mixed-longitudinal-models"
@@ -30,14 +38,19 @@
   {
     "slug": "instrumental-variables",
     "title": "Instrumental Variables",
-    "date": "2026-06-22",
+    "date": "2026-08-17",
     "authors": [
       "Jonathan Elkobi"
     ],
-    "keywords": [
-      "instrumental variables",
-      "causal inference",
-      "experimental data"
+    "keywords": [],
+    "assets": [
+      "assets/card.csv",
+      "assets/data/iv_data.csv",
+      "assets/data/iv_data.hash",
+      "assets/iv_simulation.csv",
+      "assets/scripts/iv_data.hash",
+      "assets/scripts/simulate_iv_data.R",
+      "assets/scripts/simulate_iv_data.hash"
     ],
     "topics": [
       "causal-inference"
@@ -46,7 +59,7 @@
   {
     "slug": "logit-probit",
     "title": "Logit and Probit Models for Binary Outcomes",
-    "date": "2026-06-15",
+    "date": "2026-08-17",
     "authors": [
       "Jiye Kwon"
     ],
@@ -61,6 +74,10 @@
       "Predicted Probabilities",
       "Marginal Effects."
     ],
+    "assets": [
+      "assets/data/washb-index.Rda",
+      "assets/data/washb-index.csv"
+    ],
     "topics": [
       "linear-generalized-models",
       "inference-model-building"
@@ -69,7 +86,7 @@
   {
     "slug": "mixed-effects-models",
     "title": "Linear Mixed-Effects Models: A Practical Guide",
-    "date": "2025-12-02",
+    "date": "2026-08-17",
     "authors": [
       "Cole Brookson"
     ],
@@ -86,28 +103,36 @@
       "lme4",
       "MixedModels.jl"
     ],
+    "assets": [
+      "assets/data/crop_yield_data.csv",
+      "assets/images/midway-model-types.png",
+      "assets/src/generate_data.R"
+    ],
     "topics": [
       "mixed-longitudinal-models"
     ]
   },
   {
     "slug": "olsregression",
-    "title": "Ordinary Least Square Regression",
-    "date": "2026-06-17",
+    "title": "Ordinary Least Squares Regression",
+    "date": "2026-08-17",
     "authors": [
-      "Muji Chughtai"
+      "Muji Chughtai",
+      "Claudia Mastrogiacomo"
     ],
     "keywords": [
       "OLS",
       "Regression",
-      "Continuous Varibales",
+      "Continuous Variables",
       "Categorical Variables",
       "R",
-      "Julia",
-      "glm",
       "lm",
-      "t.test",
-      "anova"
+      "t.test"
+    ],
+    "assets": [
+      "assets/data/caschools.csv",
+      "assets/data/caschools.hash",
+      "assets/scripts/export_caschools_data.R"
     ],
     "topics": [
       "linear-generalized-models",
@@ -117,7 +142,7 @@
   {
     "slug": "panel-regression",
     "title": "Panel/Longitudinal Data and its Associated Regression Practices",
-    "date": "2025-12-16",
+    "date": "2026-08-17",
     "authors": [
       "Cole Brookson"
     ],
@@ -131,6 +156,7 @@
       "R",
       "Julia"
     ],
+    "assets": [],
     "topics": [
       "mixed-longitudinal-models"
     ]
@@ -138,19 +164,36 @@
   {
     "slug": "rdd",
     "title": "Regression Discontinuity Design",
-    "date": null,
+    "date": "2026-08-17",
     "authors": [
       "Jonathan Elkobi"
     ],
-    "keywords": [],
+    "keywords": [
+      "regression discontinuity",
+      "causal inference",
+      "running variable",
+      "cutoff",
+      "local average treatment effect",
+      "bandwidth selection",
+      "McCrary density test",
+      "fuzzy RDD",
+      "sharp RDD",
+      "placebo tests"
+    ],
+    "assets": [
+      "assets/data/rdd_data.csv",
+      "assets/data/rdd_data.hash",
+      "assets/scripts/simulate_rdd_data.R",
+      "assets/scripts/simulate_rdd_data.hash"
+    ],
     "topics": [
       "causal-inference"
     ]
   },
   {
     "slug": "standard-errors",
-    "title": "Standard Errors in Applied Research",
-    "date": "2026-06-29",
+    "title": "Choosing the Right Standard Errors",
+    "date": "2026-08-17",
     "authors": [
       "Ted Ellsworth"
     ],
@@ -166,6 +209,7 @@
       "wild cluster bootstrap",
       "sandwich estimator"
     ],
+    "assets": [],
     "topics": [
       "inference-model-building"
     ]
@@ -173,7 +217,7 @@
   {
     "slug": "survival-analysis",
     "title": "Survival Analysis",
-    "date": "2026-06-22",
+    "date": "2026-08-17",
     "authors": [
       "Atalay Demiray, MD, MSc"
     ],
@@ -192,14 +236,68 @@
       "Restricted Mean Survival Time",
       "Parametric Survival Models"
     ],
+    "assets": [
+      "assets/data/lung.csv",
+      "assets/data/lung.hash",
+      "assets/scripts/export_lung_data.R",
+      "assets/scripts/export_lung_data.hash"
+    ],
     "topics": [
       "time-to-event-models"
     ]
   },
   {
+    "slug": "synthetic-control",
+    "title": "Synthetic Control Methods",
+    "date": "2026-07-16",
+    "authors": [
+      "Jonathan Elkobi"
+    ],
+    "keywords": [
+      "synthetic control",
+      "causal inference",
+      "program evaluation",
+      "counterfactuals",
+      "panel data",
+      "policy evaluation"
+    ],
+    "assets": [],
+    "topics": [
+      "mixed-longitudinal-models",
+      "causal-inference"
+    ]
+  },
+  {
+    "slug": "teststatistics",
+    "title": "Test Statistics",
+    "date": "2026-08-17",
+    "authors": [
+      "Prabaha Gangopadhyay",
+      "Atalay Demiray, MD, MSc"
+    ],
+    "keywords": [
+      "hypothesis testing",
+      "test statistic",
+      "z-statistic",
+      "t-statistic",
+      "F-statistic",
+      "chi-square statistic",
+      "sampling distribution",
+      "degrees of freedom",
+      "significance level",
+      "one-tailed and two-tailed tests",
+      "permutation test",
+      "parametric and non-parametric tests"
+    ],
+    "assets": [],
+    "topics": [
+      "inference-model-building"
+    ]
+  },
+  {
     "slug": "variable-selection",
     "title": "Selecting the Right Variables",
-    "date": "2026-06-22",
+    "date": "2026-08-17",
     "authors": [
       "Atalay Demiray, MD, MSc"
     ],
@@ -214,6 +312,12 @@
       "AIC",
       "BIC",
       "cross-validation"
+    ],
+    "assets": [
+      "assets/data/ovb_data.csv",
+      "assets/data/ovb_data.hash",
+      "assets/scripts/simulate_ovb_data.R",
+      "assets/scripts/simulate_ovb_data.hash"
     ],
     "topics": [
       "causal-inference",

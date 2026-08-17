@@ -9,8 +9,8 @@ Flask-served content.
 
 | File | Purpose |
 |------|---------|
-| `extractor.py` | Parse a single Quarto HTML file; extract content, metadata, assets |
-| `build.py` | Single ingestion command: walk `research-guides/`, smoke-check each guide with the extractor, verify local assets exist, copy accepted guides to `temp/`, write `guides_manifest.json` |
+| `extractor.py` | Parse a single Quarto HTML file; extract content, metadata, assets, and body links |
+| `build.py` | Single ingestion command: walk `research-guides/`, smoke-check each guide with the extractor, verify local assets and `<a href>` targets exist, inventory each guide's `assets/` tree, copy accepted guides to `temp/`, write `guides_manifest.json` |
 | `guide_topics.py` | Assign stable browse topics from guide metadata; imported by `build.py`, with preview/check/write commands and optional overrides in `data/guide_topic_overrides.json` |
 | `port_guides.py` | Mirror the guide directories committed on the upstream repo's **main** branch into `research-guides/`, reading via git so the upstream working tree / checked-out branch is irrelevant. Pulls main's committed rendered HTML (no `quarto render`), removes local guides no longer on main, then runs `build.py --clean`. `--ref` reads a different ref; `--only <slug>` ports one guide without pruning the rest |
 
@@ -96,15 +96,52 @@ template is excluded and never copied locally.)
 ## Edge cases and Flask adaptations
 
 ### Asset paths
-Local assets live in `<guide-name>_files/libs/` relative to the HTML file.
-When serving from Flask you must either:
+Relative asset URLs are **never rewritten**. Quarto emits paths relative to the
+HTML file (`<slug>_files/libs/…`, `images/plot.png`, `assets/data/nunn.csv`),
+and they keep working because every guide page is served at a trailing-slash
+URL — `/guides/<slug>/` — so the browser resolves them inside the guide's own
+directory. `app.guide_no_slash()` 301-redirects `/guides/<slug>` precisely to
+protect that resolution, and `freeze.guide_asset` publishes every file in
+`temp/<slug>/` recursively so nothing a guide references can 404.
 
-- Copy the `_files/` directory into `static/guides/<slug>/` and rewrite paths,
-  **or**
-- Serve the `research-guides/` tree directly as a static directory.
+(`extractor.rewrite_asset_paths()` exists but is unused — a leftover from an
+earlier design that served guides under a shared static prefix.)
 
-`extractor.rewrite_asset_paths()` handles the rewriting once you decide on a
-URL prefix.
+### The `assets/` contract
+Anything a guide commits under `<guide>/assets/` is reader-facing and ships
+verbatim to `/guides/<slug>/assets/<path>`:
+
+```
+research-guides/standard-errors/assets/
+├── data/nunn.csv        →  /statlab/guides/standard-errors/assets/data/nunn.csv
+├── scripts/simulate.R   →  /statlab/guides/standard-errors/assets/scripts/simulate.R
+└── images/diagram.png   →  inline figure, not offered as a download
+```
+
+Link it from the `.qmd` with a plain relative path:
+
+```markdown
+[`nunn.csv`](assets/data/nunn.csv){download="nunn.csv"}
+```
+
+Three things follow from this:
+
+- **`port_guides.py` exempts `assets/` from its source/cache filters.** Names
+  that are stripped everywhere else — `src/`, `archive/`, `*.sh`, `*.qmd` —
+  survive inside `assets/`. Put nothing there you would not publish.
+- **`build.py` inventories the tree** into each manifest entry's `assets` list
+  (relative paths only; the `/statlab/` prefix is applied by `url_for()` at
+  freeze time). `templates/guide.html` renders it as a "Data & materials"
+  section, so a file stays reachable even when the prose forgets to link it.
+  `assets/images/` is skipped there — those are inline figures.
+- **`build.py` validates every `<a href>`** against the disk and reports dead
+  ones as *missing file(s)*, separately from *unresolved link(s)* (`@sec-…`
+  cross-references and TODO placeholders). Both warn; neither blocks the
+  build. `freeze.py` then re-checks that each manifest asset really landed
+  in `docs/` and fails the freeze if one did not.
+
+A guide whose rendered HTML predates a data file moving into `assets/` shows up
+in the *missing file(s)* list — re-render it upstream.
 
 ### Quarto version differences
 Bootstrap CSS filenames are hashed in Quarto ≥ 1.7

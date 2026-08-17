@@ -51,6 +51,7 @@ from app import (
     cached_extract,
     list_available_guides,
     load_consultants,
+    load_guides_manifest,
 )
 
 # GitHub Pages project site: https://<owner>.github.io/<repo>/. Only the path
@@ -167,6 +168,22 @@ def serve_statlab_photo():
         yield {"filename": name}
 
 
+def verify_frozen_assets() -> list[str]:
+    """Manifest-recorded guide assets that are missing from the frozen site.
+
+    guide_asset publishes whatever it finds in temp/, so this is the end-to-end
+    check that a file committed under a guide's assets/ upstream really landed
+    on the deployed site as bytes.
+    """
+    manifest = load_guides_manifest() or []
+    missing = []
+    for guide in manifest:
+        for rel in guide.get("assets", []):
+            if not (DOCS_DIR / "guides" / guide["slug"] / rel).is_file():
+                missing.append(f"guides/{guide['slug']}/{rel}")
+    return missing
+
+
 def freeze() -> Path:
     # guide_no_slash is a 301 -> /guides/<slug>/ redirect and is deliberately
     # NOT frozen: following it would write a *file* named <slug> that collides
@@ -184,6 +201,14 @@ def freeze() -> Path:
         shutil.copyfile(NOJEKYLL, DOCS_DIR / ".nojekyll")
     else:
         (DOCS_DIR / ".nojekyll").touch()
+
+    missing = verify_frozen_assets()
+    if missing:
+        raise RuntimeError(
+            "assets recorded in the manifest are missing from the frozen site:\n"
+            + "".join(f"  - {rel}\n" for rel in missing)
+            + "Re-run tools/build.py so temp/ matches the manifest."
+        )
 
     # Pagefind runs after the static HTML exists. It sees data-pagefind-body
     # only on guide articles, so raw Quarto files and site chrome stay out of
