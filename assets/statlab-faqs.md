@@ -7,7 +7,7 @@ Alongside consultations, we offer workshops (both introductory and topic-specifi
 
 In coordination with partners across the university, we offer supplementary services including Open and Reproducible Research reading groups, reproducibility checks, and more.
 
-Some related needs are served by dedicated teams elsewhere at Yale, though we're glad to consult on these too:
+Some related needs are served by dedicated teams elsewhere at Yale, and we encourage users to explore these resources:
 
 - **Finding datasets** — a [subject specialist librarian](https://www.library.yale.edu/help-and-research-support/subject-specialist) can help you track down data for your field.
 - **GIS and geospatial data** — see the library's [GIS research guide](https://guides.library.yale.edu/GIS).
@@ -31,7 +31,7 @@ During your intake session, your consultant will work with you to determine the 
 
 ### How long is a consultation on average? What if I need more time?
 
-A typical StatLab consultation lasts about 30 minutes and no more than 45 minutes. Consultations are kept deliberately short to allow consultants to prepare quality materials in advance and to focus on particular problems, or sets of problems. For guidance on how to use this time effectively, check out our [Guide to a Successful StatLab Consultation]
+A typical StatLab consultation lasts about 30 minutes and no more than 45 minutes. Consultations are kept deliberately short to allow consultants to prepare quality materials in advance and to focus on particular problems, or sets of problems. In order to use that time effectively, we encourage users to provide as much information as possible during the intake process including identifying the key research question(s), hypotheses, and any specific questions you would like to work through in a given session.
 
 ### Do I need to have data in order to book a StatLab Consultation?
 
@@ -40,9 +40,11 @@ think through estimation strategies. Meeting at this stage lets us catch potenti
 
 ### Do StatLab consultants offer support for homework? 
 
-Typically no. As a general rule, we encourage students to seek help from their instructors or teaching fellows first, which keeps learning within the context of the course. Our team doesn't provide direct support on homework assignments.
+As a general rule, we encourage students to seek help from their instructors or teaching fellows first, which keeps learning within the context of the course. Our team doesn't provide direct support on homework assignments.
 
-We are, however, happy to offer supplemental support to classroom instruction — reviewing key concepts, working through practice problems, and advising on course-embedded research projects like theses. So while we won't complete homework with you, we can be another resource for learning and growing in statistics and data science. If you're not sure whether your question fits within the scope of our work, please feel free to send us an email.
+We are, however, happy to offer supplemental support to classroom instruction — reviewing key concepts, working through practice problems, and advising on course-embedded research projects like theses. So while we won't complete homework with you, we can be another resource for learning and growing in statistics and data science. Instructors who wish to use StatLab resources in support of course work should contact us at statlab@yale.edu.
+
+As always, if you're not sure whether your question fits within the scope of our work, please feel free to send us an email.
 
 ### Can the StatLab help me with my code?
 
@@ -50,9 +52,9 @@ Yes, with some caveats. Our team supports modern statistics and data science wor
 
 One thing to keep in mind: we are methodological experts first, not software engineers. Our strength is helping you choose and correctly apply the right approach, and our code support serves that goal.
 
-Common forms of support include code review, debugging, translating between languages, and developing pseudocode for new methods. StatLab consultants don't write code for researchers, but they'll actively use pseudocode and worked examples to teach you a new method — so you leave able to write it yourself.
+Common forms of support include code review, debugging, translating between languages, and developing pseudocode for new methods. StatLab consultants are advised to not perform analysis *for* the researcher, but they are encouraged to use pseudocode and worked examples to teach you new methods — so you leave able to write it yourself.
 
-### Can StatLab consultants collaborate on research projects? 
+### Can StatLab consultants formally collaborate on research projects? 
 
 Not typically. Because StatLab is a free service, we aim to serve as many clients as possible, which means we generally can't commit to long-term collaborations on a single project. We also recognize that our consultants are graduate students first — we keep defined hours so they can balance consulting against their own coursework and research.
 
