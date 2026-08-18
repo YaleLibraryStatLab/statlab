@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Cole Brookson">
-<meta name="dcterms.date" content="2026-08-17">
+<meta name="dcterms.date" content="2026-08-18">
 <meta name="keywords" content="&lt;p&gt;panel data, fixed effects models, multilevel models, random effects, longitudinal data, clustered data, R, Julia,&lt;/p&gt;">
 
 <title>Panel/Longitudinal Data and its Associated Regression Practices</title>
@@ -4910,7 +4910,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 17, 2026</p>
+      <p class="date">August 18, 2026</p>
     </div>
   </div>
   
@@ -4920,7 +4920,7 @@ window.Quarto = {
 <div>
   <div class="abstract">
     <div class="block-title">Abstract</div>
-    <p>This research guide provides a comprehensive introduction to the modeling of panel data with regresssion approaches. We begin with a discussion of what panel data is, and then proceed to the theory underlying regression on panel data, covering both theoretical foundations and practical implementation in R and Julia. Through a concrete example, we demonstrate how correct panel regression can account for effects both between- and within-groups.</p>
+    <p>This research guide provides a comprehensive introduction to the modeling of panel data with regression approaches. We begin with a discussion of what panel data is, and then proceed to the theory underlying regression on panel data, covering both theoretical foundations and practical implementation in R and Julia. Through a concrete example, we demonstrate how correct panel regression can account for effects both between- and within-groups.</p>
   </div>
 </div>
 
@@ -5117,7 +5117,7 @@ Figure 2: In these simulated data, each coloured line represents one group’s 
 <p>To get a better sense of what this means under the hood we can formalize this notion and look to what the formalism guides us to by way of solution. Let’s say that the observed outcome in a panel data setting can be decomposed as:</p>
 <p><span class="math display">\[\begin{equation}
 y_{it} = \boldsymbol{\beta}x^T_{it} + \varepsilon_{it}
-\end{equation}\]</span> where <span class="math inline">\(y_{it}\)</span> is the observed value of some outcome variable in group <span class="math inline">\(i\)</span> at time <span class="math inline">\(t\)</span>. We also assume that there is a set of <span class="math inline">\(K\)</span> explanatory variables <span class="math inline">\(x_{it}\)</span> which are observed as well, and therefore a set of <span class="math inline">\(K\)</span> coefficeints <span class="math inline">\(\mathbf{\beta}\)</span>, which are estimated. There is then an error term <span class="math inline">\(\varepsilon_{it}\)</span>, which is assumed to have mean 0, and contains multiple components that reflect the hierarchical nature of the data:</p>
+\end{equation}\]</span> where <span class="math inline">\(y_{it}\)</span> is the observed value of some outcome variable in group <span class="math inline">\(i\)</span> at time <span class="math inline">\(t\)</span>. We also assume that there is a set of <span class="math inline">\(K\)</span> explanatory variables <span class="math inline">\(x_{it}\)</span> which are observed as well, and therefore a set of <span class="math inline">\(K\)</span> coefficients <span class="math inline">\(\mathbf{\beta}\)</span>, which are estimated. There is then an error term <span class="math inline">\(\varepsilon_{it}\)</span>, which is assumed to have mean 0, and contains multiple components that reflect the hierarchical nature of the data:</p>
 <p><span class="math display">\[\varepsilon_{it} = \alpha_i + u_{it}\]</span></p>
 <p>The component <span class="math inline">\(\alpha_i\)</span> represents the group-specific effect, which is time-invariant and captures all systematic, but unobserved characteristics of group <span class="math inline">\(i\)</span> that remain constant over the observation period. The variance of that effect, <span class="math inline">\(Var(\alpha_i) = \tau^2\)</span> quantifies the amount of variation in the outcome that is attributable to differences between groups. Additionally, <span class="math inline">\(u_{it}\)</span> is a random variable that is independent and identically distributed (i.i.d.) with mean 0 and some variance. It represents the idiosyncratic error that varies across both groups and time periods, capturing random variation specific to group <span class="math inline">\(i\)</span> at time <span class="math inline">\(t\)</span>.</p>
 <p>This will become important later, but typically since we wish to characterize the within-group and between-group variation, we can account for variation <strong>within</strong> groups by any set of time-dependent covariates <span class="math inline">\(x_{it}\)</span> and our error term <span class="math inline">\(\varepsilon_{it}\)</span>. On the other hand, variation <strong>between</strong> groups is accounted for by the covariates but also the group-specific effects, <span class="math inline">\(\alpha_i\)</span>.</p>
@@ -5182,7 +5182,7 @@ The Hausman Test
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Even among practioners who favour FE approaches, random effects (RE) are preferred when this heterogeneity bias does not exist. Many people will use the Hausman Test <span class="citation" data-cites="Hausman-SpecificationTestsEconometrics-1978o">(<a href="#ref-Hausman-SpecificationTestsEconometrics-1978o" role="doc-biblioref">Hausman 1978</a>)</span>to test for whether or not such bias exists by checking to see if a between-group effect is significantly biasing an estimate of the within effect, but this is not typically a recommended approach to determininng whether a fixed or random effect should be preferred <span class="citation" data-cites="Fielding-RoleHausmanFixed-2004k">(<a href="#ref-Fielding-RoleHausmanFixed-2004k" role="doc-biblioref">Fielding 2004</a>)</span>.</p>
+<p>Even among practitioners who favour FE approaches, random effects (RE) are preferred when this heterogeneity bias does not exist. Many people will use the Hausman Test <span class="citation" data-cites="Hausman-SpecificationTestsEconometrics-1978o">(<a href="#ref-Hausman-SpecificationTestsEconometrics-1978o" role="doc-biblioref">Hausman 1978</a>)</span>to test for whether or not such bias exists by checking to see if a between-group effect is significantly biasing an estimate of the within effect, but this is not typically a recommended approach to determining whether a fixed or random effect should be preferred <span class="citation" data-cites="Fielding-RoleHausmanFixed-2004k">(<a href="#ref-Fielding-RoleHausmanFixed-2004k" role="doc-biblioref">Fielding 2004</a>)</span>.</p>
 </div>
 </div>
 <p>Importantly should all the considerations of the FE model be taken on and dismissed, the FE model is not “bad” in any way. Should one only care about the within-group effects, this approach can be very powerful, especially since many would argue that in this formulation, <span class="math inline">\(\beta_1\)</span> can be taken as a “causal” effect. However, this notion is in opposition to the opinion of <span class="citation" data-cites="Bell-ExplainingFixedData-2015x">Bell and Jones (<a href="#ref-Bell-ExplainingFixedData-2015x" role="doc-biblioref">2015</a>)</span>, which we agree with, that</p>
@@ -5327,7 +5327,7 @@ Recreate Our Example Data
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li><strong>Download the dataset directly:</strong> <a href="panel-regression_files/data/school_panel.csv" download="school_panel.csv"><code>school_panel.csv</code></a></li>
+<li><strong>Download the dataset directly:</strong> <a href="assets/data/school_panel.csv" download="school_panel.csv"><code>school_panel.csv</code></a></li>
 <li><strong>Simulate it yourself:</strong> the exact code used to generate this dataset is given in <a href="#sec-appendix-simulation" class="quarto-xref">Section 5.1</a>.</li>
 </ul>
 </div>
@@ -5337,7 +5337,7 @@ Recreate Our Example Data
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>panel_data <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;./research-guides/panel-regression/panel-regression_files&quot;</span>),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;./research-guides/panel-regression/assets&quot;</span>),</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;/data/school_panel.csv&quot;</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    ),</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
@@ -5625,7 +5625,7 @@ funding_men -0.972  0.000 </code></pre>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>test_score <span class="sc">~</span> funding_centered <span class="sc">+</span> funding_mean <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> school_id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>corresponds directly to the statistical model:</p>
 <p><span class="math display">\[y_{it} = \beta_0 + \beta_{1W}(x_{it} - \bar{x}_i) + \beta_{2B}\bar{x}_i + \alpha_i + \epsilon_{it}\]</span></p>
-<p>With this formulation, we’re still accounting for the same response variable <span class="math inline">\(y_{it}\)</span> and funding covariate, but we’ve turned our covariate into the within-group component <span class="math inline">\((x_{it} - \bar{x_i})\)</span> and the between-group component <span class="math inline">\(\bar{x_i}\)</span>, which each get their own coefficient value. We’ve also now included the random intercept structure for the given schoool which is the time-invariant school-specific structure <span class="math inline">\(\alpha_i\)</span>, which is in our equation as <code>(1|school_id)</code>. Recall that the error term is automatically included into models like this, we don’t specify it directly.</p>
+<p>With this formulation, we’re still accounting for the same response variable <span class="math inline">\(y_{it}\)</span> and funding covariate, but we’ve turned our covariate into the within-group component <span class="math inline">\((x_{it} - \bar{x_i})\)</span> and the between-group component <span class="math inline">\(\bar{x_i}\)</span>, which each get their own coefficient value. We’ve also now included the random intercept structure for the given school which is the time-invariant school-specific structure <span class="math inline">\(\alpha_i\)</span>, which is in our equation as <code>(1|school_id)</code>. Recall that the error term is automatically included into models like this, we don’t specify it directly.</p>
 </section>
 <section id="interpreting-within-and-between-effects" class="level3">
 <h3 class="anchored" data-anchor-id="interpreting-within-and-between-effects">Interpreting Within and Between Effects</h3>
@@ -6053,7 +6053,7 @@ Figure 6: Complete REWB model showing within effects (school-specific lines), b
 </div>
 </div>
 </div>
-<p>This final visualization captures the full richness of the model as far as we’ve specified it here. Here we can see that the within-group effects (the thin lines for each school are in fact different), and that the between-group effects (thick lines for each school type) show how average funding relates to average achievement, nested by school type. That’s a lot of information. We’ve successfully moved through most of the compnents of a panel regression now, utilizing all of the relevant parts of the data on hand. However, this is certainly far from all-encompassing, and there are more details and FAQs found below.</p>
+<p>This final visualization captures the full richness of the model as far as we’ve specified it here. Here we can see that the within-group effects (the thin lines for each school are in fact different), and that the between-group effects (thick lines for each school type) show how average funding relates to average achievement, nested by school type. That’s a lot of information. We’ve successfully moved through most of the components of a panel regression now, utilizing all of the relevant parts of the data on hand. However, this is certainly far from all-encompassing, and there are more details and FAQs found below.</p>
 </section>
 </section>
 </section>
@@ -6078,7 +6078,7 @@ Figure 6: Complete REWB model showing within effects (school-specific lines), b
 </section>
 <section id="what-if-my-treatment-variable-barely-varies-within-units" class="level3">
 <h3 class="anchored" data-anchor-id="what-if-my-treatment-variable-barely-varies-within-units">What if my treatment variable barely varies within units?</h3>
-<p>This is a serious challenge for these models, and ultiamtely is a question for a <a href="LINK%20TO%20OTHER%20GUIDE">power analysis</a>. If you’re trying to measure a very small effect, you will need sufficiently large amounts of data to find it.</p>
+<p>This is a serious challenge for these models, and ultimately is a question for a <a href="LINK%20TO%20OTHER%20GUIDE">power analysis</a>. If you’re trying to measure a very small effect, you will need sufficiently large amounts of data to find it.</p>
 </section>
 <section id="cant-i-just-use-pooled-ols-and-ignore-the-panel-structure" class="level3">
 <h3 class="anchored" data-anchor-id="cant-i-just-use-pooled-ols-and-ignore-the-panel-structure">Can’t I just use pooled OLS and ignore the panel structure?</h3>
@@ -6208,10 +6208,10 @@ Mundlak, Yair. 1978. <span>“On the Pooling of Time Series and Cross Section Da
   publisher = {Yale Library StatLab},
   title = {Panel/Longitudinal {Data} and Its {Associated} {Regression}
     {Practices}},
-  date = {2026-08-17},
+  date = {2026-08-18},
   langid = {en},
   abstract = {This research guide provides a comprehensive introduction
-    to the modeling of panel data with regresssion approaches. We begin
+    to the modeling of panel data with regression approaches. We begin
     with a discussion of what panel data is, and then proceed to the
     theory underlying regression on panel data, covering both
     theoretical foundations and practical implementation in R and Julia.
@@ -6220,7 +6220,7 @@ Mundlak, Yair. 1978. <span>“On the Pooling of Time Series and Cross Section Da
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-brookson2026" class="csl-entry quarto-appendix-citeas" role="listitem">
 Brookson, Cole. 2026. <span>“Panel/Longitudinal Data and Its Associated
-Regression Practices.”</span> Yale Library StatLab. August 17, 2026.
+Regression Practices.”</span> Yale Library StatLab. August 18, 2026.
 </div></div></section></div></main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -6709,7 +6709,7 @@ Regression Practices.”</span> Yale Library StatLab. August 17, 2026.
 <span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a><span class="co">  - text: &quot;StatLab&quot;</span></span>
 <span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a><span class="co">    href: &quot;https://yourinstitutionwebsite.com&quot;</span></span>
 <span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a><span class="an">abstract:</span><span class="co"> |</span></span>
-<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a><span class="co">  This research guide provides a comprehensive introduction to the modeling of panel data with regresssion approaches. We begin with a discussion of what panel data is, and then proceed to the theory underlying regression on panel data, covering both theoretical foundations and practical implementation in R and Julia. Through a concrete example, we demonstrate how correct panel regression can account for effects both between- and within-groups.</span></span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a><span class="co">  This research guide provides a comprehensive introduction to the modeling of panel data with regression approaches. We begin with a discussion of what panel data is, and then proceed to the theory underlying regression on panel data, covering both theoretical foundations and practical implementation in R and Julia. Through a concrete example, we demonstrate how correct panel regression can account for effects both between- and within-groups.</span></span>
 <span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a><span class="an">about_author:</span><span class="co"> |</span></span>
 <span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a><span class="co">  Cole Brookson is a PhD candidate in the Department of Epidemiology of Microbial Disease.</span></span>
 <span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a><span class="an">keywords:</span><span class="co"> |</span></span>
@@ -6903,7 +6903,7 @@ Regression Practices.”</span> Yale Library StatLab. August 17, 2026.
 <span id="cb27-232"><a href="#cb27-232" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-233"><a href="#cb27-233" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
 <span id="cb27-234"><a href="#cb27-234" aria-hidden="true" tabindex="-1"></a>y_{it} = \boldsymbol{\beta}x^T_{it} + \varepsilon_{it}</span>
-<span id="cb27-235"><a href="#cb27-235" aria-hidden="true" tabindex="-1"></a>\end{equation} where $y_{it}$ is the observed value of some outcome variable in group $i$ at time $t$. We also assume that there is a set of $K$ explanatory variables $x_{it}$ which are observed as well, and therefore a set of $K$ coefficeints $\mathbf{\beta}$, which are estimated. There is then an error term $\varepsilon_{it}$, which is assumed to have mean 0, and contains multiple components that reflect the hierarchical nature of the data:</span>
+<span id="cb27-235"><a href="#cb27-235" aria-hidden="true" tabindex="-1"></a>\end{equation} where $y_{it}$ is the observed value of some outcome variable in group $i$ at time $t$. We also assume that there is a set of $K$ explanatory variables $x_{it}$ which are observed as well, and therefore a set of $K$ coefficients $\mathbf{\beta}$, which are estimated. There is then an error term $\varepsilon_{it}$, which is assumed to have mean 0, and contains multiple components that reflect the hierarchical nature of the data:</span>
 <span id="cb27-236"><a href="#cb27-236" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-237"><a href="#cb27-237" aria-hidden="true" tabindex="-1"></a>$$\varepsilon_{it} = \alpha_i + u_{it}$$</span>
 <span id="cb27-238"><a href="#cb27-238" aria-hidden="true" tabindex="-1"></a></span>
@@ -6983,7 +6983,7 @@ Regression Practices.”</span> Yale Library StatLab. August 17, 2026.
 <span id="cb27-312"><a href="#cb27-312" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
 <span id="cb27-313"><a href="#cb27-313" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Hausman Test</span></span>
 <span id="cb27-314"><a href="#cb27-314" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-315"><a href="#cb27-315" aria-hidden="true" tabindex="-1"></a>Even among practioners who favour FE approaches, random effects (RE) are preferred when this heterogeneity bias does not exist. Many people will use the Hausman Test <span class="co">[</span><span class="ot">@Hausman-SpecificationTestsEconometrics-1978o</span><span class="co">]</span>to test for whether or not such bias exists by checking to see if a between-group effect is significantly biasing an estimate of the within effect, but this is not typically a recommended approach to determininng whether a fixed or random effect should be preferred <span class="co">[</span><span class="ot">@Fielding-RoleHausmanFixed-2004k</span><span class="co">]</span>.</span>
+<span id="cb27-315"><a href="#cb27-315" aria-hidden="true" tabindex="-1"></a>Even among practitioners who favour FE approaches, random effects (RE) are preferred when this heterogeneity bias does not exist. Many people will use the Hausman Test <span class="co">[</span><span class="ot">@Hausman-SpecificationTestsEconometrics-1978o</span><span class="co">]</span>to test for whether or not such bias exists by checking to see if a between-group effect is significantly biasing an estimate of the within effect, but this is not typically a recommended approach to determining whether a fixed or random effect should be preferred <span class="co">[</span><span class="ot">@Fielding-RoleHausmanFixed-2004k</span><span class="co">]</span>.</span>
 <span id="cb27-316"><a href="#cb27-316" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb27-317"><a href="#cb27-317" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-318"><a href="#cb27-318" aria-hidden="true" tabindex="-1"></a>Importantly should all the considerations of the FE model be taken on and dismissed, the FE model is not &quot;bad&quot; in any way. Should one only care about the within-group effects, this approach can be very powerful, especially since many would argue that in this formulation, $\beta_1$ can be taken as a &quot;causal&quot; effect. However, this notion is in opposition to the opinion of @Bell-ExplainingFixedData-2015x, which we agree with, that</span>
@@ -7117,7 +7117,7 @@ Regression Practices.”</span> Yale Library StatLab. August 17, 2026.
 <span id="cb27-448"><a href="#cb27-448" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
 <span id="cb27-449"><a href="#cb27-449" aria-hidden="true" tabindex="-1"></a><span class="co">#| </span></span>
 <span id="cb27-450"><a href="#cb27-450" aria-hidden="true" tabindex="-1"></a>files_root <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(</span>
-<span id="cb27-451"><a href="#cb27-451" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;research-guides/panel-regression/panel-regression_files&quot;</span></span>
+<span id="cb27-451"><a href="#cb27-451" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;research-guides/panel-regression/assets&quot;</span></span>
 <span id="cb27-452"><a href="#cb27-452" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb27-453"><a href="#cb27-453" aria-hidden="true" tabindex="-1"></a>script_dir <span class="ot">&lt;-</span> <span class="fu">file.path</span>(files_root, <span class="st">&quot;scripts&quot;</span>)</span>
 <span id="cb27-454"><a href="#cb27-454" aria-hidden="true" tabindex="-1"></a>data_dir <span class="ot">&lt;-</span> <span class="fu">file.path</span>(files_root, <span class="st">&quot;data&quot;</span>)</span>
@@ -7247,7 +7247,7 @@ Regression Practices.”</span> Yale Library StatLab. August 17, 2026.
 <span id="cb27-578"><a href="#cb27-578" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
 <span id="cb27-579"><a href="#cb27-579" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recreate Our Example Data</span></span>
 <span id="cb27-580"><a href="#cb27-580" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-581"><a href="#cb27-581" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Download the dataset directly:** <span class="co">[</span><span class="ot">`school_panel.csv`</span><span class="co">](panel-regression_files/data/school_panel.csv)</span>{download=&quot;school_panel.csv&quot;}</span>
+<span id="cb27-581"><a href="#cb27-581" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Download the dataset directly:** <span class="co">[</span><span class="ot">`school_panel.csv`</span><span class="co">](assets/data/school_panel.csv)</span>{download=&quot;school_panel.csv&quot;}</span>
 <span id="cb27-582"><a href="#cb27-582" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Simulate it yourself:** the exact code used to generate this dataset is</span>
 <span id="cb27-583"><a href="#cb27-583" aria-hidden="true" tabindex="-1"></a>  given in @sec-appendix-simulation.</span>
 <span id="cb27-584"><a href="#cb27-584" aria-hidden="true" tabindex="-1"></a>:::</span>
@@ -7256,7 +7256,7 @@ Regression Practices.”</span> Yale Library StatLab. August 17, 2026.
 <span id="cb27-589"><a href="#cb27-589" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: read-school-data</span></span>
 <span id="cb27-590"><a href="#cb27-590" aria-hidden="true" tabindex="-1"></a>panel_data <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(</span>
 <span id="cb27-591"><a href="#cb27-591" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(</span>
-<span id="cb27-592"><a href="#cb27-592" aria-hidden="true" tabindex="-1"></a>        here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;./research-guides/panel-regression/panel-regression_files&quot;</span>),</span>
+<span id="cb27-592"><a href="#cb27-592" aria-hidden="true" tabindex="-1"></a>        here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;./research-guides/panel-regression/assets&quot;</span>),</span>
 <span id="cb27-593"><a href="#cb27-593" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;/data/school_panel.csv&quot;</span></span>
 <span id="cb27-594"><a href="#cb27-594" aria-hidden="true" tabindex="-1"></a>    ),</span>
 <span id="cb27-595"><a href="#cb27-595" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
@@ -7477,7 +7477,7 @@ Regression Practices.”</span> Yale Library StatLab. August 17, 2026.
 <span id="cb27-822"><a href="#cb27-822" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-823"><a href="#cb27-823" aria-hidden="true" tabindex="-1"></a>$$y_{it} = \beta_0 + \beta_{1W}(x_{it} - \bar{x}_i) + \beta_{2B}\bar{x}_i + \alpha_i + \epsilon_{it}$$</span>
 <span id="cb27-824"><a href="#cb27-824" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-825"><a href="#cb27-825" aria-hidden="true" tabindex="-1"></a>With this formulation, we&#39;re still accounting for the same response variable $y_{it}$ and funding covariate, but we&#39;ve turned our covariate into the within-group component $(x_{it} - \bar{x_i})$ and the between-group component $\bar{x_i}$, which each get their own coefficient value. We&#39;ve also now included the random intercept structure for the given schoool which is the time-invariant school-specific structure $\alpha_i$, which is in our equation as <span class="in">`(1|school_id)`</span>. Recall that the error term is automatically included into models like this, we don&#39;t specify it directly. </span>
+<span id="cb27-825"><a href="#cb27-825" aria-hidden="true" tabindex="-1"></a>With this formulation, we&#39;re still accounting for the same response variable $y_{it}$ and funding covariate, but we&#39;ve turned our covariate into the within-group component $(x_{it} - \bar{x_i})$ and the between-group component $\bar{x_i}$, which each get their own coefficient value. We&#39;ve also now included the random intercept structure for the given school which is the time-invariant school-specific structure $\alpha_i$, which is in our equation as <span class="in">`(1|school_id)`</span>. Recall that the error term is automatically included into models like this, we don&#39;t specify it directly. </span>
 <span id="cb27-826"><a href="#cb27-826" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-827"><a href="#cb27-827" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-828"><a href="#cb27-828" aria-hidden="true" tabindex="-1"></a><span class="fu">### Interpreting Within and Between Effects</span></span>
@@ -7754,7 +7754,7 @@ Regression Practices.”</span> Yale Library StatLab. August 17, 2026.
 <span id="cb27-1113"><a href="#cb27-1113" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;right&quot;</span>)</span>
 <span id="cb27-1114"><a href="#cb27-1114" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb27-1115"><a href="#cb27-1115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-1116"><a href="#cb27-1116" aria-hidden="true" tabindex="-1"></a>This final visualization captures the full richness of the model as far as we&#39;ve specified it here. Here we can see that the within-group effects (the thin lines for each school are in fact different), and that the between-group effects (thick lines for each school type) show how average funding relates to average achievement, nested by school type. That&#39;s a lot of information. We&#39;ve successfully moved through most of the compnents of a panel regression now, utilizing all of the relevant parts of the data on hand. However, this is certainly far from all-encompassing, and there are more details and FAQs found below. </span>
+<span id="cb27-1116"><a href="#cb27-1116" aria-hidden="true" tabindex="-1"></a>This final visualization captures the full richness of the model as far as we&#39;ve specified it here. Here we can see that the within-group effects (the thin lines for each school are in fact different), and that the between-group effects (thick lines for each school type) show how average funding relates to average achievement, nested by school type. That&#39;s a lot of information. We&#39;ve successfully moved through most of the components of a panel regression now, utilizing all of the relevant parts of the data on hand. However, this is certainly far from all-encompassing, and there are more details and FAQs found below. </span>
 <span id="cb27-1117"><a href="#cb27-1117" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-1118"><a href="#cb27-1118" aria-hidden="true" tabindex="-1"></a><span class="fu"># Frequently Asked Questions</span></span>
 <span id="cb27-1119"><a href="#cb27-1119" aria-hidden="true" tabindex="-1"></a></span>
@@ -7778,7 +7778,7 @@ Regression Practices.”</span> Yale Library StatLab. August 17, 2026.
 <span id="cb27-1137"><a href="#cb27-1137" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-1138"><a href="#cb27-1138" aria-hidden="true" tabindex="-1"></a><span class="fu">### What if my treatment variable barely varies within units?</span></span>
 <span id="cb27-1139"><a href="#cb27-1139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-1140"><a href="#cb27-1140" aria-hidden="true" tabindex="-1"></a>This is a serious challenge for these models, and ultiamtely is a question for a <span class="co">[</span><span class="ot">power analysis</span><span class="co">](LINK TO OTHER GUIDE)</span>. If you&#39;re trying to measure a very small effect, you will need sufficiently large amounts of data to find it. </span>
+<span id="cb27-1140"><a href="#cb27-1140" aria-hidden="true" tabindex="-1"></a>This is a serious challenge for these models, and ultimately is a question for a <span class="co">[</span><span class="ot">power analysis</span><span class="co">](LINK TO OTHER GUIDE)</span>. If you&#39;re trying to measure a very small effect, you will need sufficiently large amounts of data to find it. </span>
 <span id="cb27-1141"><a href="#cb27-1141" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-1142"><a href="#cb27-1142" aria-hidden="true" tabindex="-1"></a><span class="fu">### Can&#39;t I just use pooled OLS and ignore the panel structure?</span></span>
 <span id="cb27-1143"><a href="#cb27-1143" aria-hidden="true" tabindex="-1"></a></span>
@@ -7828,7 +7828,7 @@ Regression Practices.”</span> Yale Library StatLab. August 17, 2026.
 <span id="cb27-1189"><a href="#cb27-1189" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-1190"><a href="#cb27-1190" aria-hidden="true" tabindex="-1"></a>to reproduce the dataset.</span>
 <span id="cb27-1191"><a href="#cb27-1191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-1192"><a href="#cb27-1192" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, file=here::here(&quot;research-guides/panel-regression/panel-regression_files/scripts/simulate_school_data.R&quot;)}</span></span>
+<span id="cb27-1192"><a href="#cb27-1192" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, file=here::here(&quot;research-guides/panel-regression/assets/scripts/simulate_school_data.R&quot;)}</span></span>
 <span id="cb27-1193"><a href="#cb27-1193" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
 <span id="cb27-1194"><a href="#cb27-1194" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: false</span></span>
 <span id="cb27-1195"><a href="#cb27-1195" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>

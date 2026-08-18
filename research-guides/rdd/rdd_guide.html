@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Jonathan Elkobi">
-<meta name="dcterms.date" content="2026-08-17">
+<meta name="dcterms.date" content="2026-08-18">
 <meta name="keywords" content="<p>regression discontinuity, causal inference, running variable, cutoff, local average treatment effect, bandwidth selection, McCrary density test, fuzzy RDD, sharp RDD, placebo tests</p>">
 
 <title>Regression Discontinuity Design</title>
@@ -200,7 +200,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 17, 2026</p>
+      <p class="date">August 18, 2026</p>
     </div>
   </div>
   
@@ -753,7 +753,7 @@ Robust bias-corrected    0.05           0.093          0.329          0.68      
 <section id="interpretation" class="level1">
 <h1>Interpretation</h1>
 <p>The RDD estimator provides the <strong>Local Average Treatment Effect (LATE)</strong>. “Local” is the key word. We are estimating the effect of education only for mayors in close elections, not for all mayors in all elections.</p>
-<p>This has two implications. First, treatment effects may be heterogeneous: the effect at the cutoff may differ from the effect in large-margin races because the municipalities, voters, and candidates are not the same. Second, generalization away from the cutoff is a separate problem. Cattaneo et al.&nbsp;(2020) discuss extrapolation methods that attempt to extend RD results beyond the local area of the threshold, but those are require additional assumptions. Commonly, practicioners supplement the RD design with another identification strategy (Like Difference in Difference) in order to generalize their claim to cases outside of threshold area.</p>
+<p>This has two implications. First, treatment effects may be heterogeneous: the effect at the cutoff may differ from the effect in large-margin races because the municipalities, voters, and candidates are not the same. Second, generalization away from the cutoff is a separate problem. Cattaneo et al.&nbsp;(2020) discuss extrapolation methods that attempt to extend RD results beyond the local area of the threshold, but those are require additional assumptions. Commonly, practitioners supplement the RD design with another identification strategy (Like Difference in Difference) in order to generalize their claim to cases outside of threshold area.</p>
 <p>In practice, the estimator is best interpreted as the effect for units just at the margin. That is often the most credible causal estimate in the design, even if it is not the policy-relevant effect for every city.</p>
 <p>Armstrong and Kolesár (2020) show that honest confidence intervals can require a larger critical value than 1.96 in some RD settings. The good news is that <code>rdrobust</code> handles the appropriate bias correction and inference adjustments automatically, which is another reason it is the recommended default.</p>
 </section>
@@ -879,7 +879,7 @@ Robust bias-corrected    0.05           0.093          0.329          0.68      
 <section id="cherry-picking-cutoffs" class="level4">
 <h4 class="anchored" data-anchor-id="cherry-picking-cutoffs">3. Cherry-picking cutoffs</h4>
 <p>In a valid RD design, the cutoff should be determined by the assignment rule, not chosen by the researcher after looking at the data.</p>
-<p>For example, in a close-election design, the cutoff in respect ot vote margin is naturally 0: the point at which the candidate changes from losing to winning. It would be inappropriate to search over many possible cutoffs and then emphasize the one that produces the strongest result.</p>
+<p>For example, in a close-election design, the cutoff in respect to vote margin is naturally 0: the point at which the candidate changes from losing to winning. It would be inappropriate to search over many possible cutoffs and then emphasize the one that produces the strongest result.</p>
 <p>Placebo cutoffs are useful. If similar jumps appear at many fake cutoffs, the estimated jump at the true cutoff may reflect noise, misspecification, or an underlying nonlinear trend rather than a treatment effect.</p>
 </section>
 <section id="ignoring-covariate-imbalance" class="level4">
@@ -1096,7 +1096,7 @@ Robust bias-corrected    0.05           0.093          0.329          0.68      
   author = {Elkobi, Jonathan},
   publisher = {Yale Library StatLab},
   title = {Regression {Discontinuity} {Design}},
-  date = {2026-08-17},
+  date = {2026-08-18},
   langid = {en},
   abstract = {This guide introduces Regression Discontinuity Design
     (RDD) for causal inference when treatment is assigned by a threshold
@@ -1109,7 +1109,7 @@ Robust bias-corrected    0.05           0.093          0.329          0.68      
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-elkobi2026" class="csl-entry quarto-appendix-citeas" role="listitem">
 Elkobi, Jonathan. 2026. <span>“Regression Discontinuity Design.”</span>
-Yale Library StatLab. August 17, 2026.
+Yale Library StatLab. August 18, 2026.
 </div></div></section></div></main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">

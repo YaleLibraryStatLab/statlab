@@ -2,7 +2,7 @@
   {
     "slug": "glmms",
     "title": "Generalized Mixed-Effects Models",
-    "date": "2026-08-17",
+    "date": "2026-08-18",
     "authors": [
       "Cole Brookson"
     ],
@@ -59,7 +59,7 @@
   {
     "slug": "logit-probit",
     "title": "Logit and Probit Models for Binary Outcomes",
-    "date": "2026-08-17",
+    "date": "2026-08-18",
     "authors": [
       "Jiye Kwon"
     ],
@@ -86,7 +86,7 @@
   {
     "slug": "mixed-effects-models",
     "title": "Linear Mixed-Effects Models: A Practical Guide",
-    "date": "2026-08-17",
+    "date": "2026-08-18",
     "authors": [
       "Cole Brookson"
     ],
@@ -142,7 +142,7 @@
   {
     "slug": "panel-regression",
     "title": "Panel/Longitudinal Data and its Associated Regression Practices",
-    "date": "2026-08-17",
+    "date": "2026-08-18",
     "authors": [
       "Cole Brookson"
     ],
@@ -156,7 +156,12 @@
       "R",
       "Julia"
     ],
-    "assets": [],
+    "assets": [
+      "assets/data/school_panel.csv",
+      "assets/data/school_panel.hash",
+      "assets/scripts/simulate_school_data.R",
+      "assets/scripts/simulate_school_data.hash"
+    ],
     "topics": [
       "mixed-longitudinal-models"
     ]
@@ -164,7 +169,7 @@
   {
     "slug": "rdd",
     "title": "Regression Discontinuity Design",
-    "date": "2026-08-17",
+    "date": "2026-08-18",
     "authors": [
       "Jonathan Elkobi"
     ],
@@ -193,7 +198,7 @@
   {
     "slug": "standard-errors",
     "title": "Choosing the Right Standard Errors",
-    "date": "2026-08-17",
+    "date": "2026-08-18",
     "authors": [
       "Ted Ellsworth"
     ],
