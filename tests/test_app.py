@@ -364,3 +364,33 @@ def test_faq_referral_links_are_real_links(client):
 def test_faq_markdown_lists_survive_rendering(client):
     soup = BeautifulSoup(client.get("/consultations/").data, "html.parser")
     assert len(soup.select(".faq-list__a li")) >= 4
+
+
+# ---------------------------------------------------------------------------
+# Homepage banner — identity only; the CTAs duplicated the nav
+# ---------------------------------------------------------------------------
+
+def test_homepage_hero_is_identity_only(client):
+    soup = BeautifulSoup(client.get("/").data, "html.parser")
+    hero = soup.select_one(".hero--photo")
+    assert hero is not None
+    assert hero.select_one(".hero__eyebrow").get_text(strip=True) == "Yale University Library"
+    assert hero.select_one("h1.hero__title").get_text(strip=True) == "StatLab"
+    for gone in (".hero__cta", ".hero__secondary", ".hero__tagline"):
+        assert hero.select_one(gone) is None, f"{gone} should no longer be in the banner"
+
+
+def test_homepage_still_routes_to_consultations_and_guides(client):
+    """Dropping the hero CTAs must not strand either destination."""
+    soup = BeautifulSoup(client.get("/").data, "html.parser")
+    soup.select_one(".site-nav").decompose()          # ignore the nav
+    hrefs = {a["href"].rstrip("/") + "/" for a in soup.select("a[href]")}
+    assert "/consultations/" in hrefs
+    assert "/research-guides/" in hrefs
+
+
+def test_interior_photo_heroes_keep_their_taglines(client):
+    """The banner change is scoped to .hero--photo, not shared .hero rules."""
+    for path in ("/consultations/", "/workshops/", "/about/"):
+        hero = BeautifulSoup(client.get(path).data, "html.parser").select_one(".hero--page")
+        assert hero is not None and hero.select_one(".hero__tagline") is not None, path

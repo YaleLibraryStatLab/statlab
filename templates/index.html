@@ -10,16 +10,14 @@
    here is what makes the homepage the only page with a tall hero.
 ================================================================= #}
 {% block hero %}
+{# Identity only. The CTAs that used to live here duplicated the nav's
+   Consultations and Research Guides links, and the page's own "How we can
+   help" section covers what the tagline said — so the banner is now a
+   compact masthead rather than a full-height splash. #}
 <section class="hero hero--photo" aria-label="Site introduction">
   <div class="container">
     <p class="hero__eyebrow">Yale University Library</p>
     <h1 class="hero__title">StatLab</h1>
-    <p class="hero__tagline">
-      Free statistical consulting and research support
-      for the Yale community — from study design to final analysis.
-    </p>
-    <a href="{{ url_for('consultations') }}" class="hero__cta">Book a Consultation</a>
-    <a href="{{ url_for('research_guides') }}" class="hero__secondary">Browse Research Guides &rarr;</a>
   </div>
 </section>
 {% endblock %}
@@ -123,6 +121,27 @@
       url("{{ url_for('serve_statlab_photo', filename='2025_12_05 Yale DH Lab_Lavitt_01-Web High Quality.jpg') }}");
     background-size: cover;
     background-position: center 35%;
+
+    /* Holding only the eyebrow and title, the banner needs far less height
+       than the base .hero's 7rem/6.5rem. Overrides rather than edits .hero
+       so the interior photo heroes (.hero--page) are untouched. */
+    padding-block: 3.25rem 2.75rem;
+  }
+
+  .hero--photo .hero__title {
+    /* Down from clamp(2.75rem, 6vw, 4.5rem) — a masthead, not a splash. */
+    font-size: clamp(2.1rem, 4.5vw, 3rem);
+    margin-bottom: 0;
+  }
+
+  .hero--photo .hero__eyebrow {
+    margin-bottom: 0.6rem;
+  }
+
+  @media (max-width: 768px) {
+    /* base.html tightens .hero to 4rem/3.5rem here, which would now be
+       taller than the desktop banner. */
+    .hero--photo { padding-block: 2.5rem 2.25rem; }
   }
 
   /* ---- Section layout ---- */
