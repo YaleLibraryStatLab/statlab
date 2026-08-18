@@ -8,6 +8,8 @@ from pathlib import Path
 
 from flask import Flask, abort, redirect, render_template, send_from_directory, url_for
 
+import markdown
+
 from tools.build import inventory_assets
 from tools.extractor import extract
 from tools.guide_topics import TOPICS, TOPIC_LABELS
@@ -18,6 +20,17 @@ logger = logging.getLogger(__name__)
 TEMP_GUIDES_DIR = Path(__file__).parent / "temp"
 CONSULTANTS_FILE = Path(__file__).parent / "data" / "consultants.json"
 GUIDES_MANIFEST_FILE = Path(__file__).parent / "guides_manifest.json"
+# Authored as Markdown so the FAQ can be edited without touching a template;
+# rendered into the consultations page at build time. See load_faqs().
+FAQS_FILE = Path(__file__).parent / "assets" / "statlab-faqs.md"
+
+# One Microsoft Form serves both "feedback on an existing resource" and
+# "request a resource we don't have". Defined once here and injected into every
+# template (see inject_globals) so the three entry points can't drift apart.
+FEEDBACK_FORM_URL = (
+    "https://forms.cloud.microsoft/Pages/ResponsePage.aspx"
+    "?id=u76M3Tkh-E20EU4-h6vrXKPaMvtoJdpPpwgdkcrKi_tUOTFPWTUzRzM2UTEzNDlKRU1CUkZKWDY2US4u"
+)
 PAGEFIND_DIR = Path(__file__).parent / "docs" / "pagefind"
 
 # Assets that must never load inside base.html:
@@ -74,6 +87,61 @@ def cached_extract(html_file):
     guide = extract(html_file)
     _extract_cache[html_file] = (mtime, guide)
     return guide
+
+
+# Each FAQ entry starts at a level-3 heading; everything up to the next one is
+# that question's answer.
+_FAQ_HEADING_RE = re.compile(r"^###\s+(.*?)\s*$", re.MULTILINE)
+
+# (path, mtime) -> parsed FAQ list, so editing the .md is picked up on reload
+# without re-parsing on every request.
+_faq_cache: dict[Path, tuple[float, list]] = {}
+
+
+def _faq_anchor(question: str) -> str:
+    """Stable URL fragment for a question, e.g. 'faq-does-a-consultation-cost'."""
+    slug = re.sub(r"[^a-z0-9]+", "-", question.lower()).strip("-")
+    return f"faq-{slug}" if slug else "faq"
+
+
+def parse_faqs(text: str) -> list[dict]:
+    """Split FAQ Markdown into {question, answer_html, anchor} entries.
+
+    Text before the first '###' is ignored, so the file can carry a comment or
+    title without it becoming a question.
+    """
+    matches = list(_FAQ_HEADING_RE.finditer(text))
+    faqs = []
+    for i, match in enumerate(matches):
+        end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+        question = match.group(1).strip()
+        body = text[match.end():end].strip()
+        if not question:
+            continue
+        faqs.append({
+            "question": question,
+            "answer_html": markdown.markdown(body) if body else "",
+            "anchor": _faq_anchor(question),
+        })
+    return faqs
+
+
+def load_faqs():
+    """Parsed FAQ entries, or [] when the source file is absent or unreadable."""
+    if not FAQS_FILE.is_file():
+        logger.warning("%s not found; the consultations FAQ will be empty", FAQS_FILE.name)
+        return []
+    try:
+        mtime = FAQS_FILE.stat().st_mtime
+        cached = _faq_cache.get(FAQS_FILE)
+        if cached is not None and cached[0] == mtime:
+            return cached[1]
+        faqs = parse_faqs(FAQS_FILE.read_text(encoding="utf-8"))
+    except OSError as exc:
+        logger.warning("Could not read %s: %s", FAQS_FILE.name, exc)
+        return []
+    _faq_cache[FAQS_FILE] = (mtime, faqs)
+    return faqs
 
 
 def load_guides_manifest():
@@ -165,7 +233,7 @@ def guide_downloads(slug):
 
 @app.context_processor
 def inject_now():
-    return {"now": datetime.utcnow()}
+    return {"now": datetime.utcnow(), "feedback_form_url": FEEDBACK_FORM_URL}
 
 
 @app.template_filter("friendly_date")
@@ -342,7 +410,7 @@ def about():
 
 @app.route("/consultations/")
 def consultations():
-    return render_template("consultations.html")
+    return render_template("consultations.html", faqs=load_faqs())
 
 
 @app.route("/workshops/")

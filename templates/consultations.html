@@ -11,7 +11,7 @@
     <p class="hero__eyebrow">Yale StatLab</p>
     <h1 class="hero__title">Statistical Consultations</h1>
     <p class="hero__tagline">
-      Free one-on-one sessions for Yale students, faculty, and staff —
+      Free one-on-one sessions for Yale students, faculty, and staff
       at any stage of your research.
     </p>
   </div>
@@ -22,22 +22,10 @@
 {% block content %}
 <div class="container">
 
-  <!-- ---- What to expect ---- -->
+  {# The page opens straight into booking: the hero tagline frames what a
+     consultation is, and everything explanatory now lives in the FAQ, which
+     is authored in assets/statlab-faqs.md rather than duplicated here. #}
   <div class="consult-body">
-
-    <section class="consult-section" aria-labelledby="what-heading">
-      <h2 id="what-heading">What to Expect</h2>
-      <p>
-        Our consultants are available to help with all aspects of quantitative research —
-        from study design and power analysis to model selection, interpretation of results,
-        and data visualization. Sessions are collaborative and tailored to your project.
-      </p>
-      <p>
-        You don't need to have a fully-formed question. Bring whatever you're working on —
-        a dataset, an analysis script, a draft methods section — and we'll work through it
-        together.
-      </p>
-    </section>
 
     <!-- ---- How to book ---- -->
     <section class="consult-section" aria-labelledby="book-heading">
@@ -70,16 +58,23 @@
       </div>
     </section>
 
-    <!-- ---- Who can use StatLab ---- -->
-    <section class="consult-section" aria-labelledby="who-heading">
-      <h2 id="who-heading">Who Can Use StatLab?</h2>
-      <p>
-        Consultations are free and open to all current Yale students, faculty, postdocs,
-        and staff. We support projects across all disciplines — from social sciences and
-        public health to the biological and physical sciences, humanities, and professional
-        schools.
-      </p>
+    {# ---- FAQ ----
+       Content comes from assets/statlab-faqs.md via app.load_faqs(); edit the
+       Markdown, not this template. Each "### Question" becomes one entry. #}
+    {% if faqs %}
+    <section class="consult-section" aria-labelledby="faq-heading">
+      <h2 id="faq-heading">Frequently Asked Questions</h2>
+      <dl class="faq-list">
+        {% for faq in faqs %}
+          <dt class="faq-list__q" id="{{ faq.anchor }}">
+            <a class="faq-list__anchor" href="#{{ faq.anchor }}"
+               aria-label="Link to this question">{{ faq.question }}</a>
+          </dt>
+          <dd class="faq-list__a">{{ faq.answer_html | safe }}</dd>
+        {% endfor %}
+      </dl>
     </section>
+    {% endif %}
 
     <!-- ---- CTA ---- -->
     <div class="consult-cta">
@@ -170,6 +165,79 @@
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 1.5rem;
+  }
+
+  /* ---- FAQ (rendered from assets/statlab-faqs.md) ---- */
+  .faq-list {
+    margin: 1.25rem 0 0;
+  }
+
+  .faq-list__q {
+    font-family: var(--font-serif);
+    font-size: 1.12rem;
+    color: var(--yale-blue);
+    margin-top: 1.9rem;
+    /* Clear the sticky site header when arriving via an anchor link. */
+    scroll-margin-top: 6rem;
+  }
+
+  .faq-list__q:first-child {
+    margin-top: 0;
+  }
+
+  .faq-list__anchor {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .faq-list__anchor:hover,
+  .faq-list__anchor:focus-visible {
+    text-decoration: underline;
+  }
+
+  .faq-list__a {
+    margin: 0.55rem 0 0;
+    padding-left: 1rem;
+    border-left: 2px solid var(--border);
+  }
+
+  .faq-list__a p {
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.75;
+  }
+
+  .faq-list__a p + p {
+    margin-top: 0.9rem;
+  }
+
+  /* Lists come from the Markdown source, so they have to be styled here
+     rather than authored with classes. */
+  .faq-list__a ul,
+  .faq-list__a ol {
+    margin: 0.75rem 0 0;
+    padding-left: 1.35rem;
+  }
+
+  .faq-list__a li {
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 0.45rem;
+  }
+
+  .faq-list__a li:last-child { margin-bottom: 0; }
+
+  .faq-list__a a {
+    color: var(--yale-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .faq-list__a a:hover { color: var(--yale-blue-dark); }
+
+  .faq-list__a :last-child {
+    margin-bottom: 0;
   }
 
   /* ---- CTA ---- */

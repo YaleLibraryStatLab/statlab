@@ -164,3 +164,203 @@ def test_guide_asset_serves_nested_paths(client):
     response = client.get(f"/guides/logit-probit/{rel}")
     assert response.status_code == 200
     assert response.data == on_disk.read_bytes()
+
+
+# ---------------------------------------------------------------------------
+# Consultations FAQ — authored in assets/statlab-faqs.md, rendered at build
+# ---------------------------------------------------------------------------
+
+FAQ_MD = """\
+Intro prose before any question is not itself a question.
+
+### Does it cost anything?
+
+No. It is **free**.
+
+Second paragraph.
+
+### Can you help with code?
+
+Yes, with caveats.
+"""
+
+
+def test_parse_faqs_splits_on_level_three_headings():
+    faqs = app_module.parse_faqs(FAQ_MD)
+    assert [f["question"] for f in faqs] == [
+        "Does it cost anything?",
+        "Can you help with code?",
+    ]
+
+
+def test_parse_faqs_renders_markdown_in_answers():
+    first = app_module.parse_faqs(FAQ_MD)[0]
+    assert "<strong>free</strong>" in first["answer_html"]
+    assert first["answer_html"].count("<p>") == 2   # both paragraphs survive
+
+
+def test_parse_faqs_builds_stable_anchors():
+    assert app_module.parse_faqs(FAQ_MD)[0]["anchor"] == "faq-does-it-cost-anything"
+
+
+def test_parse_faqs_ignores_text_before_the_first_question():
+    assert all("Intro prose" not in f["answer_html"] for f in app_module.parse_faqs(FAQ_MD))
+
+
+def test_parse_faqs_empty_for_markdown_without_questions():
+    assert app_module.parse_faqs("Just prose, no headings.\n") == []
+
+
+def test_load_faqs_survives_a_missing_source_file(monkeypatch, tmp_path):
+    monkeypatch.setattr(app_module, "FAQS_FILE", tmp_path / "nope.md")
+    monkeypatch.setattr(app_module, "_faq_cache", {})
+    assert app_module.load_faqs() == []
+
+
+def test_consultations_page_renders_every_faq(client):
+    soup = BeautifulSoup(client.get("/consultations/").data, "html.parser")
+    questions = soup.select(".faq-list__q")
+    answers = soup.select(".faq-list__a")
+    assert len(questions) == len(app_module.load_faqs()) > 0
+    assert len(answers) == len(questions)
+    # each question is anchorable, and the anchor matches its heading id
+    for dt in questions:
+        assert dt.get("id")
+        assert dt.select_one("a")["href"] == f"#{dt['id']}"
+
+
+def test_consultations_faq_section_absent_when_there_are_no_faqs(client, monkeypatch):
+    monkeypatch.setattr(app_module, "load_faqs", lambda: [])
+    soup = BeautifulSoup(client.get("/consultations/").data, "html.parser")
+    assert soup.select_one(".faq-list") is None
+
+
+# ---------------------------------------------------------------------------
+# Feedback / resource-request form — one MS Form, two named intents
+# ---------------------------------------------------------------------------
+
+FEEDBACK_PAGES = ["/workshops/", "/research-guides/"]
+
+
+def _external_link_is_safe(a):
+    """target=_blank without rel=noopener leaks window.opener to the new tab."""
+    rel = a.get("rel") or []
+    return a.get("target") == "_blank" and "noopener" in rel and "noreferrer" in rel
+
+
+@pytest.mark.parametrize("path", ["/", "/consultations/", *FEEDBACK_PAGES])
+def test_contact_dropdown_names_both_intents(client, path):
+    soup = BeautifulSoup(client.get(path).data, "html.parser")
+    links = [a for a in soup.select(".dropdown-menu a")
+             if a["href"] == app_module.FEEDBACK_FORM_URL]
+    labels = [a.get_text(" ", strip=True) for a in links]
+    assert len(links) == 2, "both 'feedback' and 'request' entry points present"
+    assert any("Share feedback" in text for text in labels)
+    assert any("Request a resource" in text for text in labels)
+    assert all(_external_link_is_safe(a) for a in links)
+
+
+@pytest.mark.parametrize("path", FEEDBACK_PAGES)
+def test_feedback_widget_renders_on_resource_pages(client, path):
+    soup = BeautifulSoup(client.get(path).data, "html.parser")
+    callout = soup.select_one(".feedback-callout")
+    assert callout is not None
+    cta = callout.select_one("a")
+    assert cta["href"] == app_module.FEEDBACK_FORM_URL
+    assert _external_link_is_safe(cta)
+
+
+@pytest.mark.parametrize("path", FEEDBACK_PAGES)
+def test_feedback_widget_is_a_labelled_landmark(client, path):
+    soup = BeautifulSoup(client.get(path).data, "html.parser")
+    callout = soup.select_one(".feedback-callout")
+    target = callout["aria-labelledby"]
+    assert soup.select_one(f"#{target}") is not None
+    ids = [tag["id"] for tag in soup.select("[id]")]
+    assert len(ids) == len(set(ids)), "widget ids must not collide with the page"
+
+
+@pytest.mark.parametrize("path", FEEDBACK_PAGES)
+def test_new_tab_links_announce_themselves(client, path):
+    """Sighted users see the arrow; screen readers need it said out loud."""
+    soup = BeautifulSoup(client.get(path).data, "html.parser")
+    cta = soup.select_one(".feedback-callout a")
+    hidden = cta.select_one(".visually-hidden")
+    assert hidden is not None and "new tab" in hidden.get_text(strip=True)
+
+
+def test_feedback_widget_stays_off_unrelated_pages(client):
+    for path in ("/", "/about/", "/consultations/"):
+        soup = BeautifulSoup(client.get(path).data, "html.parser")
+        assert soup.select_one(".feedback-callout") is None, path
+
+
+def test_form_url_is_defined_once(client):
+    """The three entry points must all read the same constant, not copies."""
+    soup = BeautifulSoup(client.get("/research-guides/").data, "html.parser")
+    hrefs = {a["href"] for a in soup.select("a[href]")
+             if "forms.cloud.microsoft" in a["href"]}
+    assert hrefs == {app_module.FEEDBACK_FORM_URL}
+
+
+def test_workshops_cta_names_the_dominant_intent(client):
+    """Workshops routes requests to the form; email keeps open-ended questions."""
+    soup = BeautifulSoup(client.get("/workshops/").data, "html.parser")
+
+    cta = soup.select_one(".feedback-callout a")
+    assert "Request a workshop" in cta.get_text(" ", strip=True)
+
+    # The blurb must still tell the feedback half of the audience they belong.
+    blurb = soup.select_one(".feedback-callout__body").get_text(" ", strip=True)
+    assert "feedback" in blurb.lower()
+
+    # The notice's email button no longer solicits topic requests.
+    notice = soup.select_one(".workshops-notice").get_text(" ", strip=True)
+    assert "like us to teach" not in notice
+    assert soup.select_one(".workshops-notice a[href^='mailto:']") is not None
+
+
+def test_consultations_does_not_duplicate_the_faq_in_hand_written_prose(client):
+    """The .md is the single source for explanatory copy on this page.
+
+    Guards the consolidation: eligibility and services were previously stated
+    both in the template and in the FAQ, which drifted (the template listed
+    postdocs; the Markdown did not).
+    """
+    soup = BeautifulSoup(client.get("/consultations/").data, "html.parser")
+    headings = [h.get_text(strip=True) for h in soup.select(".consult-section > h2")]
+    assert headings == ["How to Book", "Frequently Asked Questions"]
+
+    # Eligibility/cost copy belongs to the FAQ only. Repeats *within* the FAQ
+    # are fine — each answer is anchor-linkable and has to stand alone.
+    faq_block = soup.select_one(".faq-list")
+    assert "free of charge" in faq_block.get_text(" ", strip=True).lower()
+    faq_block.decompose()
+    remaining = soup.select_one(".consult-body").get_text(" ", strip=True).lower()
+    assert "free of charge" not in remaining
+    assert "all disciplines" not in remaining
+
+
+def test_eligibility_answer_keeps_the_facts_the_template_used_to_carry(client):
+    soup = BeautifulSoup(client.get("/consultations/").data, "html.parser")
+    faq = soup.select_one(".faq-list").get_text(" ", strip=True).lower()
+    for fact in ("postdoc", "disciplines", "humanities", "public health"):
+        assert fact in faq, f"{fact} was lost when the template section was removed"
+
+
+def test_faq_referral_links_are_real_links(client):
+    """Bracketed placeholders render as literal text, not links — catch regressions."""
+    soup = BeautifulSoup(client.get("/consultations/").data, "html.parser")
+    faq = soup.select_one(".faq-list")
+    hrefs = {a["href"] for a in faq.select("a[href^='http']")}
+    assert hrefs == {
+        "https://www.library.yale.edu/help-and-research-support/subject-specialist",
+        "https://guides.library.yale.edu/GIS",
+        "https://researchdata.yale.edu/research-data-management",
+        "https://library.yale.edu/digital-humanities-laboratory",
+    }
+
+
+def test_faq_markdown_lists_survive_rendering(client):
+    soup = BeautifulSoup(client.get("/consultations/").data, "html.parser")
+    assert len(soup.select(".faq-list__a li")) >= 4

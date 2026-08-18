@@ -5,6 +5,8 @@
 {% block meta_description %}Practical statistics research guides from Yale StatLab — regression, mixed models, causal inference, and more.{% endblock %}
 
 
+{% from "_feedback.html" import feedback_widget with context %}
+
 {% block content %}
 <div class="container">
 
@@ -116,6 +118,11 @@
   {% else %}
     <p class="guide-empty">No guides are available yet.</p>
   {% endif %}
+
+  {{ feedback_widget(
+       "Tell us how a guide worked for you — or request a topic we haven't
+        covered yet. Both go to the same short form.",
+       id_prefix="guides-feedback") }}
 
 </div>
 {% endblock %}

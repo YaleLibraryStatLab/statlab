@@ -19,6 +19,8 @@
 {% endblock %}
 
 
+{% from "_feedback.html" import feedback_widget with context %}
+
 {% block content %}
 <div class="container">
 
@@ -30,12 +32,22 @@
       many of the same methods with worked examples you can follow at your own pace —
       or <a href="{{ url_for('consultations') }}">book a consultation</a> for one-on-one help.
     </p>
+    {# Two different asks, two different channels: open-ended questions suit
+       email, but "teach this topic" is a request we want recorded, so it goes
+       to the form below rather than into an inbox. #}
     <p>
-      Questions about workshops, or a topic you'd like us to teach?
-      We'd love to hear from you.
+      Questions about workshops? We'd love to hear from you.
     </p>
     <a href="mailto:statlab@yale.edu" class="btn btn--primary">Email statlab@yale.edu &rarr;</a>
   </section>
+
+  {{ feedback_widget(
+       "Tell us what you'd like us to teach and we'll factor it into the
+        schedule. You can also use this form to share feedback on a workshop
+        you attended.",
+       title="Is there a workshop you'd like us to run?",
+       cta="Request a workshop",
+       id_prefix="workshops-feedback") }}
 
 </div>
 {% endblock %}

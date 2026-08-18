@@ -1,0 +1,35 @@
+{# ---- Feedback / resource-request callout ----
+
+   One Microsoft Form (app.FEEDBACK_FORM_URL) handles both "here's how this
+   resource worked for me" and "please build one you don't have". A lone button
+   can't carry both meanings, so the heading asks the open question and the
+   body names each case explicitly; the button then only has to be clickable.
+
+   Usage:
+     {% from "_feedback.html" import feedback_widget %}
+     {{ feedback_widget("Tell us how these guides are working — or request a
+                         topic we haven't covered yet.") }}
+
+   Override `cta` where a page has one dominant intent — a specific verb
+   ("Request a workshop") beats the generic label, as long as the blurb still
+   tells the other half of the audience they're in the right place.
+
+   `id_prefix` only matters if a page ever shows two of these, so the
+   aria-labelledby reference stays unique.
+#}
+{% macro feedback_widget(blurb,
+                         title="Have feedback, or need something else?",
+                         cta="Share feedback or request a resource",
+                         id_prefix="feedback") %}
+<section class="feedback-callout" aria-labelledby="{{ id_prefix }}-callout-title">
+  <h2 class="feedback-callout__title" id="{{ id_prefix }}-callout-title">{{ title }}</h2>
+  <p class="feedback-callout__body">{{ blurb }}</p>
+  <a href="{{ feedback_form_url }}"
+     class="btn btn--secondary feedback-callout__cta"
+     target="_blank" rel="noopener noreferrer">
+    {{ cta }}
+    <span aria-hidden="true">&rarr;</span>
+    <span class="visually-hidden">(opens in a new tab)</span>
+  </a>
+</section>
+{% endmacro %}

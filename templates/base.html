@@ -543,6 +543,67 @@
       line-height: 1.65;
     }
 
+    /* ---- Screen-reader-only text ----
+       Kept in the accessibility tree but out of the visual layout; used to
+       announce things a sighted reader gets from context (e.g. that a link
+       opens in a new tab). Not display:none, which removes it from that tree. */
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* ---- Feedback / resource-request callout ----
+       Shared by the Workshops and Research Guides pages; see the
+       feedback_widget macro in templates/_feedback.html. */
+    .feedback-callout {
+      margin: 3.5rem 0 1rem;
+      padding: 1.6rem 1.75rem;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .feedback-callout__title {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--yale-blue);
+      margin: 0 0 0.4rem;
+    }
+
+    .feedback-callout__body {
+      font-size: 0.97rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin: 0 0 1.15rem;
+      max-width: 60ch;
+    }
+
+    /* Guarantee a 44px tap target (WCAG 2.5.8) — the base .btn padding lands
+       just under that at this font size. */
+    .feedback-callout__cta {
+      min-height: 44px;
+    }
+
+    /* The button is full-width on narrow screens so the long label wraps
+       cleanly instead of overflowing its container. */
+    @media (max-width: 520px) {
+      .feedback-callout { padding: 1.35rem 1.25rem; }
+      .feedback-callout__cta {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+      }
+    }
+
     /* ---- Buttons ---- */
     .btn {
       display: inline-flex;
@@ -889,10 +950,27 @@
           </a>
         </li>
 
-        <li>
+        {# Contact — the parent link keeps its mailto, matching About, whose
+           parent duplicates its first child. The two form links point at the
+           same Microsoft Form: it handles both cases, and naming each intent
+           separately saves the reader from guessing which one covers them. #}
+        <li class="nav-dropdown">
           <a href="mailto:statlab@yale.edu">
             Contact
           </a>
+          <ul class="dropdown-menu" role="list">
+            <li><a href="mailto:statlab@yale.edu">Email statlab@yale.edu</a></li>
+            <li>
+              <a href="{{ feedback_form_url }}" target="_blank" rel="noopener noreferrer">
+                Share feedback<span class="visually-hidden"> (opens in a new tab)</span>
+              </a>
+            </li>
+            <li>
+              <a href="{{ feedback_form_url }}" target="_blank" rel="noopener noreferrer">
+                Request a resource<span class="visually-hidden"> (opens in a new tab)</span>
+              </a>
+            </li>
+          </ul>
         </li>
 
       </ul>
