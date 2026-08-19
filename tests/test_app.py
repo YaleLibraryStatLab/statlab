@@ -394,3 +394,67 @@ def test_interior_photo_heroes_keep_their_taglines(client):
     for path in ("/consultations/", "/workshops/", "/about/"):
         hero = BeautifulSoup(client.get(path).data, "html.parser").select_one(".hero--page")
         assert hero is not None and hero.select_one(".hero__tagline") is not None, path
+
+
+def test_wide_table_scroll_survives_bootstrap_stripping(client):
+    """Quarto's .cell-output-display overflow rule ships inside the Bootstrap
+    bundle that _filter_quarto_assets() strips, so the site must restore it.
+
+    Without both halves the 15-column table under "A Baseline" in the OLS
+    guide silently loses its horizontal scroll.
+    """
+    css = client.get("/guides/olsregression/").data.decode()
+    assert ".cell-output-display:not(.no-overflow-x)" in css
+    assert "overflow-x: auto" in css
+    # A width:100% table can't overflow its wrapper, so the override matters.
+    assert ".guide-content .cell-output-display > table" in css
+
+
+def test_bootstrap_is_still_stripped_from_guides(client):
+    """The reason the rule above has to be restored — keep the cause pinned."""
+    soup = BeautifulSoup(client.get("/guides/olsregression/").data, "html.parser")
+    hrefs = [l.get("href", "") for l in soup.select("link[rel=stylesheet]")]
+    assert not any("bootstrap" in h and h.endswith(".min.css") for h in hrefs)
+
+
+# ---------------------------------------------------------------------------
+# Card thumbnails — a guide can author its own instead of taking pot luck
+# ---------------------------------------------------------------------------
+
+def test_authored_thumbnail_wins_over_the_first_figure(client):
+    """olsregression ships olsregression.png; without it the card showed
+    whatever figure happened to appear first in the body."""
+    assert app_module.explicit_thumbnail("olsregression") == "olsregression.png"
+    response = client.get("/guides/olsregression/thumbnail")
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith(
+        "/guides/olsregression/olsregression.png"
+    )
+
+
+def test_guides_without_an_authored_image_still_get_a_thumbnail(client):
+    """The first-figure fallback must survive the new convention."""
+    slug = "glmms"
+    assert app_module.explicit_thumbnail(slug) is None
+    assert client.get(f"/guides/{slug}/thumbnail").status_code == 302
+
+
+def test_explicit_thumbnail_ignores_files_under_assets(tmp_path, monkeypatch):
+    """assets/ is the download set — a card image there must not be picked up,
+    or it would also be offered to readers as a download."""
+    monkeypatch.setattr(app_module, "TEMP_GUIDES_DIR", tmp_path)
+    guide = tmp_path / "demo"
+    (guide / "assets").mkdir(parents=True)
+    (guide / "assets" / "demo.png").write_bytes(b"\x89PNG")
+    assert app_module.explicit_thumbnail("demo") is None
+
+    (guide / "demo.png").write_bytes(b"\x89PNG")
+    assert app_module.explicit_thumbnail("demo") == "demo.png"
+
+
+def test_has_thumbnail_is_true_from_the_authored_file_alone(tmp_path, monkeypatch):
+    """Freezing must emit the URL even when the body has no usable figure."""
+    monkeypatch.setattr(app_module, "TEMP_GUIDES_DIR", tmp_path)
+    (tmp_path / "demo").mkdir()
+    (tmp_path / "demo" / "demo.jpg").write_bytes(b"\xff\xd8")
+    assert app_module.has_thumbnail("demo", extracted=None) is True

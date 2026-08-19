@@ -259,6 +259,25 @@
     .guide-content thead th { background: var(--bg-subtle); }
     .guide-content tbody tr:nth-child(even) { background: var(--bg-subtle); }
 
+    /* ---- Wide computed output ----
+       Quarto wraps computed output in .cell-output-display and gives it
+       overflow-x:auto — but that rule ships inside the Bootstrap bundle,
+       which app._filter_quarto_assets() strips (full Bootstrap clobbers the
+       site nav and footer). Restored here, honouring Quarto's own
+       .no-overflow-x opt-out so a guide can still turn it off at the source. */
+    .guide-content .cell-output-display:not(.no-overflow-x),
+    .guide-content .knitsql-table:not(.no-overflow-x) {
+      overflow-x: auto;
+    }
+
+    /* The rule above is inert on its own: a width:100% table shrinks to fit
+       its wrapper and never overflows, so no scrollbar can appear. Wide
+       tables have to be allowed past the column instead. */
+    .guide-content .cell-output-display > table {
+      width: auto;
+      min-width: 100%;
+    }
+
     /* ---- Figures ---- */
     .guide-content figure { margin: 2rem 0; }
     .guide-content figure img {

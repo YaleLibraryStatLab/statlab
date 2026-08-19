@@ -115,23 +115,28 @@
   {
     "slug": "olsregression",
     "title": "Ordinary Least Squares Regression",
-    "date": "2026-08-17",
+    "date": "2026-08-19",
     "authors": [
       "Muji Chughtai",
       "Claudia Mastrogiacomo"
     ],
     "keywords": [
-      "OLS",
-      "Regression",
-      "Continuous Variables",
-      "Categorical Variables",
-      "R",
-      "lm",
-      "t.test"
+      "regression",
+      "identification",
+      "Gauss-Markov theorem",
+      "standard errors",
+      "robust standard errors",
+      "clustered standard errors",
+      "heteroskedasticity",
+      "categorical predictors",
+      "interactions",
+      "prediction intervals",
+      "influence diagnostics"
     ],
     "assets": [
       "assets/data/caschools.csv",
       "assets/data/caschools.hash",
+      "assets/olsregression.png",
       "assets/scripts/export_caschools_data.R"
     ],
     "topics": [

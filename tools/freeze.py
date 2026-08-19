@@ -46,9 +46,9 @@ from flask_frozen import Freezer, MissingURLGeneratorWarning
 from app import (
     ASSETS_DIR,
     TEMP_GUIDES_DIR,
-    _first_guide_image,
     app,
     cached_extract,
+    has_thumbnail,
     list_available_guides,
     load_consultants,
     load_guides_manifest,
@@ -116,14 +116,14 @@ def guide_asset():
 
 @freezer.register_generator
 def guide_thumbnail():
-    # Only guides whose first figure is usable have a thumbnail; the others
-    # render an inline SVG placeholder and the route would 404.
+    # Only guides with an authored <slug>.png or a usable first figure have a
+    # thumbnail; the others render an inline SVG placeholder and would 404.
     for guide in list_available_guides():
         html_file = TEMP_GUIDES_DIR / guide["slug"] / f"{guide['slug']}.html"
         if not html_file.is_file():
             continue
         try:
-            if _first_guide_image(cached_extract(html_file)) is not None:
+            if has_thumbnail(guide["slug"], cached_extract(html_file)):
                 yield {"slug": guide["slug"]}
         except Exception:
             pass

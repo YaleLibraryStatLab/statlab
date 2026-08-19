@@ -306,6 +306,35 @@ def _first_guide_image(guide):
     return None
 
 
+# A guide picks its own card image by committing <slug>.<ext> beside its HTML.
+# Deliberately *not* under assets/: everything there publishes as a download,
+# and a card image is not something a reader downloads.
+THUMBNAIL_SUFFIXES = (".png", ".jpg", ".jpeg", ".webp")
+
+
+def explicit_thumbnail(slug):
+    """Filename of the guide's authored card image, or None to fall back.
+
+    Without this the card shows whatever figure happens to appear first in
+    the body, which is rarely the most representative one.
+    """
+    guide_dir = TEMP_GUIDES_DIR / slug
+    for suffix in THUMBNAIL_SUFFIXES:
+        candidate = guide_dir / f"{slug}{suffix}"
+        if candidate.is_file():
+            return candidate.name
+    return None
+
+
+def has_thumbnail(slug, extracted=None):
+    """Whether /guides/<slug>/thumbnail will resolve, for cards and freezing."""
+    if explicit_thumbnail(slug):
+        return True
+    if extracted is None:
+        return False
+    return _first_guide_image(extracted) is not None
+
+
 def _enrich_guides(guides):
     """Add authors, abstract, and thumbnail info to manifest guide entries
     by reading each guide's HTML (cached, so repeat views are cheap)."""
@@ -318,7 +347,7 @@ def _enrich_guides(guides):
                 extracted = cached_extract(html_file)
                 info["authors"] = [a.name for a in extracted.authors]
                 info["abstract"] = extracted.abstract
-                info["has_thumbnail"] = _first_guide_image(extracted) is not None
+                info["has_thumbnail"] = has_thumbnail(g["slug"], extracted)
             except Exception:
                 logger.warning("Could not enrich guide %s", g["slug"], exc_info=True)
         enriched.append(info)
@@ -350,6 +379,9 @@ def guide_thumbnail(slug):
     html_file = TEMP_GUIDES_DIR / slug / f"{slug}.html"
     if not html_file.is_file():
         abort(404)
+    authored = explicit_thumbnail(slug)
+    if authored:
+        return redirect(url_for("guide_asset", slug=slug, filename=authored))
     img = _first_guide_image(cached_extract(html_file))
     if img is None:
         abort(404)
