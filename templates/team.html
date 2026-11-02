@@ -96,6 +96,13 @@
     letter-spacing: 0.08em;
     color: var(--text-muted);
   }
+  .consultant-card__fellowship {
+    font-size: 0.74rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--yale-blue);
+  }
   .consultant-card__bio {
     font-size: 0.9rem;
     color: var(--text-muted);
@@ -199,6 +206,9 @@
           <div class="consultant-card__body">
             <span class="consultant-card__name">{{ c.name }}</span>
             <span class="consultant-card__role">{{ c.role }}</span>
+            {% if c.fellowship %}
+              <span class="consultant-card__fellowship">{{ c.fellowship }}</span>
+            {% endif %}
             {%- set display_bio = c.short_bio if c.short_bio else c.bio -%}
             {% if display_bio %}
               <p class="consultant-card__bio">{{ display_bio | truncate(130, True) }}</p>

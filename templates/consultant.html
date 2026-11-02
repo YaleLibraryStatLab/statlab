@@ -73,6 +73,13 @@
     margin-bottom: 0.75rem;
     letter-spacing: 0.02em;
   }
+  .profile-header__fellowship {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--yale-blue);
+    margin-top: -0.5rem;
+    margin-bottom: 0.75rem;
+  }
 
   .profile-header__status--former {
     display: inline-block;
@@ -301,6 +308,9 @@
     <div class="profile-header__info">
       <h1 class="profile-header__name">{{ consultant.name }}</h1>
       <p class="profile-header__role">{{ consultant.role }} &mdash; Yale StatLab</p>
+      {% if consultant.fellowship %}
+        <p class="profile-header__fellowship">{{ consultant.fellowship }}</p>
+      {% endif %}
       {% if consultant.status == 'former' %}
         <span class="profile-header__status--former">Former Consultant</span>
       {% endif %}
@@ -317,6 +327,11 @@
         {% if consultant.links and consultant.links.website %}
           <a href="{{ consultant.links.website }}" class="profile-link" target="_blank" rel="noopener noreferrer">
             Website
+          </a>
+        {% endif %}
+        {% if consultant.links and consultant.links.linkedin %}
+          <a href="{{ consultant.links.linkedin }}" class="profile-link" target="_blank" rel="noopener noreferrer">
+            LinkedIn
           </a>
         {% endif %}
       </div>

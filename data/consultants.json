@@ -66,7 +66,7 @@
     "photo": "kjin.jpeg",
     "short_bio": "Kevin is a PhD Candidate in Computational Biology and Biomedical Informatics. His research specializes in large language models for psychiatric treatment recommendation, natural language processing, and causal inference.",
     "bio": "Hey! Thanks for checking out my profile. My research centers on training a large language model for evidence-grounded psychiatric treatment recommendation. I specialize in LLMs but have secondary interests in classical natural language processing, classical machine learning, causal inference, time series, model interpretability, and Bayesian reasoning. I love advising on types of analyses to perform, interpreting results, understanding models and coefficients, and learning more statistics in general! If you're not sure whether your project fits, just hit me up and let's chat — I'd love to see what I can do for you, and if I can't help you directly, I'll be sure to point you in the direction of someone who can.",
-    "status": "current",
+    "status": "former",
     "guides": [],
     "links": {
       "email": "kevin.jin@yale.edu",
@@ -144,6 +144,64 @@
     "ai_coding_agents": []
   },
   {
+    "slug": "brendan-lam",
+    "name": "Brendan Lam",
+    "title": "PhD Candidate",
+    "role": "PhD Candidate · Psychology",
+    "fellowship": "GPE Fellow · Fall 2026",
+    "department": "Psychology",
+    "email": "brendan.lam@yale.edu",
+    "webpage": "https://www.linkedin.com/in/brendan-lam-4841a3127/",
+    "photo": "brendan-lam.jpeg",
+    "short_bio": "Brendan is a PhD Candidate in clinical psychology. Brendan's research specializes in how socioeconomic factors shape decision-making and risky behavior, computational cognitive modeling, and psychometrics.",
+    "bio": "I am a PhD candidate in clinical psychology, focusing on how socioeconomic factors influence decision-making and risky behaviors. My research develops statistical tools, arguments, and methods to show the consequences of omitting contextual factors (e.g., socioeconomic status) from computational cognitive models. I also develop methods to better assess ecological validity, which concerns how laboratory measures translate to real-world behavior. These research programs have given me extensive experience in psychometrics, regression modeling, and simulation studies. I also enjoy working on projects involving missing data, power analysis, and study design.",
+    "status": "current",
+    "guides": [],
+    "links": {
+      "email": "brendan.lam@yale.edu",
+      "linkedin": "https://www.linkedin.com/in/brendan-lam-4841a3127/"
+    },
+    "methodological_topics": [
+      "Linear Regression", "Logistic Regression", "Multiple Regression", "Ordinal Regression",
+      "Poisson Regression", "Negative Binomial", "Zero-inflated Models", "Quantile Regression",
+      "Regularization (Ridge/Lasso)", "GLMs", "GAMs", "Causal Inference", "Experimental Design",
+      "Propensity Score Matching", "Power Analysis", "Survey Design", "Mixed Effects Models",
+      "Multilevel Modeling", "Panel Data", "Repeated Measures", "Growth Curve Modeling",
+      "Structural Equation Modeling", "Latent Variable Models", "Longitudinal Data",
+      "Bayesian Statistics", "MCMC", "Bayesian Hierarchical Models", "Machine Learning",
+      "Supervised Learning", "Unsupervised Learning", "Dimensionality Reduction (PCA/UMAP)",
+      "Simulation Experiments", "Agent-based Modeling", "Hypothesis Testing",
+      "Nonparametric Methods", "Missing Data / Imputation", "Measurement Theory",
+      "Factor Analysis", "Psychometrics"
+    ],
+    "coding_languages_and_tools": ["R", "Python", "Julia", "SPSS", "SQL", "Bash / Shell", "JavaScript", "Stan", "BUGS / JAGS"],
+    "ai_coding_agents": ["Claude Code", "OpenAI Codex"]
+  },
+  {
+    "slug": "haley-zhang",
+    "name": "Haley Xiaohe Zhang",
+    "title": "PhD Student",
+    "role": "PhD Student · Computational Biology & Biomedical Informatics",
+    "fellowship": "GPE Fellow · Fall 2026",
+    "department": "Computational Biology and Biomedical Informatics",
+    "email": "haleyxiaohe.zhang@yale.edu",
+    "photo": "haley-zhang.jpeg",
+    "short_bio": "Haley is a PhD Student in Computational Biology and Biomedical Informatics. Haley's research specializes in LLMs and AI agents for disease prediction and diagnosis, with a focus on rare disease and psychiatric disorders.",
+    "bio": "I'm a PhD student in the department of Computational Biology and Biomedical Informatics. My research focuses on using LLMs and AI agents for disease prediction and diagnosis, with a focus on rare disease and psychiatric disorders.",
+    "status": "current",
+    "guides": [],
+    "links": {
+      "email": "haleyxiaohe.zhang@yale.edu"
+    },
+    "methodological_topics": [
+      "Machine Learning", "Random Forests", "Gradient Boosting", "Neural Networks", "Deep Learning",
+      "Clustering", "NLP", "Text Classification", "Sentiment Analysis", "Topic Modeling", "LLMs",
+      "Genomics", "Data Visualization"
+    ],
+    "coding_languages_and_tools": ["Python", "Bash / Shell"],
+    "ai_coding_agents": ["Claude Code", "GitHub Copilot", "OpenAI Codex"]
+  },
+  {
     "slug": "jonathan-elkobi",
     "name": "Jonathan Elkobi",
     "title": "PhD Student",
@@ -154,7 +212,7 @@
     "photo": "jelkobi.jpeg",
     "short_bio": "Jonathan is a PhD Student in Political Science at Yale. His research focuses on elite politics and speech, local governments, and municipal bond markets, using text-as-data approaches with LLMs and NLP.",
     "bio": "I am a PhD student in the Department of Political Science at Yale. My research focuses on elite politics and elite speech, local governments, and politics and financial markets. Methodologically, I develop computational social science tools, especially text-as-data approaches using Large Language Models (LLMs) and Natural Language Processing (NLP), to measure political elite behavior and political speech. A major part of my research agenda examines municipal bond markets in the United States and China. I also work on side projects on other local-government economic outcomes, including pollution and growth, and on other markets such as prediction markets.",
-    "status": "current",
+    "status": "former",
     "guides": ["instrumental-variables", "rdd", "synthetic-control"],
     "links": {
       "email": "jonathan.elkobi@yale.edu",
